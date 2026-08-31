@@ -1,1 +1,209 @@
-/* You can add global styles to this file, and also import other style files */
+// Global styles: Design System tokens (design-system/colors.md, typography.md, spacing.md)
+// + Bootstrap 5 grid/utilities (page structure only — interactive components stay Angular Material,
+// see docs/design-system.md "one building block at a time").
+
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/root';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/utilities';
+@import 'bootstrap/scss/utilities/api';
+
+:root {
+  // Brand colors — design-system/colors.md
+  --color-primary: #2563eb; // Medical Blue
+  --color-secondary: #10b981; // Medical Green
+  --color-accent: #0f766e; // Professional Teal
+
+  // Semantic colors
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+  --color-info: #0284c7;
+
+  // Neutral scale
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+  --color-neutral-950: #020617;
+
+  // Semantic surface/text tokens (light theme)
+  --color-background: var(--color-neutral-50);
+  --color-surface: #ffffff;
+  --color-surface-secondary: var(--color-neutral-100);
+  --color-border: var(--color-neutral-200);
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-600);
+  --color-text-disabled: var(--color-neutral-400);
+
+  // Sidebar accent theme (Settings → "Couleur d'accent") — dedicated dark palette, applied to the
+  // sidebar and, for a consistent branded look, to table headers/modal headers/top menu as well
+  // (see .shell-sidenav, .shell-header, .app-dialog-header, .mat-mdc-header-row below). Values are
+  // fixed hex from the user's brief, not derived from --color-primary — kept separate from it since
+  // buttons/links/focus rings still use --color-primary at full saturation on a light surface.
+  --sidebar-bg: #0f3d5e;
+  --sidebar-hover: #164f73;
+  --sidebar-active: #1e88c8;
+  --sidebar-text: #ffffff;
+  --sidebar-text-secondary: #b8d4e5;
+
+  // Typography — design-system/typography.md
+  --font-family-base:
+    'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-body: 1.5;
+
+  // Spacing scale — design-system/spacing.md (8px-based)
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-background: var(--color-neutral-950);
+    --color-surface: var(--color-neutral-900);
+    --color-surface-secondary: var(--color-neutral-800);
+    --color-border: var(--color-neutral-700);
+    --color-text-primary: var(--color-neutral-50);
+    --color-text-secondary: var(--color-neutral-300);
+    --color-text-disabled: var(--color-neutral-600);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-background: var(--color-neutral-950);
+  --color-surface: var(--color-neutral-900);
+  --color-surface-secondary: var(--color-neutral-800);
+  --color-border: var(--color-neutral-700);
+  --color-text-primary: var(--color-neutral-50);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-disabled: var(--color-neutral-600);
+  color-scheme: dark;
+}
+
+// Sidebar accent picker (Settings → "Couleur d'accent"). Per-user, localStorage-backed
+// (ThemeService.setAccent), independent from light/dark. --sidebar-* drives the sidebar, table
+// headers (.mat-mdc-header-row), modal headers (.app-dialog-header) and the top menu
+// (.shell-header) — see usages below — so swapping these five tokens re-themes all four surfaces
+// at once. 'ocean' (Deep Ocean Blue) is the default defined on :root above and needs no override
+// block; these values must stay in sync with AccentColor in core/services/theme.service.ts.
+:root[data-accent='teal'] {
+  // Deep Teal
+  --sidebar-bg: #123c46;
+  --sidebar-hover: #185764;
+  --sidebar-active: #20a6a6;
+  --sidebar-text: #ffffff;
+  --sidebar-text-secondary: #b8d4d7;
+}
+
+:root[data-accent='sky'] {
+  // Sky Blue
+  --sidebar-bg: #1677a8;
+  --sidebar-hover: #1b89bf;
+  --sidebar-active: #0d5f87;
+  --sidebar-text: #ffffff;
+  --sidebar-text-secondary: #d5effa;
+}
+
+html,
+body {
+  font-family: var(--font-family-base);
+  line-height: var(--line-height-body);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// Shared dialog header band — same sidebar accent family (--sidebar-*). Only the header band is
+// themed; the dialog body (.mat-mdc-dialog-surface) stays on the plain --color-surface so a whole
+// modal isn't turned into a dark panel, just its title bar (matches sidebar/table-header/top-menu).
+.app-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-4);
+  background-color: var(--sidebar-bg);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 4px 4px 0 0;
+}
+
+// `!important` needed: the `mat-dialog-title` directive applies its own system-token color
+// directly on the host <h2>, which otherwise wins over this plain descendant-selector rule.
+.app-dialog-header h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--sidebar-text) !important;
+}
+
+.app-dialog-header .mat-mdc-icon-button {
+  color: var(--sidebar-text) !important;
+}
+
+// Table headers — same sidebar accent family (--sidebar-*) as the dialog header/top menu.
+// Global because all mat-table usages need identical treatment (Cohérence, docs/design-system.md
+// §2); same reasoning as .app-dialog-header above.
+.mat-mdc-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
+}
+
+.mat-mdc-header-row {
+  background-color: var(--sidebar-bg) !important;
+}
+
+.mat-mdc-header-cell {
+  color: var(--sidebar-text) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  border-bottom-color: var(--sidebar-bg) !important;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: color-mix(in srgb, var(--color-primary) 4%, transparent) !important;
+}
+
+// Paginator sits directly under every table — match the table's surface for one cohesive card.
+.mat-mdc-paginator {
+  background-color: var(--color-surface) !important;
+  border-radius: 0 0 12px 12px;
+}
+
+// Success feedback — green, via --color-success
+.app-snackbar-success .mdc-snackbar__surface {
+  background-color: var(--color-success) !important;
+}
+
+.app-snackbar-success .mdc-snackbar__label {
+  color: #fff !important;
+}

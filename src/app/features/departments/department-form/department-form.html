@@ -1,0 +1,71 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le département' : 'Nouveau département' }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(false)" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && departmentResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else if (isArchived()) {
+    <p class="server-error" role="alert">
+      Ce département est archivé et en lecture seule. Restaurez-le avant de le modifier.
+    </p>
+  } @else {
+    <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Nom du département</mat-label>
+          <input matInput [formField]="departmentForm.name" />
+          @if (departmentForm.name().touched() && departmentForm.name().invalid()) {
+            <mat-error>{{ departmentForm.name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Code</mat-label>
+          <input matInput [formField]="departmentForm.code" />
+          @if (departmentForm.code().touched() && departmentForm.code().invalid()) {
+            <mat-error>{{ departmentForm.code().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Type de département</mat-label>
+          <mat-select [formField]="departmentForm.department_type">
+            @for (option of typeOptions; track option[0]) {
+              <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="3" [formField]="departmentForm.description"></textarea>
+        </mat-form-field>
+      </div>
+
+      @if (departmentForm().errors().length > 0) {
+        <p class="server-error" role="alert">{{ departmentForm().errors()[0].message }}</p>
+      }
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="dialogRef.close(false)">Annuler</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="departmentForm().submitting()">
+          @if (departmentForm().submitting()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            Enregistrer
+          }
+        </button>
+      </div>
+    </form>
+  }
+</mat-dialog-content>

@@ -1,0 +1,87 @@
+<div class="page-header">
+  <h1>Médecins</h1>
+  @if (canManage()) {
+    <div class="header-actions">
+      <button mat-flat-button color="primary" (click)="openCreate()">
+        <mat-icon>person_add</mat-icon>
+        Nouveau médecin
+      </button>
+    </div>
+  }
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Statut</mat-label>
+    <mat-select [value]="isActive() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
+      <mat-option value="">Tous</mat-option>
+      <mat-option value="true">Actifs</mat-option>
+      <mat-option value="false">Inactifs</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (doctorsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (dataSource.data.length === 0) {
+  <app-empty-state icon="badge" message="Aucun médecin trouvé." />
+} @else {
+  <table mat-table [dataSource]="dataSource" class="doctors-table">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let doctor">{{ doctor.user.first_name }} {{ doctor.user.last_name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="specialty">
+      <th mat-header-cell *matHeaderCellDef>Spécialité</th>
+      <td mat-cell *matCellDef="let doctor">{{ doctor.specialty }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="professional_number">
+      <th mat-header-cell *matHeaderCellDef>N° professionnel</th>
+      <td mat-cell *matCellDef="let doctor">{{ doctor.professional_number }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let doctor">
+        @if (doctor.is_active) {
+          <mat-chip disableRipple class="active-chip">Actif</mat-chip>
+        } @else {
+          <mat-chip disableRipple class="inactive-chip">Inactif</mat-chip>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let doctor">
+        @if (canManage()) {
+          <div class="actions">
+            <button mat-icon-button matTooltip="Modifier" (click)="openEdit(doctor)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            @if (doctor.is_active) {
+              <button mat-icon-button matTooltip="Désactiver" (click)="deactivate(doctor)">
+                <mat-icon>person_off</mat-icon>
+              </button>
+            }
+          </div>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

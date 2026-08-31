@@ -1,0 +1,138 @@
+<div class="activation-page">
+  <mat-card class="activation-card">
+    <mat-card-header>
+      <mat-card-title>Activer mon compte patient</mat-card-title>
+      <mat-card-subtitle>
+        @if (step() === 'identify') {
+          Renseignez vos informations pour recevoir un code de vérification.
+        } @else if (step() === 'verify') {
+          Saisissez le code reçu par e-mail ou SMS, puis choisissez vos identifiants.
+        } @else {
+          Votre compte est activé.
+        }
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (step() === 'identify') {
+        <form novalidate (submit)="$event.preventDefault(); onIdentitySubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Clinique</mat-label>
+            <input
+              matInput
+              [value]="clinicLabel()"
+              (input)="onClinicQueryInput($any($event.target).value)"
+              [matAutocomplete]="clinicAuto"
+              autocomplete="off"
+              placeholder="Rechercher votre clinique"
+            />
+            <mat-autocomplete #clinicAuto="matAutocomplete" (optionSelected)="onClinicSelected($event.option.value)">
+              @for (clinic of clinicsResource.value().results; track clinic.id) {
+                <mat-option [value]="clinic">{{ clinic.name }}</mat-option>
+              }
+            </mat-autocomplete>
+            @if (identityForm.clinic().touched() && identityForm.clinic().invalid()) {
+              <mat-error>{{ identityForm.clinic().errors()[0]?.message ?? 'Clinique invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Numéro patient</mat-label>
+            <input matInput [formField]="identityForm.patient_number" placeholder="PAT-2026-00001" />
+            @if (identityForm.patient_number().touched() && identityForm.patient_number().invalid()) {
+              <mat-error>{{ identityForm.patient_number().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Téléphone</mat-label>
+            <input matInput [formField]="identityForm.phone" autocomplete="tel" />
+            @if (identityForm.phone().touched() && identityForm.phone().invalid()) {
+              <mat-error>{{ identityForm.phone().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Date de naissance</mat-label>
+            <input matInput [matDatepicker]="dobPicker" [formField]="identityForm.date_of_birth" [max]="today" />
+            <mat-datepicker-toggle matIconSuffix [for]="dobPicker" />
+            <mat-datepicker #dobPicker />
+            @if (identityForm.date_of_birth().touched() && identityForm.date_of_birth().invalid()) {
+              <mat-error>{{ identityForm.date_of_birth().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          @if (identityForm().errors().length > 0) {
+            <p class="server-error" role="alert">{{ identityForm().errors()[0].message }}</p>
+          }
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="full-width submit-button"
+            [disabled]="identityForm().submitting()"
+          >
+            @if (identityForm().submitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Recevoir le code
+            }
+          </button>
+        </form>
+      } @else if (step() === 'verify') {
+        <form novalidate (submit)="$event.preventDefault(); onCredentialsSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Code de vérification</mat-label>
+            <input matInput [formField]="credentialsForm.code" autocomplete="one-time-code" />
+            @if (credentialsForm.code().touched() && credentialsForm.code().invalid()) {
+              <mat-error>{{ credentialsForm.code().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nom d'utilisateur</mat-label>
+            <input matInput [formField]="credentialsForm.username" autocomplete="username" />
+            @if (credentialsForm.username().touched() && credentialsForm.username().invalid()) {
+              <mat-error>{{ credentialsForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Mot de passe</mat-label>
+            <input
+              matInput
+              type="password"
+              [formField]="credentialsForm.password"
+              autocomplete="new-password"
+            />
+            @if (credentialsForm.password().touched() && credentialsForm.password().invalid()) {
+              <mat-error>{{ credentialsForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          @if (credentialsForm().errors().length > 0) {
+            <p class="server-error" role="alert">{{ credentialsForm().errors()[0].message }}</p>
+          }
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="full-width submit-button"
+            [disabled]="credentialsForm().submitting()"
+          >
+            @if (credentialsForm().submitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Activer mon compte
+            }
+          </button>
+        </form>
+      } @else {
+        <p>Votre compte patient a été activé avec succès.</p>
+        <button mat-flat-button color="primary" class="full-width" (click)="goToLogin()">Se connecter</button>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

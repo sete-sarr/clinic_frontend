@@ -1,0 +1,94 @@
+<div class="page-header">
+  <h1>Facturation</h1>
+  <div class="header-actions">
+    <button mat-stroked-button (click)="exportCsv()">
+      <mat-icon>download</mat-icon>
+      Exporter CSV
+    </button>
+    @if (canCreate()) {
+      <button mat-flat-button color="primary" (click)="openCreate()">
+        <mat-icon>add</mat-icon>
+        Nouvelle facture
+      </button>
+    }
+  </div>
+</div>
+
+<mat-form-field appearance="outline" class="status-filter">
+  <mat-label>Statut</mat-label>
+  <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
+    <mat-option value="">Tous</mat-option>
+    @for (option of statusOptions; track option[0]) {
+      <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+@if (invoicesResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (dataSource.data.length === 0) {
+  <app-empty-state icon="receipt_long" message="Aucune facture pour ce filtre." />
+} @else {
+  <table mat-table [dataSource]="dataSource" class="invoices-table">
+    <ng-container matColumnDef="number">
+      <th mat-header-cell *matHeaderCellDef>N° facture</th>
+      <td mat-cell *matCellDef="let invoice">
+        {{ invoice.number || 'Brouillon' }}
+        <span class="issue-date">{{ invoice.issue_date | date: 'mediumDate' }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="patient">
+      <th mat-header-cell *matHeaderCellDef>Patient</th>
+      <td mat-cell *matCellDef="let invoice">{{ invoice.patient_display }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let invoice">
+        {{ invoice.total_amount }}
+        @if (invoice.balance_due !== '0.00' && invoice.status !== 'draft' && invoice.status !== 'cancelled') {
+          <span class="balance-due">reste {{ invoice.balance_due }}</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let invoice">
+        <mat-chip [class]="'status-chip status-' + invoice.status" disableRipple>
+          {{ statusLabel(invoice) }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let invoice">
+        <div class="actions">
+          <button mat-icon-button matTooltip="Ouvrir" (click)="openEdit(invoice)">
+            <mat-icon>{{ invoice.status === 'draft' ? 'edit' : 'visibility' }}</mat-icon>
+          </button>
+          @if (invoice.status !== 'draft') {
+            <button mat-icon-button matTooltip="Télécharger le PDF" (click)="downloadPdf(invoice)">
+              <mat-icon>picture_as_pdf</mat-icon>
+            </button>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

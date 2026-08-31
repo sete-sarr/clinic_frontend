@@ -1,0 +1,128 @@
+<div class="page-header">
+  <h1>Abonnement</h1>
+</div>
+
+@if (checkoutNotice(); as notice) {
+  <div class="checkout-notice" [class.notice-success]="notice.kind === 'success'" [class.notice-cancelled]="notice.kind === 'cancelled'" role="status">
+    <mat-icon>{{ notice.kind === 'success' ? 'check_circle' : 'info' }}</mat-icon>
+    <span>{{ notice.message }}</span>
+    <button mat-icon-button (click)="dismissNotice()" aria-label="Fermer">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+}
+
+@if (clinicResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else {
+  @if (clinicResource.value(); as clinic) {
+    <mat-card class="status-card">
+      <mat-card-content>
+        <div class="status-row">
+          <div class="status-item">
+            <span class="status-label">Statut</span>
+            <mat-chip [class]="'status-chip status-' + clinic.subscription_status">
+              {{ statusLabels[clinic.subscription_status] }}
+            </mat-chip>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Formule actuelle</span>
+            <span class="status-value">{{ clinic.plan_tier | titlecase }}</span>
+          </div>
+          @if (clinic.subscription_status === 'trial' && clinic.trial_ends_at) {
+            <div class="status-item">
+              <span class="status-label">Fin de l'essai</span>
+              <span class="status-value">{{ clinic.trial_ends_at | date: 'mediumDate' }}</span>
+            </div>
+          }
+          @if (clinic.current_period_end) {
+            <div class="status-item">
+              <span class="status-label">Prochain renouvellement</span>
+              <span class="status-value">{{ clinic.current_period_end | date: 'mediumDate' }}</span>
+            </div>
+          }
+        </div>
+
+        @if (clinic.subscription_status === 'past_due') {
+          <p class="warning-text">
+            <mat-icon>warning</mat-icon>
+            Votre dernier paiement a échoué. Merci de mettre à jour votre moyen de paiement pour éviter la suspension du compte.
+          </p>
+        }
+        @if (clinic.subscription_status === 'suspended') {
+          <p class="warning-text warning-error">
+            <mat-icon>error</mat-icon>
+            Votre abonnement est suspendu. La création de nouveaux enregistrements est bloquée ; vos données existantes restent accessibles.
+          </p>
+        }
+
+        @if (clinic.subscription_status !== 'trial') {
+          <div class="manage-action">
+            <button mat-stroked-button (click)="manageBilling()" [disabled]="working() !== null">
+              @if (working() === 'portal') {
+                <mat-spinner diameter="18" />
+              } @else {
+                <mat-icon>credit_card</mat-icon>
+              }
+              Gérer l'abonnement
+            </button>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <div class="cycle-toggle">
+    <mat-button-toggle-group [value]="billingCycle()" (change)="billingCycle.set($event.value)" aria-label="Cycle de facturation">
+      <mat-button-toggle value="monthly">Mensuel</mat-button-toggle>
+      <mat-button-toggle value="annual">Annuel <span class="save-badge">2 mois offerts</span></mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="plans-grid">
+    @for (plan of plans; track plan.tier) {
+      <mat-card class="plan-card" [class.plan-current]="isCurrentPlan(plan.tier)">
+        <mat-card-header>
+          <mat-card-title>{{ plan.label }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="plan-price">
+            <span class="price-amount">{{ indicativePriceForCycle(plan, billingCycle()) | number: '1.0-0' }} $</span>
+            <span class="price-period">/ {{ billingCycle() === 'annual' ? 'an' : 'mois' }}</span>
+          </div>
+          <ul class="plan-highlights">
+            @for (highlight of plan.highlights; track highlight) {
+              <li>
+                <mat-icon>check</mat-icon>
+                {{ highlight }}
+              </li>
+            }
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          @if (isCurrentPlan(plan.tier)) {
+            <button mat-flat-button disabled>Formule actuelle</button>
+          } @else {
+            <button mat-flat-button color="primary" (click)="selectPlan(plan.tier)" [disabled]="working() !== null">
+              @if (working() === plan.tier) {
+                <mat-spinner diameter="18" />
+              } @else {
+                Choisir cette formule
+              }
+            </button>
+          }
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+
+  @if (errorMessage(); as message) {
+    <p class="server-error" role="alert">{{ message }}</p>
+  }
+
+  <p class="pricing-disclaimer">
+    Tarifs indicatifs en USD, hors taxes. La facturation réelle est gérée de façon sécurisée par Stripe.
+  </p>
+}

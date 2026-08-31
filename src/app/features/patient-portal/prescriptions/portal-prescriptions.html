@@ -1,0 +1,41 @@
+<h1>Mes prescriptions</h1>
+
+@if (prescriptionsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (prescriptionsResource.value().results.length === 0) {
+  <app-empty-state icon="medication" message="Vous n'avez aucune prescription." />
+} @else {
+  <div class="prescription-cards">
+    @for (prescription of prescriptionsResource.value().results; track prescription.id) {
+      <mat-card class="prescription-card">
+        <mat-card-content>
+          <div class="prescription-row">
+            <div>
+              <div class="date">{{ prescription.created_at | date: 'mediumDate' }}</div>
+              <div class="doctor">{{ prescription.doctor_display }}</div>
+              <div class="items-count">{{ prescription.items.length }} médicament(s)</div>
+            </div>
+            <div class="actions">
+              <mat-chip [class]="'status-chip status-' + prescription.status" disableRipple>
+                {{ statusLabel(prescription) }}
+              </mat-chip>
+              <button mat-icon-button (click)="downloadPdf(prescription)" aria-label="Télécharger le PDF">
+                <mat-icon>picture_as_pdf</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

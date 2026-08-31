@@ -1,0 +1,105 @@
+<div class="auth-page">
+  <div class="auth-brand">
+    <div class="auth-brand-content">
+      <div class="auth-brand-logo">
+        <mat-icon>local_hospital</mat-icon>
+        <span>Clinic Management</span>
+      </div>
+      <h1 class="auth-brand-title">La gestion de clinique, simplifiée.</h1>
+      <p class="auth-brand-text">
+        Rendez-vous, dossiers médicaux, ordonnances et facturation réunis dans une seule
+        plateforme sécurisée, pensée pour le rythme d'une équipe soignante.
+      </p>
+      <ul class="auth-brand-list">
+        <li>
+          <mat-icon>verified_user</mat-icon>
+          <span>Données de santé protégées, conformes RGPD/HIPAA</span>
+        </li>
+        <li>
+          <mat-icon>groups</mat-icon>
+          <span>Un accès adapté à chaque rôle de votre équipe</span>
+        </li>
+        <li>
+          <mat-icon>bolt</mat-icon>
+          <span>Pensée pour la productivité entre deux patients</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="auth-form-side">
+    <mat-card class="auth-card">
+      <div class="auth-card-header">
+        <h2>Connexion</h2>
+        <p>Accédez à l'espace de votre clinique.</p>
+      </div>
+
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom d'utilisateur</mat-label>
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <input matInput [formField]="loginForm.username" autocomplete="username" />
+          @if (loginForm.username().touched() && loginForm.username().invalid()) {
+            <mat-error>{{ loginForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            [formField]="loginForm.password"
+            autocomplete="current-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="hidePassword() ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+          >
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (loginForm.password().touched() && loginForm.password().invalid()) {
+            <mat-error>{{ loginForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (loginForm().errors().length > 0) {
+          <p class="server-error" role="alert">
+            <mat-icon>error_outline</mat-icon>
+            {{ loginForm().errors()[0].message }}
+          </p>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="full-width submit-button"
+          [disabled]="loginForm().submitting()"
+        >
+          @if (loginForm().submitting()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            Se connecter
+          }
+        </button>
+      </form>
+
+      <div class="auth-divider"><span>ou</span></div>
+
+      <p class="auth-link">
+        Patient et pas encore de compte ?
+        <a routerLink="/activate">Activer mon compte</a>
+      </p>
+
+      <p class="auth-link">
+        Nouvelle clinique ?
+        <a routerLink="/register">Créer votre clinique</a>
+      </p>
+    </mat-card>
+  </div>
+</div>

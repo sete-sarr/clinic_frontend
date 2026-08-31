@@ -1,0 +1,81 @@
+<mat-sidenav-container class="shell-container">
+  <mat-sidenav
+    #drawer
+    class="shell-sidenav"
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="!isHandset()"
+    [fixedInViewport]="isHandset()"
+  >
+    <div class="brand">
+      @if (logoUrl(); as url) {
+        <img [src]="url" alt="Logo de la clinique" class="brand-logo" />
+      } @else {
+        <mat-icon class="brand-icon">local_hospital</mat-icon>
+      }
+      <div class="brand-text">
+        <span class="brand-title">Clinic Management</span>
+        <span class="brand-subtitle">Gestion de clinique</span>
+      </div>
+    </div>
+
+    <mat-nav-list class="nav-list">
+      @for (item of navItems(); track item.route) {
+        <a
+          mat-list-item
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          (click)="isHandset() && drawer.close()"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+
+    <div class="compliance-card">
+      <mat-icon class="compliance-icon">security</mat-icon>
+      <div class="compliance-body">
+        <span class="compliance-title">Sécurité &amp; Conformité</span>
+        <p class="compliance-text">
+          Vos données sont protégées conformément aux exigences HIPAA et RGPD.
+        </p>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="shell-header">
+      @if (isHandset()) {
+        <button mat-icon-button (click)="drawer.toggle()" aria-label="Ouvrir le menu">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+
+      @if (canSearch()) {
+        <app-global-search class="header-search" />
+      }
+
+      <span class="spacer"></span>
+
+      @if (user(); as currentUser) {
+        <button mat-button class="user-chip" [matMenuTriggerFor]="userMenu">
+          <span class="user-avatar">{{ userInitials() }}</span>
+          <span class="user-text">
+            <span class="user-name">{{ currentUser.first_name || currentUser.username }}</span>
+            <span class="user-role">{{ primaryRoleLabel() }}</span>
+          </span>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Déconnexion</span>
+          </button>
+        </mat-menu>
+      }
+    </mat-toolbar>
+
+    <main class="shell-workspace">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,21 @@
+.page-header {
+  margin-bottom: var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.records-table {
+  width: 100%;
+  background-color: var(--color-surface);
+}
+
+.records-table td.mat-column-allergies {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

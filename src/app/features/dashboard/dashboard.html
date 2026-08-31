@@ -1,0 +1,182 @@
+<div class="page-header">
+  <div>
+    <h1 class="greeting">
+      Bienvenue{{ auth.user()?.first_name ? ', ' + auth.user()?.first_name : '' }}
+    </h1>
+    <p class="subtitle">Voici ce qui se passe aujourd'hui dans votre clinique.</p>
+  </div>
+  @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
+    <a mat-raised-button color="primary" routerLink="/appointments">
+      <mat-icon>add</mat-icon>
+      Nouveau rendez-vous
+    </a>
+  }
+</div>
+
+<div class="kpi-grid">
+  @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
+    <mat-card class="kpi-card">
+      <div class="kpi-icon-badge kpi-icon-primary">
+        <mat-icon>event</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (todaysAppointments.isLoading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          <span class="kpi-value">{{ todaysAppointments.value().count }}</span>
+        }
+        <span class="kpi-label">Rendez-vous aujourd'hui</span>
+      </div>
+    </mat-card>
+  }
+
+  @if (auth.hasRole('doctor', 'clinic_admin')) {
+    <mat-card class="kpi-card">
+      <div class="kpi-icon-badge kpi-icon-accent">
+        <mat-icon>medical_information</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (draftConsultations.isLoading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          <span class="kpi-value">{{ draftConsultations.value().count }}</span>
+        }
+        <span class="kpi-label">Consultations en brouillon</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <div class="kpi-icon-badge kpi-icon-secondary">
+        <mat-icon>description</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (draftPrescriptions.isLoading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          <span class="kpi-value">{{ draftPrescriptions.value().count }}</span>
+        }
+        <span class="kpi-label">Prescriptions en brouillon</span>
+      </div>
+    </mat-card>
+  }
+
+  @if (auth.hasRole('secretary', 'accountant', 'clinic_admin', 'doctor')) {
+    <mat-card class="kpi-card">
+      <div class="kpi-icon-badge kpi-icon-warning">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (unpaidLoading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          <span class="kpi-value">{{ unpaidInvoicesCount() }}</span>
+        }
+        <span class="kpi-label">Factures en attente</span>
+      </div>
+    </mat-card>
+  }
+</div>
+
+<div class="dashboard-row">
+  @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
+    <mat-card class="dashboard-card schedule-card">
+      <mat-card-header>
+        <mat-card-title>Rendez-vous du jour</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (todaysAppointments.isLoading()) {
+          <div class="loading">
+            <mat-spinner diameter="28" />
+          </div>
+        } @else if (todaysAppointments.value().results.length === 0) {
+          <app-empty-state icon="event_busy" message="Aucun rendez-vous aujourd'hui." [padded]="false" />
+        } @else {
+          <ul class="appointment-list">
+            @for (appointment of todaysAppointments.value().results; track appointment.id) {
+              <li>
+                <span class="appointment-avatar">{{ patientInitials(appointment) }}</span>
+                <div class="appointment-details">
+                  <span class="patient">{{ appointment.patient_display }}</span>
+                  <span class="doctor">{{ appointment.doctor_display }}</span>
+                </div>
+                <span class="time">{{ appointment.time }}</span>
+                <mat-chip [class]="'status-chip status-' + appointment.status" disableRipple>
+                  {{ statusLabels[appointment.status] }}
+                </mat-chip>
+              </li>
+            }
+          </ul>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/appointments">Voir tous les rendez-vous</a>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  @if (isClinicAdmin() && clinicResource.value(); as clinic) {
+    <mat-card class="dashboard-card subscription-card">
+      <mat-card-header>
+        <mat-card-title>Mon abonnement</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="subscription-row">
+          <span class="plan-name">{{ planTierLabels[clinic.plan_tier] }}</span>
+          <mat-chip [class]="'status-chip status-' + clinic.subscription_status" disableRipple>
+            {{ subscriptionStatusLabels[clinic.subscription_status] }}
+          </mat-chip>
+        </div>
+        @if (clinic.current_period_end) {
+          <p class="period-end">Prochain renouvellement : {{ clinic.current_period_end | date: 'longDate' }}</p>
+        }
+        @if (portalError()) {
+          <p class="server-error" role="alert">{{ portalError() }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="openBillingPortal()" [disabled]="openingPortal()">
+          @if (openingPortal()) {
+            <mat-spinner diameter="18" />
+          } @else {
+            Gérer mon abonnement
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  @if (isClinicAdmin()) {
+    <mat-card class="dashboard-card activity-card">
+      <mat-card-header>
+        <mat-card-title>Activité récente</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (recentActivity.isLoading()) {
+          <div class="loading">
+            <mat-spinner diameter="28" />
+          </div>
+        } @else if (recentActivity.value().results.length === 0) {
+          <app-empty-state icon="history" message="Aucune activité récente." [padded]="false" />
+        } @else {
+          <ul class="activity-list">
+            @for (entry of recentActivity.value().results; track entry.id) {
+              <li>
+                <mat-icon class="activity-icon">history</mat-icon>
+                <div class="activity-details">
+                  <span class="activity-text">
+                    {{ actionLabels[entry.action] }} — {{ entry.model_name }}
+                  </span>
+                  <span class="activity-user">{{ entry.user_display }}</span>
+                </div>
+                <span class="activity-time">{{ entry.created_at | date: 'short' }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/audit-log">Voir tout le journal</a>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

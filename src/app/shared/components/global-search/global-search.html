@@ -1,0 +1,39 @@
+<div class="global-search">
+  <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      matInput
+      type="text"
+      placeholder="Rechercher un patient, un médecin, un rendez-vous…"
+      autocomplete="off"
+      [value]="queryInput()"
+      (input)="onInput($any($event.target).value)"
+      (focus)="onFocus()"
+    />
+    @if (resultsResource.isLoading()) {
+      <mat-spinner matSuffix diameter="18" />
+    }
+  </mat-form-field>
+
+  @if (panelOpen() && queryInput().length >= 2) {
+    <div class="results-panel">
+      @if (hasResults()) {
+        @for (group of groups; track group) {
+          @if (resultsFor(group).length > 0) {
+            <div class="result-group">
+              <span class="group-label">{{ groupLabel[group] }}</span>
+              @for (item of resultsFor(group); track item.id) {
+                <button type="button" class="result-item" (click)="selectResult(item)">
+                  <span class="result-title">{{ item.title }}</span>
+                  <span class="result-subtitle">{{ item.subtitle }}</span>
+                </button>
+              }
+            </div>
+          }
+        }
+      } @else if (!resultsResource.isLoading()) {
+        <div class="no-results">Aucun résultat</div>
+      }
+    </div>
+  }
+</div>

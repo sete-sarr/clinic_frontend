@@ -1,0 +1,208 @@
+/* Shared visual shell for the pre-auth screens (login, register-clinic): a brand panel on the
+   left (platform identity only — no clinic logo exists yet at this point in the flow, consistent
+   with design-system/branding.md "never hardcode a clinic's identity") and the form card on the
+   right. Imported by each component's own .css via a relative @import rather than duplicated,
+   since both screens need the identical shell. */
+
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.auth-brand {
+  display: none;
+  position: relative;
+  flex: 1 1 45%;
+  background: linear-gradient(160deg, var(--color-primary), var(--color-accent));
+  padding: var(--space-12);
+  overflow: hidden;
+}
+
+.auth-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.1), transparent 45%);
+}
+
+.auth-brand-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  color: #ffffff;
+}
+
+.auth-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-semibold);
+  font-size: 1.125rem;
+  margin-bottom: var(--space-8);
+}
+
+.auth-brand-badge {
+  display: inline-block;
+  align-self: flex-start;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-4);
+}
+
+.auth-brand-title {
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  margin: 0 0 var(--space-4);
+}
+
+.auth-brand-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 var(--space-8);
+}
+
+.auth-brand-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-brand-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.auth-brand-list mat-icon {
+  flex-shrink: 0;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  padding: var(--space-2);
+  width: 20px;
+  height: 20px;
+  box-sizing: content-box;
+}
+
+.auth-form-side {
+  flex: 1 1 55%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background-color: var(--color-background);
+  overflow-y: auto;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-8) var(--space-6);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
+}
+
+.auth-card-header {
+  margin-bottom: var(--space-6);
+}
+
+.auth-card-header h2 {
+  margin: 0 0 var(--space-1);
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.auth-card-header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.submit-button {
+  margin-top: var(--space-2);
+  height: 44px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.server-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-error);
+  background-color: color-mix(in srgb, var(--color-error) 8%, transparent);
+  border-radius: 8px;
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.server-error mat-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 var(--space-4);
+  color: var(--color-text-disabled);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.auth-link {
+  text-align: center;
+  margin: var(--space-2) 0 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.auth-link a {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 900px) {
+  .auth-brand {
+    display: block;
+  }
+}

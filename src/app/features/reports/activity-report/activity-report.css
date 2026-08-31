@@ -1,0 +1,29 @@
+.page-header {
+  margin-bottom: var(--space-4);
+}
+
+.form-card {
+  max-width: 560px;
+}
+
+.hint {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.field-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.half-width {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}

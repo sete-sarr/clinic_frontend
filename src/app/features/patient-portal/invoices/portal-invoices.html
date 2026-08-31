@@ -1,0 +1,46 @@
+<h1>Mes factures</h1>
+
+@if (invoicesResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (invoicesResource.value().results.length === 0) {
+  <app-empty-state icon="receipt_long" message="Vous n'avez aucune facture." />
+} @else {
+  <div class="invoice-cards">
+    @for (invoice of invoicesResource.value().results; track invoice.id) {
+      <mat-card class="invoice-card">
+        <mat-card-content>
+          <div class="invoice-row">
+            <div>
+              <div class="number">{{ invoice.number || 'Brouillon' }}</div>
+              <div class="issue-date">{{ invoice.issue_date | date: 'mediumDate' }}</div>
+              <div class="total">Total : {{ invoice.total_amount }}</div>
+              @if (invoice.balance_due !== '0.00') {
+                <div class="balance-due">Solde restant : {{ invoice.balance_due }}</div>
+              }
+            </div>
+            <div class="actions">
+              <mat-chip [class]="'status-chip status-' + invoice.status" disableRipple>
+                {{ statusLabel(invoice) }}
+              </mat-chip>
+              @if (invoice.status !== 'draft') {
+                <button mat-icon-button (click)="downloadPdf(invoice)" aria-label="Télécharger le PDF">
+                  <mat-icon>picture_as_pdf</mat-icon>
+                </button>
+              }
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

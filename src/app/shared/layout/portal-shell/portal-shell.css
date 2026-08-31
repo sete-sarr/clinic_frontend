@@ -1,0 +1,41 @@
+.shell-container {
+  height: 100vh;
+}
+
+.shell-sidenav {
+  width: 264px;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+}
+
+.active-link {
+  --mat-list-active-indicator-color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.shell-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.shell-workspace {
+  padding: var(--space-6);
+  background-color: var(--color-background);
+  min-height: calc(100vh - 64px);
+}

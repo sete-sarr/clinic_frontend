@@ -1,0 +1,126 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.page-header h1 {
+  flex: 1 1 auto;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.locked-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  border-radius: 4px;
+  background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+}
+
+.form-card {
+  max-width: 760px;
+  margin-bottom: var(--space-4);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.section-title {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.item-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  position: relative;
+}
+
+.item-fields {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.item-fields mat-form-field {
+  flex: 1 1 140px;
+}
+
+.item-field-wide {
+  flex: 2 1 220px !important;
+}
+
+.item-field-narrow {
+  flex: 0 1 100px !important;
+}
+
+.item-row button[mat-icon-button] {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+}
+
+.add-item-button {
+  margin-bottom: var(--space-4);
+}
+
+.notes-field {
+  margin-top: var(--space-2);
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.workflow-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 760px;
+  flex-wrap: wrap;
+}
+
+.status-chip {
+  font-weight: var(--font-weight-medium);
+}
+
+.status-draft {
+  background-color: color-mix(in srgb, var(--color-neutral-500) 15%, transparent);
+  color: var(--color-text-secondary);
+}
+
+.status-validated {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.status-cancelled {
+  background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
+  color: var(--color-error);
+}

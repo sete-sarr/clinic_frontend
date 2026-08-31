@@ -1,0 +1,58 @@
+h1 {
+  margin-bottom: var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.prescription-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.prescription-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.date {
+  font-weight: var(--font-weight-medium);
+}
+
+.doctor,
+.items-count {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.status-chip {
+  font-weight: var(--font-weight-medium);
+}
+
+.status-draft {
+  background-color: color-mix(in srgb, var(--color-neutral-500) 15%, transparent);
+  color: var(--color-text-secondary);
+}
+
+.status-validated {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.status-cancelled {
+  background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
+  color: var(--color-error);
+}

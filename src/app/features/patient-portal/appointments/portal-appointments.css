@@ -1,0 +1,92 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+h1 {
+  margin: 0;
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.appointment-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.appointment-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.date {
+  font-weight: var(--font-weight-medium);
+}
+
+.doctor {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.reason {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  margin-top: var(--space-1);
+}
+
+.status-chip {
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+}
+
+.status-pending {
+  background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+}
+
+.status-confirmed {
+  background-color: color-mix(in srgb, var(--color-info) 15%, transparent);
+  color: var(--color-info);
+}
+
+.status-completed {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.status-cancelled,
+.status-no_show {
+  background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
+  color: var(--color-error);
+}
+
+.appointment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.confirm-text {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  margin-right: var(--space-2);
+}

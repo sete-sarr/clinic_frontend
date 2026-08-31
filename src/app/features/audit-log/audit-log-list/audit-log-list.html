@@ -1,0 +1,88 @@
+<div class="page-header">
+  <h1>Journal d'audit</h1>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input
+      matInput
+      [value]="searchInput()"
+      (input)="onSearchInput($any($event.target).value)"
+      placeholder="Type d'objet, identifiant..."
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Action</mat-label>
+    <mat-select [value]="action() ?? ''" (selectionChange)="onActionFilterChange($event.value)">
+      <mat-option value="">Toutes</mat-option>
+      @for (option of actionOptions; track option[0]) {
+        <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Du</mat-label>
+    <input matInput [matDatepicker]="fromPicker" (dateChange)="onDateFromChange($event)" />
+    <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+    <mat-datepicker #fromPicker />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Au</mat-label>
+    <input matInput [matDatepicker]="toPicker" (dateChange)="onDateToChange($event)" />
+    <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+    <mat-datepicker #toPicker />
+  </mat-form-field>
+</div>
+
+@if (logsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (dataSource.data.length === 0) {
+  <app-empty-state icon="history" message="Aucune entrée pour ce filtre." />
+} @else {
+  <table mat-table [dataSource]="dataSource" class="audit-table">
+    <ng-container matColumnDef="created_at">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let entry">{{ entry.created_at | date: 'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="user_display">
+      <th mat-header-cell *matHeaderCellDef>Utilisateur</th>
+      <td mat-cell *matCellDef="let entry">{{ entry.user_display }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>Action</th>
+      <td mat-cell *matCellDef="let entry">
+        <mat-chip disableRipple>{{ actionLabel(entry) }}</mat-chip>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="model_name">
+      <th mat-header-cell *matHeaderCellDef>Type d'objet</th>
+      <td mat-cell *matCellDef="let entry">{{ entry.model_name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="object_id">
+      <th mat-header-cell *matHeaderCellDef>Identifiant</th>
+      <td mat-cell *matCellDef="let entry">{{ entry.object_id }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

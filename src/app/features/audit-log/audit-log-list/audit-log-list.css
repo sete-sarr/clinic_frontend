@@ -1,0 +1,29 @@
+.page-header {
+  margin-bottom: var(--space-4);
+}
+
+.filters {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1 1 280px;
+}
+
+.filter-field {
+  width: 180px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.audit-table {
+  width: 100%;
+  background-color: var(--color-surface);
+}

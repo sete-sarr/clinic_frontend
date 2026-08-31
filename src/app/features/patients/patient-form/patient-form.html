@@ -1,0 +1,107 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le patient' : 'Nouveau patient' }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && patientResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Prénom</mat-label>
+            <input matInput [formField]="patientForm.first_name" />
+            @if (patientForm.first_name().touched() && patientForm.first_name().invalid()) {
+              <mat-error>{{ patientForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Nom</mat-label>
+            <input matInput [formField]="patientForm.last_name" />
+            @if (patientForm.last_name().touched() && patientForm.last_name().invalid()) {
+              <mat-error>{{ patientForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Date de naissance</mat-label>
+            <input matInput [matDatepicker]="dobPicker" [formField]="patientForm.date_of_birth" [max]="today" />
+            <mat-datepicker-toggle matIconSuffix [for]="dobPicker" />
+            <mat-datepicker #dobPicker />
+            @if (patientForm.date_of_birth().touched() && patientForm.date_of_birth().invalid()) {
+              <mat-error>{{ patientForm.date_of_birth().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Genre</mat-label>
+            <mat-select [formField]="patientForm.gender">
+              @for (option of genderOptions; track option[0]) {
+                <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+              }
+            </mat-select>
+            @if (patientForm.gender().touched() && patientForm.gender().invalid()) {
+              <mat-error>{{ patientForm.gender().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Téléphone</mat-label>
+            <input matInput [formField]="patientForm.phone" autocomplete="tel" />
+            @if (patientForm.phone().touched() && patientForm.phone().invalid()) {
+              <mat-error>{{ patientForm.phone().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>E-mail (facultatif)</mat-label>
+            <input matInput type="email" [formField]="patientForm.email" autocomplete="email" />
+            @if (patientForm.email().touched() && patientForm.email().invalid()) {
+              <mat-error>{{ patientForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Groupe sanguin</mat-label>
+            <mat-select [formField]="patientForm.blood_type">
+              @for (option of bloodTypeOptions; track option[0]) {
+                <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>N° identité nationale (facultatif)</mat-label>
+            <input matInput [formField]="patientForm.national_id" />
+          </mat-form-field>
+        </div>
+
+        @if (patientForm().errors().length > 0) {
+          <p class="server-error" role="alert">{{ patientForm().errors()[0].message }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">Annuler</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="patientForm().submitting()">
+            @if (patientForm().submitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Enregistrer
+            }
+          </button>
+        </div>
+      </form>
+  }
+</mat-dialog-content>

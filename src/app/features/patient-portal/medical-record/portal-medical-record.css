@@ -1,0 +1,28 @@
+h1 {
+  margin-bottom: var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.record-card {
+  max-width: 640px;
+}
+
+.record-card h2 {
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-semibold);
+  margin: var(--space-4) 0 var(--space-1);
+}
+
+.record-card h2:first-child {
+  margin-top: 0;
+}
+
+.record-card p {
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+}

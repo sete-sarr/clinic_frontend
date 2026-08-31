@@ -1,0 +1,117 @@
+.page-header {
+  margin-bottom: var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 640px;
+}
+
+.settings-card mat-card-title {
+  font-size: 1rem;
+}
+
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+.logo-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.logo-label {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.logo-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface-secondary);
+  color: var(--color-text-disabled);
+  overflow: hidden;
+}
+
+.logo-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+
+.locale-field {
+  width: 100%;
+  max-width: 320px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+mat-button-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.accent-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: var(--space-1);
+  vertical-align: middle;
+}
+
+/* Fixed swatch colors, deliberately not var(--sidebar-bg) — it changes with the active accent,
+   but a swatch must always show what selecting that option looks like, regardless of current pick.
+   Must stay in sync with the palettes in styles.scss :root[data-accent]. */
+.accent-swatch-ocean {
+  background-color: #0f3d5e;
+}
+
+.accent-swatch-teal {
+  background-color: #123c46;
+}
+
+.accent-swatch-sky {
+  background-color: #1677a8;
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}

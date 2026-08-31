@@ -1,0 +1,153 @@
+<div class="auth-page">
+  <div class="auth-brand">
+    <div class="auth-brand-content">
+      <div class="auth-brand-logo">
+        <mat-icon>local_hospital</mat-icon>
+        <span>Clinic Management</span>
+      </div>
+      <span class="auth-brand-badge">Essai gratuit de 14 jours</span>
+      <h1 class="auth-brand-title">Votre clinique, opérationnelle en quelques minutes.</h1>
+      <p class="auth-brand-text">
+        Créez votre espace, invitez votre équipe et commencez à gérer patients, rendez-vous et
+        facturation dès aujourd'hui — sans carte bancaire.
+      </p>
+      <ul class="auth-brand-list">
+        <li>
+          <mat-icon>check_circle</mat-icon>
+          <span>Aucun engagement, aucune carte requise</span>
+        </li>
+        <li>
+          <mat-icon>check_circle</mat-icon>
+          <span>Isolation stricte des données de votre clinique</span>
+        </li>
+        <li>
+          <mat-icon>check_circle</mat-icon>
+          <span>Support pour vos médecins, secrétaires et comptables</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="auth-form-side">
+    <mat-card class="auth-card register-card">
+      <div class="auth-card-header">
+        <h2>Créer votre clinique</h2>
+        <p>Démarrez votre essai gratuit de 14 jours.</p>
+      </div>
+
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <div class="section-heading">
+          <mat-icon>local_hospital</mat-icon>
+          <h3>Clinique</h3>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom de la clinique</mat-label>
+          <input matInput [formField]="registerForm.clinic_name" autocomplete="organization" />
+          @if (registerForm.clinic_name().touched() && registerForm.clinic_name().invalid()) {
+            <mat-error>{{ registerForm.clinic_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>E-mail de la clinique (facultatif)</mat-label>
+            <input matInput type="email" [formField]="registerForm.clinic_email" autocomplete="email" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Téléphone (facultatif)</mat-label>
+            <input matInput [formField]="registerForm.clinic_phone" autocomplete="tel" />
+          </mat-form-field>
+        </div>
+
+        <div class="section-heading">
+          <mat-icon>person_outline</mat-icon>
+          <h3>Votre compte administrateur</h3>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Prénom</mat-label>
+            <input matInput [formField]="registerForm.first_name" autocomplete="given-name" />
+            @if (registerForm.first_name().touched() && registerForm.first_name().invalid()) {
+              <mat-error>{{ registerForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Nom</mat-label>
+            <input matInput [formField]="registerForm.last_name" autocomplete="family-name" />
+            @if (registerForm.last_name().touched() && registerForm.last_name().invalid()) {
+              <mat-error>{{ registerForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>E-mail</mat-label>
+          <input matInput type="email" [formField]="registerForm.email" autocomplete="email" />
+          @if (registerForm.email().touched() && registerForm.email().invalid()) {
+            <mat-error>{{ registerForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom d'utilisateur</mat-label>
+          <input matInput [formField]="registerForm.username" autocomplete="username" />
+          @if (registerForm.username().touched() && registerForm.username().invalid()) {
+            <mat-error>{{ registerForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            [formField]="registerForm.password"
+            autocomplete="new-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="hidePassword() ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+          >
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (registerForm.password().touched() && registerForm.password().invalid()) {
+            <mat-error>{{ registerForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (registerForm().errors().length > 0) {
+          <p class="server-error" role="alert">
+            <mat-icon>error_outline</mat-icon>
+            {{ registerForm().errors()[0].message }}
+          </p>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="full-width submit-button"
+          [disabled]="registerForm().submitting()"
+        >
+          @if (registerForm().submitting()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            Créer ma clinique
+          }
+        </button>
+      </form>
+
+      <p class="auth-link">
+        Déjà un compte ?
+        <a routerLink="/login">Se connecter</a>
+      </p>
+    </mat-card>
+  </div>
+</div>

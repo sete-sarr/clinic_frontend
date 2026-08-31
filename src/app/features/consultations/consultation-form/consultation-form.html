@@ -1,0 +1,151 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>
+    {{ isEditMode() ? 'Modifier la consultation' : 'Nouvelle consultation' }}
+    @if (isEditMode()) {
+      <mat-chip [class]="'status-chip status-' + currentStatus()" disableRipple>
+        {{ statusLabels[currentStatus()] }}
+      </mat-chip>
+    }
+  </h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && consultationResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (isLocked()) {
+      <p class="locked-banner">
+        <mat-icon>lock</mat-icon>
+        Cette consultation est validée et ne peut plus être modifiée.
+      </p>
+    }
+
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <div class="form-fields">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Patient</mat-label>
+            <input
+              matInput
+              [value]="patientLabel()"
+              [disabled]="isLocked()"
+              (input)="onPatientQueryInput($any($event.target).value)"
+              [matAutocomplete]="patientAuto"
+              autocomplete="off"
+              placeholder="Rechercher par nom, téléphone ou n° patient"
+            />
+            <mat-autocomplete #patientAuto="matAutocomplete" (optionSelected)="onPatientSelected($event.option.value)">
+              @for (patient of patientsResource.value().results; track patient.id) {
+                <mat-option [value]="patient">{{ formatPatientOption(patient) }}</mat-option>
+              }
+            </mat-autocomplete>
+            @if (consultationForm.patient().touched() && consultationForm.patient().invalid()) {
+              <mat-error>{{ consultationForm.patient().errors()[0]?.message ?? 'Patient invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          @if (isSelfDoctor()) {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Médecin</mat-label>
+              <input matInput [value]="currentUserName()" disabled />
+            </mat-form-field>
+          } @else {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Médecin</mat-label>
+              <mat-select [formField]="consultationForm.doctor">
+                @for (doctor of doctorsResource.value().results; track doctor.id) {
+                  <mat-option [value]="doctor.id">{{ formatDoctor(doctor) }}</mat-option>
+                }
+              </mat-select>
+              @if (consultationForm.doctor().touched() && consultationForm.doctor().invalid()) {
+                <mat-error>{{ consultationForm.doctor().errors()[0]?.message ?? 'Médecin invalide' }}</mat-error>
+              }
+            </mat-form-field>
+          }
+
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Date</mat-label>
+              <input matInput [matDatepicker]="picker" [formField]="consultationForm.date" />
+              <mat-datepicker-toggle matIconSuffix [for]="picker" />
+              <mat-datepicker #picker />
+              @if (consultationForm.date().touched() && consultationForm.date().invalid()) {
+                <mat-error>{{ consultationForm.date().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Heure</mat-label>
+              <input matInput type="time" [formField]="consultationForm.time" />
+              @if (consultationForm.time().touched() && consultationForm.time().invalid()) {
+                <mat-error>{{ consultationForm.time().errors()[0]?.message ?? 'Heure invalide' }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-checkbox [formField]="consultationForm.is_follow_up" class="follow-up-checkbox">
+            Consultation de suivi
+          </mat-checkbox>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Motif de consultation</mat-label>
+            <textarea matInput rows="2" [formField]="consultationForm.chief_complaint"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Diagnostic</mat-label>
+            <textarea matInput rows="3" [formField]="consultationForm.diagnosis"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Plan de traitement</mat-label>
+            <textarea matInput rows="3" [formField]="consultationForm.treatment_plan"></textarea>
+          </mat-form-field>
+
+          @if (consultationForm().errors().length > 0) {
+            <p class="server-error" role="alert">{{ consultationForm().errors()[0].message }}</p>
+          }
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="dialogRef.close(isEditMode())">
+              {{ isLocked() ? 'Retour' : 'Annuler' }}
+            </button>
+
+            @if (!isLocked()) {
+              <button mat-flat-button color="primary" type="submit" [disabled]="consultationForm().submitting()">
+                @if (consultationForm().submitting()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  Enregistrer
+                }
+              </button>
+            }
+          </div>
+        </div>
+      </form>
+
+    @if (isEditMode() && !isLocked()) {
+      <div class="workflow-actions">
+        @if (currentStatus() === 'draft') {
+          <button mat-stroked-button color="primary" [disabled]="!canComplete()" (click)="complete()">
+            <mat-icon>task_alt</mat-icon>
+            Marquer comme terminée
+          </button>
+          @if (!canComplete()) {
+            <span class="hint">Motif, diagnostic et plan de traitement requis pour terminer.</span>
+          }
+        }
+        @if (currentStatus() === 'completed') {
+          <button mat-stroked-button color="primary" (click)="validate()">
+            <mat-icon>lock</mat-icon>
+            Valider (verrouiller)
+          </button>
+        }
+      </div>
+    }
+  }
+</mat-dialog-content>

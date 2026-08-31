@@ -1,0 +1,100 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.page-header h1 {
+  flex: 1 1 auto;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.locked-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  border-radius: 4px;
+  background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+}
+
+.form-card {
+  max-width: 640px;
+  margin-bottom: var(--space-4);
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.field-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.half-width {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.follow-up-checkbox {
+  margin-bottom: var(--space-4);
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.workflow-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 640px;
+}
+
+.hint {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.status-chip {
+  font-weight: var(--font-weight-medium);
+}
+
+.status-draft {
+  background-color: color-mix(in srgb, var(--color-neutral-500) 15%, transparent);
+  color: var(--color-text-secondary);
+}
+
+.status-completed {
+  background-color: color-mix(in srgb, var(--color-info) 15%, transparent);
+  color: var(--color-info);
+}
+
+.status-validated {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}

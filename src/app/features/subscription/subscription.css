@@ -1,0 +1,187 @@
+.page-header {
+  margin-bottom: var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.checkout-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: 8px;
+  margin-bottom: var(--space-4);
+}
+
+.checkout-notice span {
+  flex: 1;
+}
+
+.notice-success {
+  background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
+  color: var(--color-success);
+}
+
+.notice-cancelled {
+  background-color: var(--color-surface-secondary);
+  color: var(--color-text-secondary);
+}
+
+.status-card {
+  margin-bottom: var(--space-6);
+}
+
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.status-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.status-value {
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.status-chip {
+  width: fit-content;
+}
+
+.status-trial {
+  background-color: color-mix(in srgb, var(--color-info) 15%, transparent) !important;
+  color: var(--color-info) !important;
+}
+
+.status-active {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent) !important;
+  color: var(--color-success) !important;
+}
+
+.status-past_due {
+  background-color: color-mix(in srgb, var(--color-warning) 18%, transparent) !important;
+  color: var(--color-warning) !important;
+}
+
+.status-suspended,
+.status-cancelled {
+  background-color: color-mix(in srgb, var(--color-error) 15%, transparent) !important;
+  color: var(--color-error) !important;
+}
+
+.warning-text {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  color: var(--color-warning);
+  font-size: 0.875rem;
+}
+
+.warning-text.warning-error {
+  color: var(--color-error);
+}
+
+.manage-action {
+  margin-top: var(--space-4);
+}
+
+.cycle-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+}
+
+.save-badge {
+  margin-left: var(--space-1);
+  font-size: 0.6875rem;
+  opacity: 0.8;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+  max-width: 960px;
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-current {
+  outline: 2px solid var(--color-primary);
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.price-amount {
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.price-period {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.plan-highlights {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.plan-highlights li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.plan-highlights mat-icon {
+  color: var(--color-success);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+mat-card-actions {
+  margin-top: auto;
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: var(--space-4) 0 0;
+}
+
+.pricing-disclaimer {
+  margin-top: var(--space-6);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}

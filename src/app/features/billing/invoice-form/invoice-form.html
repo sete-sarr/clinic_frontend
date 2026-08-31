@@ -1,0 +1,303 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>
+    {{ isEditMode() ? 'Facture ' + (invoiceResource.value()?.number || '') : 'Nouvelle facture' }}
+  </h2>
+  @if (isEditMode()) {
+    <mat-chip [class]="'status-chip status-' + currentStatus()" disableRipple>
+      {{ statusLabels[currentStatus()] }}
+    </mat-chip>
+  }
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+@if (isEditMode() && invoiceResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else {
+  @if (isLocked()) {
+    <p class="locked-banner">
+      <mat-icon>lock</mat-icon>
+      Cette facture est {{ currentStatus() === 'cancelled' ? 'annulée' : 'payée' }} et ne peut plus être modifiée.
+    </p>
+  } @else if (isEditMode() && !canEditExisting()) {
+    <p class="locked-banner">
+      <mat-icon>info</mat-icon>
+      Seuls un comptable ou un administrateur peuvent modifier une facture déjà créée.
+    </p>
+  }
+
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Patient</mat-label>
+          <input
+            matInput
+            [value]="patientLabel()"
+            [disabled]="!formEditable()"
+            (input)="onPatientQueryInput($any($event.target).value)"
+            [matAutocomplete]="patientAuto"
+            autocomplete="off"
+            placeholder="Rechercher par nom, téléphone ou n° patient"
+          />
+          <mat-autocomplete #patientAuto="matAutocomplete" (optionSelected)="onPatientSelected($event.option.value)">
+            @for (patient of patientsResource.value().results; track patient.id) {
+              <mat-option [value]="patient">{{ formatPatientOption(patient) }}</mat-option>
+            }
+          </mat-autocomplete>
+          @if (invoiceForm.patient().touched() && invoiceForm.patient().invalid()) {
+            <mat-error>{{ invoiceForm.patient().errors()[0]?.message ?? 'Patient invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Médecin (facultatif)</mat-label>
+            <mat-select [formField]="invoiceForm.doctor">
+              <mat-option [value]="null">Aucun</mat-option>
+              @for (doctor of doctorsResource.value().results; track doctor.id) {
+                <mat-option [value]="doctor.id">{{ formatDoctor(doctor) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Date d'émission</mat-label>
+            <input matInput [matDatepicker]="picker" [formField]="invoiceForm.issue_date" />
+            <mat-datepicker-toggle matIconSuffix [for]="picker" />
+            <mat-datepicker #picker />
+            @if (invoiceForm.issue_date().touched() && invoiceForm.issue_date().invalid()) {
+              <mat-error>{{ invoiceForm.issue_date().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="vat-field">
+          <mat-label>Taux de TVA</mat-label>
+          <input matInput type="number" step="0.01" [formField]="invoiceForm.vat_rate" />
+          <span matTextSuffix>(ex. 0.18 = 18%)</span>
+        </mat-form-field>
+
+        <h2 class="section-title">Lignes</h2>
+
+        @for (lineField of invoiceForm.lines; track $index) {
+          <div class="line-row">
+            <mat-form-field appearance="outline" class="line-description">
+              <mat-label>Description</mat-label>
+              <input matInput [formField]="lineField.description" />
+              @if (lineField.description().touched() && lineField.description().invalid()) {
+                <mat-error>{{ lineField.description().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="line-narrow">
+              <mat-label>Quantité</mat-label>
+              <input matInput type="number" [formField]="lineField.quantity" />
+              @if (lineField.quantity().touched() && lineField.quantity().invalid()) {
+                <mat-error>{{ lineField.quantity().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="line-narrow">
+              <mat-label>Prix unitaire</mat-label>
+              <input matInput type="number" step="0.01" [formField]="lineField.unit_price" />
+              @if (lineField.unit_price().touched() && lineField.unit_price().invalid()) {
+                <mat-error>{{ lineField.unit_price().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+
+            @if (formEditable()) {
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="Retirer cette ligne"
+                [disabled]="invoiceForm.lines.length <= 1"
+                (click)="removeLine($index)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        }
+
+        @if (formEditable()) {
+          <button mat-stroked-button type="button" (click)="addLine()" class="add-line-button">
+            <mat-icon>add</mat-icon>
+            Ajouter une ligne
+          </button>
+        }
+
+        <div class="totals">
+          @if (isEditMode()) {
+            <div class="totals-row">
+              <span>Sous-total</span>
+              <span>{{ invoiceResource.value()?.subtotal }}</span>
+            </div>
+            <div class="totals-row">
+              <span>TVA</span>
+              <span>{{ invoiceResource.value()?.vat_amount }}</span>
+            </div>
+            <div class="totals-row total">
+              <span>Total</span>
+              <span>{{ invoiceResource.value()?.total_amount }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Payé</span>
+              <span>{{ invoiceResource.value()?.amount_paid }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Solde restant</span>
+              <span>{{ invoiceResource.value()?.balance_due }}</span>
+            </div>
+          } @else {
+            <p class="estimate-hint">Estimation — le total définitif est calculé à l'enregistrement.</p>
+            <div class="totals-row">
+              <span>Sous-total (estimation)</span>
+              <span>{{ estimatedTotals().subtotal.toFixed(2) }}</span>
+            </div>
+            <div class="totals-row">
+              <span>TVA (estimation)</span>
+              <span>{{ estimatedTotals().vatAmount.toFixed(2) }}</span>
+            </div>
+            <div class="totals-row total">
+              <span>Total (estimation)</span>
+              <span>{{ estimatedTotals().total.toFixed(2) }}</span>
+            </div>
+          }
+        </div>
+
+        @if (invoiceForm().errors().length > 0) {
+          <p class="server-error" role="alert">{{ invoiceForm().errors()[0].message }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">
+            {{ formEditable() ? 'Annuler' : 'Retour' }}
+          </button>
+
+          @if (formEditable()) {
+            <button mat-flat-button color="primary" type="submit" [disabled]="invoiceForm().submitting()">
+              @if (invoiceForm().submitting()) {
+                <mat-spinner diameter="20" />
+              } @else {
+                Enregistrer
+              }
+            </button>
+          }
+        </div>
+      </form>
+
+  @if (isEditMode()) {
+    <div class="workflow-actions">
+      <button mat-stroked-button (click)="downloadPdf()">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Télécharger le PDF
+      </button>
+
+      @if (canViewMedicalRecord() && invoiceResource.value()?.patient) {
+        <a
+          mat-stroked-button
+          [routerLink]="['/medical-records']"
+          [queryParams]="{ patient: invoiceResource.value()!.patient }"
+          (click)="dialogRef.close(isEditMode())"
+        >
+          <mat-icon>folder_shared</mat-icon>
+          Voir le dossier médical
+        </a>
+      }
+
+      @if (currentStatus() === 'draft' && canEditExisting()) {
+        <button mat-stroked-button color="primary" (click)="issueInvoice()">
+          <mat-icon>send</mat-icon>
+          Émettre
+        </button>
+      }
+      @if (!isLocked() && auth.hasRole('clinic_admin')) {
+        <button mat-stroked-button color="warn" (click)="cancelInvoice()">
+          <mat-icon>block</mat-icon>
+          Annuler la facture
+        </button>
+      }
+    </div>
+
+    <div class="payments-card">
+        <h2 class="section-title">Paiements</h2>
+
+        @if (paymentsResource.value().results.length === 0) {
+          <app-empty-state icon="payments" message="Aucun paiement enregistré." [padded]="false" />
+        } @else {
+          <table class="payments-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Montant</th>
+                <th>Méthode</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (payment of paymentsResource.value().results; track payment.id) {
+                <tr>
+                  <td>{{ payment.date | date: 'mediumDate' }}</td>
+                  <td>{{ payment.amount }}</td>
+                  <td>{{ methodLabels[payment.method] }}</td>
+                  <td>
+                    <mat-chip [class]="'status-chip status-' + payment.status" disableRipple>
+                      {{ paymentStatusLabels[payment.status] }}
+                    </mat-chip>
+                  </td>
+                  <td>
+                    @if (canRefund() && payment.status === 'validated') {
+                      <button mat-icon-button matTooltip="Rembourser" (click)="refundPayment(payment)">
+                        <mat-icon>undo</mat-icon>
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+
+        @if (canRecordPayment() && !isLocked() && invoiceResource.value()?.balance_due !== '0.00') {
+          <form novalidate (submit)="$event.preventDefault(); addPayment()" class="payment-entry-form">
+            <mat-form-field appearance="outline" class="payment-amount">
+              <mat-label>Montant</mat-label>
+              <input matInput type="number" step="0.01" [formField]="paymentForm.amount" />
+              @if (paymentForm.amount().touched() && paymentForm.amount().invalid()) {
+                <mat-error>{{ paymentForm.amount().errors()[0]?.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="payment-method">
+              <mat-label>Méthode</mat-label>
+              <mat-select [formField]="paymentForm.method">
+                @for (option of methodOptions; track option[0]) {
+                  <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="payment-date">
+              <mat-label>Date</mat-label>
+              <input matInput [matDatepicker]="paymentPicker" [formField]="paymentForm.date" />
+              <mat-datepicker-toggle matIconSuffix [for]="paymentPicker" />
+              <mat-datepicker #paymentPicker />
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="submit" [disabled]="paymentForm().submitting()">
+              Enregistrer le paiement
+            </button>
+          </form>
+
+          @if (paymentForm().errors().length > 0) {
+            <p class="server-error" role="alert">{{ paymentForm().errors()[0].message }}</p>
+          }
+        }
+    </div>
+  }
+}
+</mat-dialog-content>

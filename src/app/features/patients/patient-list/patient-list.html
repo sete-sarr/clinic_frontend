@@ -1,0 +1,110 @@
+<div class="page-header">
+  <h1>Patients</h1>
+  <div class="header-actions">
+    <button mat-stroked-button (click)="exportCsv()">
+      <mat-icon>download</mat-icon>
+      Exporter CSV
+    </button>
+    @if (canManage()) {
+      <button mat-flat-button color="primary" (click)="openCreate()">
+        <mat-icon>person_add</mat-icon>
+        Nouveau patient
+      </button>
+    }
+  </div>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input
+      matInput
+      [value]="searchInput()"
+      (input)="onSearchInput($any($event.target).value)"
+      placeholder="Nom, téléphone, n° patient..."
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="gender-filter">
+    <mat-label>Genre</mat-label>
+    <mat-select [value]="gender() ?? ''" (selectionChange)="onGenderFilterChange($event.value)">
+      <mat-option value="">Tous</mat-option>
+      @for (option of genderOptions; track option[0]) {
+        <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (patientsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (dataSource.data.length === 0) {
+  <app-empty-state icon="people_outline" message="Aucun patient trouvé." />
+} @else {
+  <table mat-table [dataSource]="dataSource" class="patients-table">
+    <ng-container matColumnDef="patient_number">
+      <th mat-header-cell *matHeaderCellDef>N° patient</th>
+      <td mat-cell *matCellDef="let patient">{{ patient.patient_number }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let patient">{{ patient.first_name }} {{ patient.last_name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+      <td mat-cell *matCellDef="let patient">{{ patient.phone }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="date_of_birth">
+      <th mat-header-cell *matHeaderCellDef>Date de naissance</th>
+      <td mat-cell *matCellDef="let patient">{{ patient.date_of_birth }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="gender">
+      <th mat-header-cell *matHeaderCellDef>Genre</th>
+      <td mat-cell *matCellDef="let patient">{{ genderLabel(patient) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let patient">
+        <div class="actions">
+          @if (canViewStatement()) {
+            <button mat-icon-button matTooltip="Relevé de compte" (click)="downloadStatement(patient)">
+              <mat-icon>picture_as_pdf</mat-icon>
+            </button>
+          }
+          @if (canManage()) {
+            <button mat-icon-button matTooltip="Modifier" (click)="openEdit(patient)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
+          @if (canDeactivate() && patient.is_active) {
+            <button mat-icon-button matTooltip="Désactiver" (click)="deactivate(patient)">
+              <mat-icon>person_off</mat-icon>
+            </button>
+          }
+          @if (!patient.is_active) {
+            <mat-chip disableRipple class="inactive-chip">Inactif</mat-chip>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

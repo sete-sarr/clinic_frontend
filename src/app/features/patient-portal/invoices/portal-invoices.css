@@ -1,0 +1,73 @@
+h1 {
+  margin-bottom: var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.invoice-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.invoice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.number {
+  font-weight: var(--font-weight-medium);
+}
+
+.issue-date,
+.total {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.balance-due {
+  color: var(--color-warning);
+  font-size: 0.875rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.status-chip {
+  font-weight: var(--font-weight-medium);
+}
+
+.status-draft {
+  background-color: color-mix(in srgb, var(--color-neutral-500) 15%, transparent);
+  color: var(--color-text-secondary);
+}
+
+.status-issued {
+  background-color: color-mix(in srgb, var(--color-info) 15%, transparent);
+  color: var(--color-info);
+}
+
+.status-pending_payment {
+  background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+}
+
+.status-paid {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.status-cancelled {
+  background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
+  color: var(--color-error);
+}

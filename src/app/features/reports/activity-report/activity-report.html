@@ -1,0 +1,45 @@
+<div class="page-header">
+  <h1>Rapport d'activité</h1>
+</div>
+
+<mat-card class="form-card">
+  <mat-card-content>
+    <p class="hint">
+      Génère un PDF récapitulatif des rendez-vous et consultations de la clinique sur la période choisie.
+      Laissez les champs vides pour le mois en cours.
+    </p>
+
+    <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Du</mat-label>
+          <input matInput [matDatepicker]="fromPicker" [formField]="reportForm.dateFrom" [max]="today" />
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+          <mat-datepicker #fromPicker />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Au</mat-label>
+          <input matInput [matDatepicker]="toPicker" [formField]="reportForm.dateTo" [max]="today" />
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+          <mat-datepicker #toPicker />
+        </mat-form-field>
+      </div>
+
+      @if (reportForm().errors().length > 0) {
+        <p class="server-error" role="alert">{{ reportForm().errors()[0].message }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="reportForm().submitting()">
+        @if (reportForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          <ng-container>
+            <mat-icon>picture_as_pdf</mat-icon>
+            Générer le PDF
+          </ng-container>
+        }
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,46 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>Dossier médical — {{ patientLabel() }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (recordResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Allergies</mat-label>
+          <textarea matInput rows="3" [formField]="medicalRecordForm.allergies"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Antécédents médicaux</mat-label>
+          <textarea matInput rows="4" [formField]="medicalRecordForm.medical_history"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Observations</mat-label>
+          <textarea matInput rows="4" [formField]="medicalRecordForm.observations"></textarea>
+        </mat-form-field>
+
+        @if (medicalRecordForm().errors().length > 0) {
+          <p class="server-error" role="alert">{{ medicalRecordForm().errors()[0].message }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="dialogRef.close()">Annuler</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="medicalRecordForm().submitting()">
+            @if (medicalRecordForm().submitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Enregistrer
+            }
+          </button>
+        </div>
+      </form>
+  }
+</mat-dialog-content>

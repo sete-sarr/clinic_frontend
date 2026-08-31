@@ -1,0 +1,109 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le membre du personnel' : 'Nouveau membre du personnel' }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && memberResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        @if (!isEditMode()) {
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Nom d'utilisateur</mat-label>
+              <input matInput [formField]="staffForm.username" autocomplete="username" />
+              @if (staffForm.username().touched() && staffForm.username().invalid()) {
+                <mat-error>{{ staffForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Rôle</mat-label>
+              <mat-select [formField]="staffForm.role">
+                @for (option of roleOptions; track option[0]) {
+                  <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        }
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Prénom</mat-label>
+            <input matInput [formField]="staffForm.first_name" />
+            @if (staffForm.first_name().touched() && staffForm.first_name().invalid()) {
+              <mat-error>{{ staffForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Nom</mat-label>
+            <input matInput [formField]="staffForm.last_name" />
+            @if (staffForm.last_name().touched() && staffForm.last_name().invalid()) {
+              <mat-error>{{ staffForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>E-mail</mat-label>
+            <input matInput type="email" [formField]="staffForm.email" autocomplete="email" />
+            @if (staffForm.email().touched() && staffForm.email().invalid()) {
+              <mat-error>{{ staffForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          @if (!isEditMode()) {
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Mot de passe</mat-label>
+              <input matInput type="password" [formField]="staffForm.password" autocomplete="new-password" />
+              @if (staffForm.password().touched() && staffForm.password().invalid()) {
+                <mat-error>{{ staffForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+          }
+        </div>
+
+        @if (staffForm().errors().length > 0) {
+          <p class="server-error" role="alert">{{ staffForm().errors()[0].message }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">Annuler</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="staffForm().submitting()">
+            @if (staffForm().submitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Enregistrer
+            }
+          </button>
+        </div>
+      </form>
+
+      @if (isEditMode()) {
+        <div class="role-section">
+          <h2>Rôle</h2>
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Changer le rôle</mat-label>
+              <mat-select [value]="model().role" (selectionChange)="onRoleChange($event.value)" [disabled]="roleChangePending()">
+                @for (option of roleOptions; track option[0]) {
+                  <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          @if (roleChangeError()) {
+            <p class="server-error" role="alert">{{ roleChangeError() }}</p>
+          }
+        </div>
+      }
+  }
+</mat-dialog-content>

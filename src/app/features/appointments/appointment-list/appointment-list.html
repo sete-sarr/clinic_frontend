@@ -1,0 +1,129 @@
+<div class="page-header">
+  <h1>Rendez-vous</h1>
+  <div class="header-actions">
+    <button mat-stroked-button (click)="exportCsv()">
+      <mat-icon>download</mat-icon>
+      Exporter CSV
+    </button>
+    @if (canManage()) {
+      <button mat-flat-button color="primary" (click)="openCreate()">
+        <mat-icon>add</mat-icon>
+        Nouveau rendez-vous
+      </button>
+    }
+  </div>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="patient-number-filter">
+    <mat-label>N° patient</mat-label>
+    <input
+      matInput
+      [value]="patientNumberInput()"
+      (input)="onPatientNumberInput($any($event.target).value)"
+      placeholder="Numéro sur le ticket..."
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="status-filter">
+    <mat-label>Statut</mat-label>
+    <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
+      <mat-option value="">Tous</mat-option>
+      @for (option of statusOptions; track option[0]) {
+        <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox [checked]="checkedIn() === true" (change)="onCheckedInFilterChange($event.checked)">
+    Arrivés uniquement
+  </mat-checkbox>
+</div>
+
+@if (appointmentsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (dataSource.data.length === 0) {
+  <app-empty-state icon="event_busy" message="Aucun rendez-vous pour ce filtre." />
+} @else {
+  <table mat-table [dataSource]="dataSource" class="appointments-table">
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef>Date / Heure</th>
+      <td mat-cell *matCellDef="let appointment">{{ appointment.date }} · {{ appointment.time }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="patient">
+      <th mat-header-cell *matHeaderCellDef>Patient</th>
+      <td mat-cell *matCellDef="let appointment">{{ appointment.patient_display }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="doctor">
+      <th mat-header-cell *matHeaderCellDef>Médecin</th>
+      <td mat-cell *matCellDef="let appointment">{{ appointment.doctor_display }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let appointment">
+        <mat-chip [class]="'status-chip status-' + appointment.status" disableRipple>
+          {{ statusLabel(appointment) }}
+        </mat-chip>
+        @if (isCheckedIn(appointment)) {
+          <mat-icon class="checked-in-icon" matTooltip="Patient arrivé ({{ appointment.ticket_number }})">
+            how_to_reg
+          </mat-icon>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let appointment">
+        <div class="actions">
+          @if (canManage() && canCheckIn(appointment)) {
+            <button mat-icon-button matTooltip="Enregistrer l'arrivée" (click)="checkIn(appointment)">
+              <mat-icon>how_to_reg</mat-icon>
+            </button>
+          }
+          @if (isCheckedIn(appointment)) {
+            <button mat-icon-button matTooltip="Imprimer le ticket" (click)="downloadTicket(appointment)">
+              <mat-icon>confirmation_number</mat-icon>
+            </button>
+          }
+          @if (canManage() && !isTerminal(appointment)) {
+            @if (appointment.status === 'pending') {
+              <button mat-icon-button matTooltip="Confirmer" (click)="confirm(appointment)">
+                <mat-icon>event_available</mat-icon>
+              </button>
+            }
+            <button mat-icon-button matTooltip="Modifier" (click)="openEdit(appointment)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Marquer terminé" (click)="complete(appointment)">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Absence" (click)="markNoShow(appointment)">
+              <mat-icon>person_off</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Annuler" (click)="cancel(appointment)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

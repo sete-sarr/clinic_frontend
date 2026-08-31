@@ -1,0 +1,128 @@
+<div class="page-header">
+  <h1>Départements</h1>
+  <div class="header-actions">
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon>
+      Nouveau département
+    </button>
+  </div>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Statut</mat-label>
+    <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
+      <mat-option value="">Tous</mat-option>
+      <mat-option value="active">Actif</mat-option>
+      <mat-option value="inactive">Inactif</mat-option>
+      <mat-option value="archived">Archivé</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (actionError()) {
+  <p class="server-error" role="alert">{{ actionError() }}</p>
+}
+
+@if (departmentsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (dataSource.data.length === 0) {
+  <app-empty-state icon="apartment" message="Aucun département trouvé." />
+} @else {
+  <table mat-table [dataSource]="dataSource" class="department-table">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let department">{{ department.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="code">
+      <th mat-header-cell *matHeaderCellDef>Code</th>
+      <td mat-cell *matCellDef="let department">{{ department.code }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let department">
+        <mat-chip disableRipple>{{ typeLabel(department) }}</mat-chip>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let department">
+        <mat-chip disableRipple [class]="'status-chip-' + department.status">
+          {{ statusLabel(department) }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let department">
+        <div class="actions">
+          <button
+            mat-icon-button
+            matTooltip="Modifier"
+            [disabled]="department.status === 'archived'"
+            (click)="openEdit(department)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          @if (department.status !== 'archived') {
+            @if (department.status === 'inactive') {
+              <button
+                mat-icon-button
+                matTooltip="Activer"
+                [disabled]="actionPending() === department.id"
+                (click)="toggleActive(department)"
+              >
+                <mat-icon>toggle_on</mat-icon>
+              </button>
+            } @else {
+              <button
+                mat-icon-button
+                matTooltip="Désactiver"
+                [disabled]="actionPending() === department.id"
+                (click)="toggleActive(department)"
+              >
+                <mat-icon>toggle_off</mat-icon>
+              </button>
+            }
+
+            <button
+              mat-icon-button
+              matTooltip="Archiver"
+              [disabled]="actionPending() === department.id"
+              (click)="toggleArchived(department)"
+            >
+              <mat-icon>archive</mat-icon>
+            </button>
+          } @else {
+            <button
+              mat-icon-button
+              matTooltip="Restaurer"
+              [disabled]="actionPending() === department.id"
+              (click)="toggleArchived(department)"
+            >
+              <mat-icon>unarchive</mat-icon>
+            </button>
+          }
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

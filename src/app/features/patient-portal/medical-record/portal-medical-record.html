@@ -1,0 +1,22 @@
+<h1>Mon dossier médical</h1>
+
+@if (recordResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (!record()) {
+  <app-empty-state icon="folder_off" message="Aucun dossier médical n'est encore associé à votre profil." />
+} @else {
+  <mat-card class="record-card">
+    <mat-card-content>
+      <h2>Allergies</h2>
+      <p>{{ record()!.allergies || 'Aucune allergie renseignée.' }}</p>
+
+      <h2>Antécédents médicaux</h2>
+      <p>{{ record()!.medical_history || 'Aucun antécédent renseigné.' }}</p>
+
+      <h2>Observations</h2>
+      <p>{{ record()!.observations || 'Aucune observation.' }}</p>
+    </mat-card-content>
+  </mat-card>
+}

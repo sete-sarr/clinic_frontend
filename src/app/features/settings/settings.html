@@ -1,0 +1,134 @@
+<div class="page-header">
+  <h1>Paramètres</h1>
+</div>
+
+@if (clinicResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else {
+  <div class="settings-grid">
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Logo</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="logo-grid">
+          @for (field of logoFields; track field.key) {
+            <div class="logo-field">
+              <span class="logo-label">{{ field.label }}</span>
+              <div class="logo-preview">
+                @if (previewFor(field.key); as url) {
+                  <img [src]="url" [alt]="field.label" />
+                } @else {
+                  <mat-icon>image</mat-icon>
+                }
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                [id]="'file-' + field.key"
+                hidden
+                (change)="onFileSelected(field.key, $event)"
+              />
+              <label [for]="'file-' + field.key" mat-stroked-button class="upload-button">
+                <mat-icon>upload</mat-icon>
+                Choisir un fichier
+              </label>
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Langue</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="locale-field">
+          <mat-label>Langue de l'interface</mat-label>
+          <mat-select [value]="locale()" (selectionChange)="locale.set($event.value)">
+            @for (option of localeOptions; track option[0]) {
+              <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <p class="hint">
+          La préférence est enregistrée ; la traduction complète de l'interface arrivera dans une
+          prochaine version.
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Thème</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-button-toggle-group
+          [value]="themeService.current()"
+          (change)="setTheme($event.value)"
+          aria-label="Thème"
+        >
+          <mat-button-toggle value="light">
+            <mat-icon>light_mode</mat-icon>
+            Clair
+          </mat-button-toggle>
+          <mat-button-toggle value="dark">
+            <mat-icon>dark_mode</mat-icon>
+            Sombre
+          </mat-button-toggle>
+          <mat-button-toggle value="system">
+            <mat-icon>brightness_auto</mat-icon>
+            Système
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Couleur d'accent</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-button-toggle-group
+          [value]="themeService.currentAccent()"
+          (change)="setAccent($event.value)"
+          aria-label="Couleur d'accent"
+        >
+          <mat-button-toggle value="ocean">
+            <span class="accent-swatch accent-swatch-ocean"></span>
+            Bleu océan
+          </mat-button-toggle>
+          <mat-button-toggle value="teal">
+            <span class="accent-swatch accent-swatch-teal"></span>
+            Teal profond
+          </mat-button-toggle>
+          <mat-button-toggle value="sky">
+            <span class="accent-swatch accent-swatch-sky"></span>
+            Bleu ciel
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+        <p class="hint">
+          S'applique à la barre latérale, aux en-têtes de tableaux, aux en-têtes de fenêtres
+          modales et au menu du haut.
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    @if (errorMessage(); as message) {
+      <p class="server-error" role="alert">{{ message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" (click)="save()" [disabled]="saving()">
+        @if (saving()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          Enregistrer
+        }
+      </button>
+    </div>
+  </div>
+}

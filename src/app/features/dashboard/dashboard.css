@@ -1,0 +1,276 @@
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.greeting {
+  margin: 0;
+}
+
+.subtitle {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-left: 4px solid transparent;
+}
+
+/* Each KPI card takes the color of its own badge (kpi-icon-*) instead of a uniform neutral
+   surface — a subtle tint + left border, not a full-color card, so the number/label stay
+   perfectly legible (--color-text-primary/-secondary, never overridden here). */
+.kpi-card:has(.kpi-icon-primary) {
+  background-color: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  border-left-color: var(--color-primary);
+}
+
+.kpi-card:has(.kpi-icon-accent) {
+  background-color: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface));
+  border-left-color: var(--color-accent);
+}
+
+.kpi-card:has(.kpi-icon-secondary) {
+  background-color: color-mix(in srgb, var(--color-secondary) 6%, var(--color-surface));
+  border-left-color: var(--color-secondary);
+}
+
+.kpi-card:has(.kpi-icon-warning) {
+  background-color: color-mix(in srgb, var(--color-warning) 6%, var(--color-surface));
+  border-left-color: var(--color-warning);
+}
+
+.kpi-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.kpi-icon-badge mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.kpi-icon-primary {
+  background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+}
+
+.kpi-icon-accent {
+  background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+}
+
+.kpi-icon-secondary {
+  background-color: color-mix(in srgb, var(--color-secondary) 15%, transparent);
+  color: var(--color-secondary);
+}
+
+.kpi-icon-warning {
+  background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+}
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.kpi-label {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.dashboard-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.dashboard-card {
+  min-width: 0;
+  border-top: 3px solid transparent;
+}
+
+/* Same per-content color logic as the KPI cards above: schedule = primary (appointments),
+   subscription = accent (billing/platform), activity = secondary (audit trail) — a colored top
+   edge rather than a tinted background, since these cards hold longer lists/text that need to
+   stay on the plain --color-surface for readability. */
+.schedule-card {
+  border-top-color: var(--color-primary);
+}
+
+.subscription-card {
+  border-top-color: var(--color-accent);
+}
+
+.activity-card {
+  border-top-color: var(--color-secondary);
+}
+
+.subscription-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.plan-name {
+  font-weight: var(--font-weight-medium);
+}
+
+.period-end {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  margin: var(--space-2) 0 0;
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: var(--space-2) 0 0;
+}
+
+.status-chip {
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+}
+
+/* Status chips grouped by semantic color, not by domain (Clinic.SubscriptionStatus and
+   AppointmentStatus both map onto the same 4 tones — trial/completed=info, active/confirmed=success,
+   past_due/pending=warning, suspended/cancelled/no_show=error). */
+.status-trial,
+.status-completed {
+  background-color: color-mix(in srgb, var(--color-info) 15%, transparent);
+  color: var(--color-info);
+}
+
+.status-active,
+.status-confirmed {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.status-past_due,
+.status-pending {
+  background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+}
+
+.status-suspended,
+.status-cancelled,
+.status-no_show {
+  background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
+  color: var(--color-error);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-6);
+}
+
+.appointment-list,
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.appointment-list li,
+.activity-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.appointment-list li:last-child,
+.activity-list li:last-child {
+  border-bottom: none;
+}
+
+.appointment-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--color-neutral-500) 15%, transparent);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+.appointment-details,
+.activity-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.patient {
+  font-weight: var(--font-weight-medium);
+}
+
+.doctor {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.time {
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+}
+
+.activity-icon {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.activity-text {
+  font-size: 0.875rem;
+}
+
+.activity-user {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.activity-time {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}

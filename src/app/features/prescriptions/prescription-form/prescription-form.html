@@ -1,0 +1,185 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>
+    {{ isEditMode() ? 'Modifier la prescription' : 'Nouvelle prescription' }}
+    @if (isEditMode()) {
+      <mat-chip [class]="'status-chip status-' + currentStatus()" disableRipple>
+        {{ statusLabels[currentStatus()] }}
+      </mat-chip>
+    }
+  </h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && prescriptionResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (isLocked()) {
+      <p class="locked-banner">
+        <mat-icon>lock</mat-icon>
+        Cette prescription est {{ currentStatus() === 'cancelled' ? 'annulée' : 'validée' }} et ne peut plus être
+        modifiée.
+      </p>
+    }
+
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Patient</mat-label>
+          <input
+            matInput
+            [value]="patientLabel()"
+            [disabled]="isEditMode() || isLocked()"
+            (input)="onPatientQueryInput($any($event.target).value)"
+            [matAutocomplete]="patientAuto"
+            autocomplete="off"
+            placeholder="Rechercher par nom, téléphone ou n° patient"
+          />
+          <mat-autocomplete #patientAuto="matAutocomplete" (optionSelected)="onPatientSelected($event.option.value)">
+            @for (patient of patientsResource.value().results; track patient.id) {
+              <mat-option [value]="patient">{{ formatPatientOption(patient) }}</mat-option>
+            }
+          </mat-autocomplete>
+          @if (prescriptionForm.patient().touched() && prescriptionForm.patient().invalid()) {
+            <mat-error>{{ prescriptionForm.patient().errors()[0]?.message ?? 'Patient invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Consultation</mat-label>
+          <mat-select [formField]="prescriptionForm.consultation">
+            @for (consultation of consultationsResource.value().results; track consultation.id) {
+              <mat-option [value]="consultation.id">{{ formatConsultationOption(consultation) }}</mat-option>
+            }
+          </mat-select>
+          @if (prescriptionForm.consultation().touched() && prescriptionForm.consultation().invalid()) {
+            <mat-error>{{ prescriptionForm.consultation().errors()[0]?.message ?? 'Consultation invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (isSelfDoctor()) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Médecin</mat-label>
+            <input matInput [value]="currentUserName()" disabled />
+          </mat-form-field>
+        } @else {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Médecin</mat-label>
+            <mat-select [formField]="prescriptionForm.doctor">
+              @for (doctor of doctorsResource.value().results; track doctor.id) {
+                <mat-option [value]="doctor.id">{{ formatDoctor(doctor) }}</mat-option>
+              }
+            </mat-select>
+            @if (prescriptionForm.doctor().touched() && prescriptionForm.doctor().invalid()) {
+              <mat-error>{{ prescriptionForm.doctor().errors()[0]?.message ?? 'Médecin invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        }
+
+        <h2 class="section-title">Médicaments</h2>
+
+        @for (itemField of prescriptionForm.items; track $index) {
+          <div class="item-row">
+            <div class="item-fields">
+              <mat-form-field appearance="outline" class="item-field-wide">
+                <mat-label>Médicament</mat-label>
+                <input matInput [formField]="itemField.medication_name" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Dosage</mat-label>
+                <input matInput [formField]="itemField.dosage" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Fréquence</mat-label>
+                <input matInput [formField]="itemField.frequency" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Durée</mat-label>
+                <input matInput [formField]="itemField.duration" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="item-field-narrow">
+                <mat-label>Quantité</mat-label>
+                <input matInput type="number" [formField]="itemField.quantity" />
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Instructions (facultatif)</mat-label>
+              <input matInput [formField]="itemField.instructions" />
+            </mat-form-field>
+
+            @if (!isLocked()) {
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="Retirer cette ligne"
+                [disabled]="prescriptionForm.items.length <= 1"
+                (click)="removeItem($index)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        }
+
+        @if (!isLocked()) {
+          <button mat-stroked-button type="button" (click)="addItem()" class="add-item-button">
+            <mat-icon>add</mat-icon>
+            Ajouter un médicament
+          </button>
+        }
+
+        <mat-form-field appearance="outline" class="full-width notes-field">
+          <mat-label>Notes (facultatif)</mat-label>
+          <textarea matInput rows="2" [formField]="prescriptionForm.notes"></textarea>
+        </mat-form-field>
+
+        @if (prescriptionForm().errors().length > 0) {
+          <p class="server-error" role="alert">{{ prescriptionForm().errors()[0].message }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">
+            {{ isLocked() ? 'Retour' : 'Annuler' }}
+          </button>
+
+          @if (!isLocked()) {
+            <button mat-flat-button color="primary" type="submit" [disabled]="prescriptionForm().submitting()">
+              @if (prescriptionForm().submitting()) {
+                <mat-spinner diameter="20" />
+              } @else {
+                Enregistrer
+              }
+            </button>
+          }
+        </div>
+      </form>
+
+    @if (isEditMode()) {
+      <div class="workflow-actions">
+        <button mat-stroked-button (click)="downloadPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          Télécharger le PDF
+        </button>
+
+        @if (!isLocked()) {
+          <button mat-stroked-button color="primary" (click)="validate()">
+            <mat-icon>lock</mat-icon>
+            Valider (verrouiller)
+          </button>
+          <button mat-stroked-button color="warn" (click)="cancel()">
+            <mat-icon>block</mat-icon>
+            Annuler la prescription
+          </button>
+        }
+      </div>
+    }
+  }
+</mat-dialog-content>

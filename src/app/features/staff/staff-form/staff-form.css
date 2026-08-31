@@ -1,0 +1,44 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.form-card {
+  max-width: 640px;
+}
+
+.role-section {
+  max-width: 640px;
+  margin-top: var(--space-4);
+}
+
+.field-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.half-width {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}

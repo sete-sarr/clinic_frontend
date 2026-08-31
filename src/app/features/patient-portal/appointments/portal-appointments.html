@@ -1,0 +1,64 @@
+<div class="page-header">
+  <h1>Mes rendez-vous</h1>
+  <button mat-flat-button color="primary" (click)="openCreate()">
+    <mat-icon>add</mat-icon>
+    Prendre rendez-vous
+  </button>
+</div>
+
+@if (errorMessage()) {
+  <p class="server-error" role="alert">{{ errorMessage() }}</p>
+}
+
+@if (appointmentsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (appointmentsResource.value().results.length === 0) {
+  <app-empty-state icon="event_busy" message="Vous n'avez aucun rendez-vous." [padded]="false" />
+} @else {
+  <div class="appointment-cards">
+    @for (appointment of appointmentsResource.value().results; track appointment.id) {
+      <mat-card class="appointment-card">
+        <mat-card-content>
+          <div class="appointment-row">
+            <div>
+              <div class="date">{{ appointment.date }} · {{ appointment.time }}</div>
+              <div class="doctor">{{ appointment.doctor_display }}</div>
+              @if (appointment.reason) {
+                <div class="reason">{{ appointment.reason }}</div>
+              }
+            </div>
+            <mat-chip [class]="'status-chip status-' + appointment.status" disableRipple>
+              {{ statusLabel(appointment) }}
+            </mat-chip>
+          </div>
+
+          @if (isCancellable(appointment)) {
+            <div class="appointment-actions">
+              @if (confirmingCancelId() === appointment.id) {
+                <span class="confirm-text">Confirmer l'annulation ?</span>
+                @if (cancellingId() === appointment.id) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  <button mat-button color="warn" (click)="confirmCancel(appointment)">Oui</button>
+                  <button mat-button (click)="dismissCancel()">Non</button>
+                }
+              } @else {
+                <button mat-button color="warn" (click)="requestCancel(appointment)">Annuler</button>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

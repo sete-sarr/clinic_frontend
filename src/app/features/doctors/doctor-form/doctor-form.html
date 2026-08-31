@@ -1,0 +1,120 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le médecin' : 'Nouveau médecin' }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && doctorResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        @if (!isEditMode()) {
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Nom d'utilisateur</mat-label>
+              <input matInput [formField]="doctorForm.username" autocomplete="username" />
+              @if (doctorForm.username().touched() && doctorForm.username().invalid()) {
+                <mat-error>{{ doctorForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Mot de passe</mat-label>
+              <input matInput type="password" [formField]="doctorForm.password" autocomplete="new-password" />
+              @if (doctorForm.password().touched() && doctorForm.password().invalid()) {
+                <mat-error>{{ doctorForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        }
+
+        @if (isEditMode()) {
+          <p class="readonly-name">{{ model().first_name }} {{ model().last_name }}</p>
+        } @else {
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Prénom</mat-label>
+              <input matInput [formField]="doctorForm.first_name" />
+              @if (doctorForm.first_name().touched() && doctorForm.first_name().invalid()) {
+                <mat-error>{{ doctorForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Nom</mat-label>
+              <input matInput [formField]="doctorForm.last_name" />
+              @if (doctorForm.last_name().touched() && doctorForm.last_name().invalid()) {
+                <mat-error>{{ doctorForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        }
+
+        @if (!isEditMode()) {
+          <div class="field-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>E-mail</mat-label>
+              <input matInput type="email" [formField]="doctorForm.email" autocomplete="email" />
+              @if (doctorForm.email().touched() && doctorForm.email().invalid()) {
+                <mat-error>{{ doctorForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        }
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Spécialité</mat-label>
+            <input matInput [formField]="doctorForm.specialty" />
+            @if (doctorForm.specialty().touched() && doctorForm.specialty().invalid()) {
+              <mat-error>{{ doctorForm.specialty().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>N° professionnel</mat-label>
+            <input matInput [formField]="doctorForm.professional_number" />
+            @if (doctorForm.professional_number().touched() && doctorForm.professional_number().invalid()) {
+              <mat-error>{{ doctorForm.professional_number().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Département (facultatif)</mat-label>
+            <mat-select [formField]="doctorForm.department">
+              <mat-option [value]="null">Aucun</mat-option>
+              @for (dept of departmentOptions(); track dept.id) {
+                <mat-option [value]="dept.id">{{ dept.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Téléphone (facultatif)</mat-label>
+            <input matInput [formField]="doctorForm.phone" autocomplete="tel" />
+          </mat-form-field>
+        </div>
+
+        @if (doctorForm().errors().length > 0) {
+          <p class="server-error" role="alert">{{ doctorForm().errors()[0].message }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">Annuler</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="doctorForm().submitting()">
+            @if (doctorForm().submitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Enregistrer
+            }
+          </button>
+        </div>
+      </form>
+  }
+</mat-dialog-content>

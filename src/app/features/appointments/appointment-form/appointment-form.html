@@ -1,0 +1,93 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le rendez-vous' : 'Nouveau rendez-vous' }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && appointmentResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+      <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Patient</mat-label>
+          <input
+            matInput
+            [value]="patientLabel()"
+            (input)="onPatientQueryInput($any($event.target).value)"
+            [matAutocomplete]="patientAuto"
+            autocomplete="off"
+            placeholder="Rechercher par nom, téléphone ou n° patient"
+          />
+          <mat-autocomplete #patientAuto="matAutocomplete" (optionSelected)="onPatientSelected($event.option.value)">
+            @for (patient of patientsResource.value().results; track patient.id) {
+              <mat-option [value]="patient">
+                {{ formatPatientOption(patient) }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+          @if (appointmentForm.patient().touched() && appointmentForm.patient().invalid()) {
+            <mat-error>{{ appointmentForm.patient().errors()[0]?.message ?? 'Patient invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Médecin</mat-label>
+          <mat-select [formField]="appointmentForm.doctor">
+            @for (doctor of doctorsResource.value().results; track doctor.id) {
+              <mat-option [value]="doctor.id">{{ formatDoctor(doctor) }}</mat-option>
+            }
+          </mat-select>
+          @if (appointmentForm.doctor().touched() && appointmentForm.doctor().invalid()) {
+            <mat-error>{{ appointmentForm.doctor().errors()[0]?.message ?? 'Médecin invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="picker" [formField]="appointmentForm.date" [min]="today" />
+            <mat-datepicker-toggle matIconSuffix [for]="picker" />
+            <mat-datepicker #picker />
+            @if (appointmentForm.date().touched() && appointmentForm.date().invalid()) {
+              <mat-error>{{ appointmentForm.date().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Heure</mat-label>
+            <input matInput type="time" [formField]="appointmentForm.time" />
+            @if (appointmentForm.time().touched() && appointmentForm.time().invalid()) {
+              <mat-error>{{ appointmentForm.time().errors()[0]?.message ?? 'Heure invalide' }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Motif (facultatif)</mat-label>
+          <textarea matInput rows="3" [formField]="appointmentForm.reason"></textarea>
+          @if (appointmentForm.reason().touched() && appointmentForm.reason().invalid()) {
+            <mat-error>{{ appointmentForm.reason().errors()[0]?.message ?? 'Motif invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (appointmentForm().errors().length > 0) {
+          <p class="server-error" role="alert">{{ appointmentForm().errors()[0].message }}</p>
+        }
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">Annuler</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="appointmentForm().submitting()">
+            @if (appointmentForm().submitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              Enregistrer
+            }
+          </button>
+        </div>
+      </form>
+  }
+</mat-dialog-content>

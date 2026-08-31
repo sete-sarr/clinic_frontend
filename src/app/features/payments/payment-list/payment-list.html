@@ -1,0 +1,100 @@
+<div class="page-header">
+  <h1>Paiements</h1>
+  <button mat-stroked-button (click)="exportCsv()">
+    <mat-icon>download</mat-icon>
+    Exporter CSV
+  </button>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Statut</mat-label>
+    <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
+      <mat-option value="">Tous</mat-option>
+      @for (option of statusOptions; track option[0]) {
+        <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Méthode</mat-label>
+    <mat-select [value]="method() ?? ''" (selectionChange)="onMethodFilterChange($event.value)">
+      <mat-option value="">Toutes</mat-option>
+      @for (option of methodOptions; track option[0]) {
+        <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (paymentsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (dataSource.data.length === 0) {
+  <app-empty-state icon="payments" message="Aucun paiement pour ce filtre." />
+} @else {
+  <table mat-table [dataSource]="dataSource" class="payments-table">
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.date | date: 'mediumDate' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="invoice">
+      <th mat-header-cell *matHeaderCellDef>Facture</th>
+      <td mat-cell *matCellDef="let payment">
+        <a [routerLink]="['/billing']">{{ payment.invoice_number }}</a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="patient">
+      <th mat-header-cell *matHeaderCellDef>Patient</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.patient_display }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef>Montant</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.amount }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="method">
+      <th mat-header-cell *matHeaderCellDef>Méthode</th>
+      <td mat-cell *matCellDef="let payment">{{ methodLabel(payment) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let payment">
+        <mat-chip [class]="'status-chip status-' + payment.status" disableRipple>
+          {{ statusLabel(payment) }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let payment">
+        <button mat-icon-button matTooltip="Télécharger le reçu" (click)="downloadReceipt(payment)">
+          <mat-icon>picture_as_pdf</mat-icon>
+        </button>
+        @if (canRefund() && payment.status === 'validated') {
+          <button mat-icon-button matTooltip="Rembourser" (click)="refund(payment)">
+            <mat-icon>undo</mat-icon>
+          </button>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

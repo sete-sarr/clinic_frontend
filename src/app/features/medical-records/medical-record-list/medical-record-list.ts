@@ -1,9 +1,11 @@
 import { httpResource } from '@angular/common/http';
-import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -16,6 +18,7 @@ import { MedicalRecord } from '../medical-record.model';
 import { MedicalRecordForm } from '../medical-record-form/medical-record-form';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-medical-record-list',
@@ -23,7 +26,9 @@ const PAGE_SIZE = 20;
     EmptyState,
     RouterLink,
     MatButtonModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatTableModule,
@@ -38,9 +43,13 @@ export class MedicalRecordList {
 
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
   readonly patient = input<string | undefined>();
+  readonly search = input<string | undefined>();
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly displayedColumns = ['patient', 'allergies', 'actions'];
+
+  protected readonly searchInput = signal('');
+  private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
   protected readonly recordsResource = httpResource<Paginated<MedicalRecord>>(
     () => ({
@@ -48,6 +57,7 @@ export class MedicalRecordList {
       params: {
         page: this.page(),
         ...(this.patient() ? { patient: this.patient()! } : {}),
+        ...(this.search() ? { search: this.search()! } : {}),
       },
     }),
     { defaultValue: emptyPage<MedicalRecord>() },
@@ -60,6 +70,20 @@ export class MedicalRecordList {
     effect(() => {
       this.dataSource.data = this.recordsResource.value().results;
     });
+    effect(() => {
+      this.searchInput.set(this.search() ?? '');
+    });
+  }
+
+  protected onSearchInput(value: string): void {
+    this.searchInput.set(value);
+    clearTimeout(this.searchDebounceHandle);
+    this.searchDebounceHandle = setTimeout(() => {
+      this.router.navigate([], {
+        queryParams: { search: value || null, page: null },
+        queryParamsHandling: 'merge',
+      });
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   protected onPageChange(event: PageEvent): void {

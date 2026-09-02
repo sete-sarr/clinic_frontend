@@ -11,9 +11,19 @@
   gap: var(--space-2);
 }
 
+.filters {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1 1 320px;
+}
+
 .status-filter {
   width: 220px;
-  margin-bottom: var(--space-4);
 }
 
 .loading {

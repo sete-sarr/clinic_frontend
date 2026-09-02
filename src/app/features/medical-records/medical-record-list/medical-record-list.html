@@ -8,6 +8,19 @@
   }
 </div>
 
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input
+      matInput
+      [value]="searchInput()"
+      (input)="onSearchInput($any($event.target).value)"
+      placeholder="Nom du patient, n° patient..."
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</div>
+
 @if (recordsResource.isLoading()) {
   <div class="loading">
     <mat-spinner diameter="32" />

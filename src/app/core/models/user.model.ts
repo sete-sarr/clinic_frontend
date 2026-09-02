@@ -24,7 +24,7 @@ export interface LoginResponse extends AuthTokens {
 }
 
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 

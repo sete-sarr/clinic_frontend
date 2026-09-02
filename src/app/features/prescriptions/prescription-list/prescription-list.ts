@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
-import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -22,6 +23,7 @@ import { PrescriptionForm } from '../prescription-form/prescription-form';
 import { PrescriptionService } from '../prescription.service';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-prescription-list',
@@ -32,6 +34,7 @@ const PAGE_SIZE = 20;
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
@@ -47,6 +50,7 @@ export class PrescriptionList {
   private readonly prescriptionService = inject(PrescriptionService);
   protected readonly auth = inject(AuthService);
 
+  readonly search = input<string | undefined>();
   readonly status = input<PrescriptionStatus | undefined>();
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
 
@@ -57,11 +61,15 @@ export class PrescriptionList {
   ][];
   protected readonly displayedColumns = ['created_at', 'patient', 'doctor', 'status', 'actions'];
 
+  protected readonly searchInput = signal('');
+  private searchDebounceHandle?: ReturnType<typeof setTimeout>;
+
   protected readonly prescriptionsResource = httpResource<Paginated<Prescription>>(
     () => ({
       url: `${environment.apiBaseUrl}/prescriptions/`,
       params: {
         page: this.page(),
+        ...(this.search() ? { search: this.search()! } : {}),
         ...(this.status() ? { status: this.status()! } : {}),
       },
     }),
@@ -77,6 +85,20 @@ export class PrescriptionList {
     effect(() => {
       this.dataSource.data = this.prescriptionsResource.value().results;
     });
+    effect(() => {
+      this.searchInput.set(this.search() ?? '');
+    });
+  }
+
+  protected onSearchInput(value: string): void {
+    this.searchInput.set(value);
+    clearTimeout(this.searchDebounceHandle);
+    this.searchDebounceHandle = setTimeout(() => {
+      this.router.navigate([], {
+        queryParams: { search: value || null, page: null },
+        queryParamsHandling: 'merge',
+      });
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   protected statusLabel(prescription: Prescription): string {

@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
-import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -23,6 +24,7 @@ import { InvoiceForm } from '../invoice-form/invoice-form';
 import { InvoiceService } from '../invoice.service';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-invoice-list',
@@ -33,6 +35,7 @@ const PAGE_SIZE = 20;
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
@@ -48,6 +51,7 @@ export class InvoiceList {
   private readonly invoiceService = inject(InvoiceService);
   protected readonly auth = inject(AuthService);
 
+  readonly search = input<string | undefined>();
   readonly status = input<InvoiceStatus | undefined>();
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
 
@@ -55,11 +59,15 @@ export class InvoiceList {
   protected readonly statusOptions = Object.entries(INVOICE_STATUS_LABELS) as [InvoiceStatus, string][];
   protected readonly displayedColumns = ['number', 'patient', 'total', 'status', 'actions'];
 
+  protected readonly searchInput = signal('');
+  private searchDebounceHandle?: ReturnType<typeof setTimeout>;
+
   protected readonly invoicesResource = httpResource<Paginated<Invoice>>(
     () => ({
       url: `${environment.apiBaseUrl}/billing/`,
       params: {
         page: this.page(),
+        ...(this.search() ? { search: this.search()! } : {}),
         ...(this.status() ? { status: this.status()! } : {}),
       },
     }),
@@ -75,6 +83,20 @@ export class InvoiceList {
     effect(() => {
       this.dataSource.data = this.invoicesResource.value().results;
     });
+    effect(() => {
+      this.searchInput.set(this.search() ?? '');
+    });
+  }
+
+  protected onSearchInput(value: string): void {
+    this.searchInput.set(value);
+    clearTimeout(this.searchDebounceHandle);
+    this.searchDebounceHandle = setTimeout(() => {
+      this.router.navigate([], {
+        queryParams: { search: value || null, page: null },
+        queryParamsHandling: 'merge',
+      });
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   protected statusLabel(invoice: Invoice): string {

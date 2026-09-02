@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
-import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -27,6 +28,7 @@ import {
 import { PaymentService } from '../payment.service';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-payment-list',
@@ -38,6 +40,7 @@ const PAGE_SIZE = 20;
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
@@ -52,6 +55,7 @@ export class PaymentList {
   private readonly paymentService = inject(PaymentService);
   protected readonly auth = inject(AuthService);
 
+  readonly search = input<string | undefined>();
   readonly status = input<PaymentStatus | undefined>();
   readonly method = input<PaymentMethod | undefined>();
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
@@ -61,11 +65,15 @@ export class PaymentList {
   protected readonly methodOptions = Object.entries(PAYMENT_METHOD_LABELS) as [PaymentMethod, string][];
   protected readonly displayedColumns = ['date', 'invoice', 'patient', 'amount', 'method', 'status', 'actions'];
 
+  protected readonly searchInput = signal('');
+  private searchDebounceHandle?: ReturnType<typeof setTimeout>;
+
   protected readonly paymentsResource = httpResource<Paginated<Payment>>(
     () => ({
       url: `${environment.apiBaseUrl}/payments/`,
       params: {
         page: this.page(),
+        ...(this.search() ? { search: this.search()! } : {}),
         ...(this.status() ? { status: this.status()! } : {}),
         ...(this.method() ? { method: this.method()! } : {}),
       },
@@ -82,6 +90,20 @@ export class PaymentList {
     effect(() => {
       this.dataSource.data = this.paymentsResource.value().results;
     });
+    effect(() => {
+      this.searchInput.set(this.search() ?? '');
+    });
+  }
+
+  protected onSearchInput(value: string): void {
+    this.searchInput.set(value);
+    clearTimeout(this.searchDebounceHandle);
+    this.searchDebounceHandle = setTimeout(() => {
+      this.router.navigate([], {
+        queryParams: { search: value || null, page: null },
+        queryParamsHandling: 'merge',
+      });
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   protected statusLabel(payment: Payment): string {

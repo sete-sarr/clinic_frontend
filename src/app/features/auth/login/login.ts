@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormField, form, required, submit } from '@angular/forms/signals';
+import { FormField, email, form, required, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -13,7 +13,7 @@ import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 
 interface LoginFormModel {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -39,10 +39,11 @@ export class Login {
 
   protected readonly hidePassword = signal(true);
 
-  protected readonly model = signal<LoginFormModel>({ username: '', password: '' });
+  protected readonly model = signal<LoginFormModel>({ email: '', password: '' });
 
   protected readonly loginForm = form(this.model, (path) => {
-    required(path.username, { message: "Nom d'utilisateur requis" });
+    required(path.email, { message: 'Email requis' });
+    email(path.email, { message: 'Adresse e-mail invalide' });
     required(path.password, { message: 'Mot de passe requis' });
   });
 

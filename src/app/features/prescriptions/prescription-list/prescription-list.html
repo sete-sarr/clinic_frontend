@@ -8,15 +8,28 @@
   }
 </div>
 
-<mat-form-field appearance="outline" class="status-filter">
-  <mat-label>Statut</mat-label>
-  <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
-    <mat-option value="">Tous</mat-option>
-    @for (option of statusOptions; track option[0]) {
-      <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
-    }
-  </mat-select>
-</mat-form-field>
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input
+      matInput
+      [value]="searchInput()"
+      (input)="onSearchInput($any($event.target).value)"
+      placeholder="Nom du patient, n° patient..."
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="status-filter">
+    <mat-label>Statut</mat-label>
+    <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
+      <mat-option value="">Tous</mat-option>
+      @for (option of statusOptions; track option[0]) {
+        <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
 
 @if (prescriptionsResource.isLoading()) {
   <div class="loading">

@@ -90,6 +90,7 @@ export class DoctorForm {
     email(path.email, { message: 'Adresse e-mail invalide' });
     if (!this.isEditMode()) {
       required(path.username, { message: "Nom d'utilisateur requis" });
+      required(path.email, { message: 'Adresse e-mail requise' });
       required(path.password, { message: 'Mot de passe requis' });
     }
   });

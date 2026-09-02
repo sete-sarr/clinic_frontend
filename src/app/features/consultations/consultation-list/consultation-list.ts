@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
-import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -22,6 +23,7 @@ import { CONSULTATION_STATUS_LABELS, Consultation, ConsultationStatus } from '..
 import { ConsultationForm } from '../consultation-form/consultation-form';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-consultation-list',
@@ -32,6 +34,7 @@ const PAGE_SIZE = 20;
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
@@ -46,6 +49,7 @@ export class ConsultationList {
   private readonly dialog = inject(MatDialog);
   protected readonly auth = inject(AuthService);
 
+  readonly search = input<string | undefined>();
   readonly status = input<ConsultationStatus | undefined>();
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
 
@@ -56,11 +60,15 @@ export class ConsultationList {
   ][];
   protected readonly displayedColumns = ['date', 'patient', 'doctor', 'status', 'actions'];
 
+  protected readonly searchInput = signal('');
+  private searchDebounceHandle?: ReturnType<typeof setTimeout>;
+
   protected readonly consultationsResource = httpResource<Paginated<Consultation>>(
     () => ({
       url: `${environment.apiBaseUrl}/consultations/`,
       params: {
         page: this.page(),
+        ...(this.search() ? { search: this.search()! } : {}),
         ...(this.status() ? { status: this.status()! } : {}),
       },
     }),
@@ -76,6 +84,20 @@ export class ConsultationList {
     effect(() => {
       this.dataSource.data = this.consultationsResource.value().results;
     });
+    effect(() => {
+      this.searchInput.set(this.search() ?? '');
+    });
+  }
+
+  protected onSearchInput(value: string): void {
+    this.searchInput.set(value);
+    clearTimeout(this.searchDebounceHandle);
+    this.searchDebounceHandle = setTimeout(() => {
+      this.router.navigate([], {
+        queryParams: { search: value || null, page: null },
+        queryParamsHandling: 'merge',
+      });
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   protected statusLabel(consultation: Consultation): string {

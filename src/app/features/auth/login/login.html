@@ -36,11 +36,11 @@
 
       <form novalidate (submit)="$event.preventDefault(); onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nom d'utilisateur</mat-label>
+          <mat-label>Email</mat-label>
           <mat-icon matPrefix>person_outline</mat-icon>
-          <input matInput [formField]="loginForm.username" autocomplete="username" />
-          @if (loginForm.username().touched() && loginForm.username().invalid()) {
-            <mat-error>{{ loginForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          <input matInput [formField]="loginForm.email" type="email" autocomplete="email" />
+          @if (loginForm.email().touched() && loginForm.email().invalid()) {
+            <mat-error>{{ loginForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
           }
         </mat-form-field>
 

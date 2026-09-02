@@ -7,6 +7,17 @@
 </div>
 
 <div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input
+      matInput
+      [value]="searchInput()"
+      (input)="onSearchInput($any($event.target).value)"
+      placeholder="Nom du patient, n° facture..."
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
   <mat-form-field appearance="outline" class="filter-field">
     <mat-label>Statut</mat-label>
     <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">

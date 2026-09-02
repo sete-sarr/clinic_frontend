@@ -75,6 +75,7 @@ export class StaffForm {
   protected readonly staffForm = form(this.model, (path) => {
     required(path.first_name, { message: 'Prénom requis' });
     required(path.last_name, { message: 'Nom requis' });
+    required(path.email, { message: 'Adresse e-mail requise' });
     email(path.email, { message: 'Adresse e-mail invalide' });
     if (!this.isEditMode()) {
       required(path.username, { message: "Nom d'utilisateur requis" });

@@ -9,6 +9,10 @@
   flex-wrap: wrap;
 }
 
+.search-field {
+  flex: 1 1 320px;
+}
+
 .filter-field {
   width: 200px;
 }

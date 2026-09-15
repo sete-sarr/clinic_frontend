@@ -1,6 +1,8 @@
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { map } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -47,7 +50,16 @@ export class PatientList {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly patientService = inject(PatientService);
+  private readonly breakpointObserver = inject(BreakpointObserver);
   protected readonly auth = inject(AuthService);
+
+  // design-system/tables.md §Mobile — below this breakpoint a table row is unreadable, so the
+  // table is replaced by stacked cards (design-system/cards.md "Carte Patient"). Same
+  // BreakpointObserver + Breakpoints.Handset pattern as shared/layout/shell/shell.ts.
+  protected readonly isHandset = toSignal(
+    this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
+    { initialValue: false },
+  );
 
   readonly search = input<string | undefined>();
   readonly gender = input<Gender | undefined>();

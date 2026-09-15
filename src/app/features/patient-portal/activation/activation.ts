@@ -152,4 +152,12 @@ export class Activation {
   protected goToLogin(): void {
     this.router.navigate(['/login']);
   }
+
+  // No back button existed at all between steps — the wizard is client-side-only state (not
+  // URL-driven), so even the browser's back button can't help once past 'identify'; a patient who
+  // mistyped their phone/clinic was stuck reloading the whole page (reported by user, 2026-09-15).
+  protected backToIdentity(): void {
+    this.credentialsModel.set({ code: '', username: '', password: '' });
+    this.step.set('identify');
+  }
 }

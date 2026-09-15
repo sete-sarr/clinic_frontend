@@ -1,8 +1,10 @@
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -14,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { map } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -56,7 +59,15 @@ export class AppointmentList {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly appointmentService = inject(AppointmentService);
+  private readonly breakpointObserver = inject(BreakpointObserver);
   protected readonly auth = inject(AuthService);
+
+  // design-system/tables.md §Mobile — same card fallback as patients/patient-list.ts, using
+  // design-system/cards.md "Carte Rendez-vous".
+  protected readonly isHandset = toSignal(
+    this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
+    { initialValue: false },
+  );
 
   // Router-bound inputs (withComponentInputBinding): absent query params are set to `undefined`,
   // so `page` falls back through its transform rather than the declared default.

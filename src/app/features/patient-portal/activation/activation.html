@@ -128,6 +128,17 @@
               Activer mon compte
             }
           </button>
+
+          <button
+            mat-button
+            type="button"
+            class="full-width back-button"
+            [disabled]="credentialsForm().submitting()"
+            (click)="backToIdentity()"
+          >
+            <mat-icon>arrow_back</mat-icon>
+            Retour
+          </button>
         </form>
       } @else {
         <p>Votre compte patient a été activé avec succès.</p>

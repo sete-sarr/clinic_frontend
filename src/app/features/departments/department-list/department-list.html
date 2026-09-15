@@ -31,6 +31,7 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="apartment" message="Aucun département trouvé." />
 } @else {
+  <div class="table-scroll">
   <table mat-table [dataSource]="dataSource" class="department-table">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Nom</th>
@@ -117,6 +118,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+  </div>
 
   <mat-paginator
     [length]="totalCount()"

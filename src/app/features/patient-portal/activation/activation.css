@@ -22,6 +22,14 @@
   height: 40px;
 }
 
+.back-button {
+  margin-top: var(--space-1);
+}
+
+.back-button mat-icon {
+  margin-right: var(--space-1);
+}
+
 .server-error {
   color: var(--color-error);
   font-size: 0.875rem;

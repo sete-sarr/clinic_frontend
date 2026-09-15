@@ -170,6 +170,15 @@ body {
   color: var(--sidebar-text) !important;
 }
 
+// Mobile table overflow (design-system/tables.md §Mobile — défilement horizontal). Without this,
+// a table wider than the viewport pushes .shell-workspace's width, and since nothing clips it the
+// overflow bubbles up to the whole page (sidebar/header scroll sideways too, not just the table).
+// Wrap every `<table mat-table>` in a `.table-scroll` div so only the table region scrolls.
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 // Table headers — same sidebar accent family (--sidebar-*) as the dialog header/top menu.
 // Global because all mat-table usages need identical treatment (Cohérence, docs/design-system.md
 // §2); same reasoning as .app-dialog-header above.

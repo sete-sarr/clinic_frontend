@@ -2,12 +2,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   margin-bottom: var(--space-4);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-2);
 }
 
@@ -34,7 +37,7 @@
 }
 
 .appointments-table {
-  width: 100%;
+  min-width: 100%;
   background-color: var(--color-surface);
 }
 
@@ -75,4 +78,58 @@
 .status-no_show {
   background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
   color: var(--color-error);
+}
+
+/* design-system/cards.md "Carte Rendez-vous" — mobile replacement for .appointments-table
+   (design-system/tables.md §Mobile "cartes responsives"). */
+.appointment-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.appointment-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.appointment-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.appointment-card-date {
+  font-weight: var(--font-weight-semibold);
+}
+
+.appointment-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.appointment-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 0.875rem;
+}
+
+.appointment-card-row .label {
+  color: var(--color-text-secondary);
+}
+
+.appointment-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
 }

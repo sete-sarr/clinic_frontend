@@ -2,12 +2,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   margin-bottom: var(--space-4);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-2);
 }
 
@@ -33,7 +36,7 @@
 }
 
 .patients-table {
-  width: 100%;
+  min-width: 100%;
   background-color: var(--color-surface);
 }
 
@@ -46,4 +49,61 @@
 .inactive-chip {
   background-color: color-mix(in srgb, var(--color-neutral-500) 15%, transparent);
   color: var(--color-text-secondary);
+}
+
+/* design-system/cards.md "Carte Patient" — mobile replacement for .patients-table
+   (design-system/tables.md §Mobile "cartes responsives"). */
+.patient-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.patient-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.patient-card.inactive {
+  opacity: 0.7;
+}
+
+.patient-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.patient-card-name {
+  font-weight: var(--font-weight-semibold);
+}
+
+.patient-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.patient-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 0.875rem;
+}
+
+.patient-card-row .label {
+  color: var(--color-text-secondary);
+}
+
+.patient-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
 }

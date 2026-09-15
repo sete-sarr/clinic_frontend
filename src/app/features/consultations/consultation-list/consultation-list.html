@@ -38,6 +38,7 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="medical_information" message="Aucune consultation pour ce filtre." />
 } @else {
+  <div class="table-scroll">
   <table mat-table [dataSource]="dataSource" class="consultations-table">
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef>Date</th>
@@ -75,6 +76,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+  </div>
 
   <mat-paginator
     [length]="totalCount()"

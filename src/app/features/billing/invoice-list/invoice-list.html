@@ -44,6 +44,7 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="receipt_long" message="Aucune facture pour ce filtre." />
 } @else {
+  <div class="table-scroll">
   <table mat-table [dataSource]="dataSource" class="invoices-table">
     <ng-container matColumnDef="number">
       <th mat-header-cell *matHeaderCellDef>N° facture</th>
@@ -96,6 +97,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+  </div>
 
   <mat-paginator
     [length]="totalCount()"

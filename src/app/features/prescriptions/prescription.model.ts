@@ -1,5 +1,5 @@
-// Mirrors prescriptions.api.serializers.PrescriptionSerializer/PrescriptionItemSerializer
-// and prescriptions.models.Prescription.Status (backend).
+// Reflète prescriptions.api.serializers.PrescriptionSerializer/PrescriptionItemSerializer
+// et prescriptions.models.Prescription.Status (backend).
 export type PrescriptionStatus = 'draft' | 'validated' | 'cancelled';
 
 export const PRESCRIPTION_STATUS_LABELS: Record<PrescriptionStatus, string> = {
@@ -8,7 +8,7 @@ export const PRESCRIPTION_STATUS_LABELS: Record<PrescriptionStatus, string> = {
   cancelled: 'Annulée',
 };
 
-// prescriptions/services/__init__.py LOCKED_STATUSES — validated and cancelled are both read-only.
+// prescriptions/services/__init__.py LOCKED_STATUSES — validated et cancelled sont tous deux en lecture seule.
 export const LOCKED_PRESCRIPTION_STATUSES: ReadonlySet<PrescriptionStatus> = new Set([
   'validated',
   'cancelled',

@@ -1,5 +1,6 @@
-// Mirrors patients.api.serializers.PatientSerializer (backend) — summary fields only,
-// enough for pickers/lists. The full record belongs to the future patients feature module.
+// Reflète patients.api.serializers.PatientSerializer (backend) — champs résumés uniquement,
+// suffisants pour les sélecteurs/listes. L'enregistrement complet relève du futur module
+// fonctionnel patients.
 export interface PatientSummary {
   id: number;
   patient_number: string;

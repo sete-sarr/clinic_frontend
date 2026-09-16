@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
-// Mirrors common.exceptions.api_exception_handler (docs/api-guidelines.md
+// Reflète common.exceptions.api_exception_handler (docs/api-guidelines.md
 // "Standardized errors: code, message, field when relevant").
 export interface ApiError {
   code: number;

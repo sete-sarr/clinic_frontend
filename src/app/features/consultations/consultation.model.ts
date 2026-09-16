@@ -1,4 +1,4 @@
-// Mirrors consultations.api.serializers.ConsultationSerializer and
+// Reflète consultations.api.serializers.ConsultationSerializer et
 // consultations.models.Consultation.Status (backend).
 export type ConsultationStatus = 'draft' | 'completed' | 'validated';
 
@@ -8,8 +8,8 @@ export const CONSULTATION_STATUS_LABELS: Record<ConsultationStatus, string> = {
   validated: 'Validée',
 };
 
-// business/validation-rules.md "Validated consultations become read-only" —
-// consultations/services.py currently offers no reopen path, admin or otherwise.
+// business/validation-rules.md « Les consultations validées deviennent en lecture seule » —
+// consultations/services.py n'offre actuellement aucun moyen de rouvrir, ni pour l'admin ni pour quiconque.
 export const LOCKED_CONSULTATION_STATUSES: ReadonlySet<ConsultationStatus> = new Set(['validated']);
 
 export interface Consultation {

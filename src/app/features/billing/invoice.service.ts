@@ -26,7 +26,7 @@ export class InvoiceService {
     return this.http.post<Invoice>(`${this.baseUrl}${id}/cancel/`, {});
   }
 
-  // See prescription.service.ts for why this is a blob fetch rather than a plain <a href>.
+  // Voir prescription.service.ts pour comprendre pourquoi ceci est une récupération blob plutôt qu'un simple <a href>.
   downloadPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}${id}/pdf/`, { responseType: 'blob' });
   }

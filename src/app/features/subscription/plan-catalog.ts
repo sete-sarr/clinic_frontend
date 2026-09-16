@@ -1,8 +1,8 @@
 import { BillingCycle, PlanTier } from '../../core/models/clinic.model';
 
-// Mirrors backend/subscriptions/catalog.py::PLAN_LIMITS. PLACEHOLDER pricing — indicative only,
-// pending real business sign-off (business/subscription-billing-policy.md). The actual charge
-// always comes from the Stripe Price resolved server-side; these $ figures are UI-display-only.
+// Reflète backend/subscriptions/catalog.py::PLAN_LIMITS. Tarification TEMPORAIRE — indicative seulement,
+// en attente de validation métier réelle (business/subscription-billing-policy.md). Le montant réellement
+// facturé provient toujours du Stripe Price résolu côté serveur ; ces montants en $ sont uniquement d'affichage UI.
 export interface PlanDefinition {
   tier: PlanTier;
   label: string;
@@ -39,7 +39,7 @@ export const PLAN_CATALOG: PlanDefinition[] = [
   },
 ];
 
-// Annual pricing mirrors the x10 (2 months free) factor used when the Stripe Prices were created.
+// La tarification annuelle reflète le facteur x10 (2 mois offerts) utilisé lors de la création des Stripe Prices.
 export function indicativeAnnualUsd(plan: PlanDefinition): number {
   return plan.indicativeMonthlyUsd * 10;
 }

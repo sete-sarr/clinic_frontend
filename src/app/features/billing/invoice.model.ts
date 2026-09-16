@@ -1,4 +1,4 @@
-// Mirrors billing.api.serializers.InvoiceSerializer/InvoiceLineSerializer and
+// Reflète billing.api.serializers.InvoiceSerializer/InvoiceLineSerializer et
 // billing.models.Invoice.Status (backend).
 export type InvoiceStatus = 'draft' | 'issued' | 'pending_payment' | 'paid' | 'cancelled';
 

@@ -69,8 +69,8 @@ export class Dashboard {
     });
   }
 
-  // design-system/dashboard.md: "avoid unnecessary API requests" — each stat below only fires
-  // for the roles that actually see that KPI, and only reads page_size:1 where just the count matters.
+  // design-system/dashboard.md : « éviter les requêtes API inutiles » — chaque statistique ci-dessous ne se déclenche
+  // que pour les rôles qui voient réellement ce KPI, et ne lit page_size:1 que lorsque seul le compte importe.
   private readonly seesSchedule = computed(() => this.auth.hasRole('doctor', 'secretary', 'clinic_admin'));
   private readonly seesClinicalQueue = computed(() => this.auth.hasRole('doctor', 'clinic_admin'));
   private readonly seesBilling = computed(() =>
@@ -125,9 +125,9 @@ export class Dashboard {
     () => this.issuedInvoices.isLoading() || this.pendingPaymentInvoices.isLoading(),
   );
 
-  // "Activité récente" widget — reuses the audit-log resource pattern from
+  // Widget "Activité récente" — reprend le pattern de resource de l'audit-log de
   // features/audit-log/audit-log-list/audit-log-list.ts. AuditLogViewSet (backend/common/api/views.py)
-  // is clinic_admin-only per business/access-policy.md, so this must stay behind isClinicAdmin().
+  // est réservé à clinic_admin selon business/access-policy.md, donc ceci doit rester derrière isClinicAdmin().
   protected readonly actionLabels = AUDIT_ACTION_LABELS;
 
   protected readonly recentActivity = httpResource<Paginated<AuditLogEntry>>(
@@ -138,8 +138,8 @@ export class Dashboard {
     { defaultValue: emptyPage<AuditLogEntry>() },
   );
 
-  // patient_display is a plain "First Last (patient_number)" string (AppointmentSerializer) — no
-  // nested patient object/photo exists, so the schedule card uses generated initials instead.
+  // patient_display est une simple chaîne "Prénom Nom (patient_number)" (AppointmentSerializer) — aucun
+  // objet patient imbriqué ni photo n'existe, donc la carte planning utilise des initiales générées à la place.
   protected patientInitials(appointment: Appointment): string {
     const namePart = appointment.patient_display.split('(')[0].trim();
     const words = namePart.split(/\s+/).filter(Boolean);

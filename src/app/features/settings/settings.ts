@@ -70,8 +70,8 @@ export class Settings {
   private readonly previewUrls = signal<Partial<Record<LogoField['key'], string>>>({});
 
   constructor() {
-    // Sync locale from the loaded clinic whenever it (re)loads — mirrors the effect pattern used
-    // by patient-form.ts/invoice-form.ts for syncing a resource into local editable state.
+    // Synchronise la locale depuis la clinique chargée à chaque (re)chargement — reprend le pattern d'effect utilisé
+    // par patient-form.ts/invoice-form.ts pour synchroniser une resource vers un état local éditable.
     effect(() => {
       const clinic = this.clinicResource.value();
       if (clinic) {

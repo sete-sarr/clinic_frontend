@@ -4,8 +4,8 @@ import { CanActivateFn, Router } from '@angular/router';
 import { Role } from '../models/user.model';
 import { AuthService } from './auth.service';
 
-// Backend remains the source of truth for authorization (business/permissions-matrix.md);
-// this guard only avoids rendering a screen the user has no visibility into.
+// Le backend reste la source de vérité pour l'autorisation (business/permissions-matrix.md) ;
+// ce guard évite seulement d'afficher un écran auquel l'utilisateur n'a pas accès en visibilité.
 export function roleGuard(...allowed: Role[]): CanActivateFn {
   return () => {
     const auth = inject(AuthService);
@@ -19,9 +19,10 @@ export function roleGuard(...allowed: Role[]): CanActivateFn {
   };
 }
 
-// A patient-role user must never render the staff Shell (different app surface entirely —
-// business/access-policy.md scopes them to "Own X" everywhere). Applied only to the root Shell
-// route; roleGuard itself is untouched since its ~8 existing call sites all want the '/' redirect.
+// Un utilisateur ayant le rôle patient ne doit jamais afficher le Shell staff (surface applicative
+// entièrement différente — business/access-policy.md les limite partout à "Own X"). Appliqué
+// uniquement à la route racine Shell ; roleGuard lui-même n'est pas modifié puisque ses ~8 sites
+// d'appel existants veulent tous la redirection vers '/'.
 export const staffAreaGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);

@@ -18,8 +18,8 @@ interface NavItem {
   route: string;
 }
 
-// The whole shell is patient-only (guarded by roleGuard('patient') in app.routes.ts), so — unlike
-// the staff Shell — there is no per-item role filtering here.
+// Toute la coquille (shell) est réservée aux patients (protégée par roleGuard('patient') dans app.routes.ts), donc — contrairement
+// au Shell du personnel — il n'y a pas de filtrage par rôle par élément ici.
 const NAV_ITEMS: NavItem[] = [
   { label: 'Mes rendez-vous', icon: 'event', route: '/portal/appointments' },
   { label: 'Mes prescriptions', icon: 'description', route: '/portal/prescriptions' },

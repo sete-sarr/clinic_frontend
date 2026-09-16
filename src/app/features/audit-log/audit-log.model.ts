@@ -1,4 +1,4 @@
-// Mirrors common.models.AuditLog.Action and common.api.serializers.AuditLogSerializer (backend).
+// Reflète common.models.AuditLog.Action et common.api.serializers.AuditLogSerializer (backend).
 export type AuditAction =
   | 'create'
   | 'update'

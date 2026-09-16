@@ -1,4 +1,4 @@
-// Mirrors clinics.api.serializers.ClinicSerializer (backend).
+// Reflète clinics.api.serializers.ClinicSerializer (backend).
 export type SubscriptionStatus = 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled';
 export type PlanTier = 'starter' | 'professional' | 'enterprise';
 export type BillingCycle = 'monthly' | 'annual';

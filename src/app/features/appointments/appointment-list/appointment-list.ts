@@ -62,15 +62,16 @@ export class AppointmentList {
   private readonly breakpointObserver = inject(BreakpointObserver);
   protected readonly auth = inject(AuthService);
 
-  // design-system/tables.md §Mobile — same card fallback as patients/patient-list.ts, using
-  // design-system/cards.md "Carte Rendez-vous".
+  // design-system/tables.md §Mobile — même repli en carte que patients/patient-list.ts, en
+  // utilisant design-system/cards.md "Carte Rendez-vous".
   protected readonly isHandset = toSignal(
     this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
     { initialValue: false },
   );
 
-  // Router-bound inputs (withComponentInputBinding): absent query params are set to `undefined`,
-  // so `page` falls back through its transform rather than the declared default.
+  // Entrées liées au routeur (withComponentInputBinding) : les query params absents sont mis à
+  // `undefined`, donc `page` retombe via sa transformation plutôt que via la valeur par défaut
+  // déclarée.
   readonly status = input<AppointmentStatus | undefined>();
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
   readonly patientNumber = input<string | undefined>();

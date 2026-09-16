@@ -1,6 +1,7 @@
-// Mirrors appointments.api.serializers.AppointmentSerializer and appointments.models.Appointment.Status
-// (backend). Status transitions are backend-enforced (appointments/services.py); the frontend only
-// exposes the actions allowed for the current status/role, never a free status field.
+// Reflète appointments.api.serializers.AppointmentSerializer et appointments.models.Appointment.Status
+// (backend). Les transitions de statut sont imposées côté backend (appointments/services.py) ; le
+// frontend expose uniquement les actions autorisées pour le statut/rôle courant, jamais un champ de
+// statut libre.
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
 
 export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
@@ -11,7 +12,8 @@ export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
   no_show: 'Absence',
 };
 
-// business/validation-rules.md "Cancelled appointments remain archived" — no further transition out of these.
+// business/validation-rules.md "Cancelled appointments remain archived" — aucune transition
+// ultérieure hors de ces statuts.
 export const TERMINAL_APPOINTMENT_STATUSES: ReadonlySet<AppointmentStatus> = new Set([
   'completed',
   'cancelled',

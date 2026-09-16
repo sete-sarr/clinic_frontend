@@ -62,10 +62,11 @@ export class AuthService {
   }
 
   logout(): void {
-    // Best-effort server-side revocation (blacklists the refresh token, records the LOGOUT audit
-    // event — business/access-policy.md "AUDIT POLICY"). Fired before clearing local state so the
-    // auth interceptor still has a token to attach; local state is cleared unconditionally right
-    // after so the UI/guards behave correctly even if this call fails or is still in flight.
+    // Révocation côté serveur au mieux (blackliste le refresh token, enregistre l'événement d'audit
+    // LOGOUT — business/access-policy.md "AUDIT POLICY"). Déclenché avant d'effacer l'état local pour
+    // que l'intercepteur d'authentification ait encore un token à attacher ; l'état local est effacé
+    // inconditionnellement juste après pour que l'UI/les guards se comportent correctement même si cet
+    // appel échoue ou est encore en cours.
     const refresh = this.refreshTokenValue();
     if (this.accessToken() && refresh) {
       this.http.post(`${environment.apiBaseUrl}/auth/logout/`, { refresh }).subscribe({ error: () => undefined });

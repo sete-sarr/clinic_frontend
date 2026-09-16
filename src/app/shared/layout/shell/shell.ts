@@ -25,8 +25,8 @@ interface NavItem {
   roles: Role[];
 }
 
-// Mirrors backend/accounts/migrations/0002_seed_roles.py — no equivalent display label existed
-// anywhere in the frontend before this.
+// Reflète backend/accounts/migrations/0002_seed_roles.py — aucun libellé d'affichage équivalent n'existait
+// nulle part dans le frontend avant cela.
 const ROLE_LABEL: Record<Role, string> = {
   clinic_admin: 'Administrateur',
   doctor: 'Médecin',
@@ -35,11 +35,11 @@ const ROLE_LABEL: Record<Role, string> = {
   patient: 'Patient',
 };
 
-// Highest-privilege-first — a user with multiple roles shows only one label in the header chip.
+// Du plus privilégié au moins privilégié — un utilisateur avec plusieurs rôles n'affiche qu'un seul libellé dans la puce de l'en-tête.
 const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'secretary', 'patient'];
 
-// Only lists routes that actually exist. Append an entry here (with the roles allowed to see it,
-// per business/access-policy.md) each time a new feature module lands.
+// Ne liste que les routes qui existent réellement. Ajouter une entrée ici (avec les rôles autorisés à la voir,
+// selon business/access-policy.md) à chaque nouveau module de fonctionnalité livré.
 const NAV_ITEMS: NavItem[] = [
   {
     label: 'Tableau de bord',
@@ -51,45 +51,45 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Rendez-vous',
     icon: 'event',
     route: '/appointments',
-    // CanManageAppointments (backend/appointments/permissions.py): patient read-only access is
-    // scoped to their own appointments and belongs to the future patient portal, not this staff shell.
+    // CanManageAppointments (backend/appointments/permissions.py) : l'accès en lecture seule du patient est
+    // limité à ses propres rendez-vous et relève du futur portail patient, pas de cette coquille (shell) du personnel.
     roles: ['doctor', 'secretary', 'clinic_admin'],
   },
   {
     label: 'Patients',
     icon: 'people',
     route: '/patients',
-    // CanManagePatients (backend/patients/permissions.py): read access for all clinic staff roles.
+    // CanManagePatients (backend/patients/permissions.py) : accès en lecture pour tous les rôles du personnel de la clinique.
     roles: ['doctor', 'secretary', 'accountant', 'clinic_admin'],
   },
   {
     label: 'Consultations',
     icon: 'medical_information',
     route: '/consultations',
-    // CanManageConsultations (backend/consultations/permissions.py): clinical data, doctor/clinic_admin
-    // only — secretary/accountant must never see this entry (business/access-policy.md).
+    // CanManageConsultations (backend/consultations/permissions.py) : données cliniques, doctor/clinic_admin
+    // uniquement — secretary/accountant ne doivent jamais voir cette entrée (business/access-policy.md).
     roles: ['doctor', 'clinic_admin'],
   },
   {
     label: 'Dossiers médicaux',
     icon: 'folder_shared',
     route: '/medical-records',
-    // CanAccessMedicalRecord (backend/medical_records/permissions.py): doctor only — even
-    // clinic_admin is excluded here, unlike every other module.
+    // CanAccessMedicalRecord (backend/medical_records/permissions.py) : doctor uniquement — même
+    // clinic_admin est exclu ici, contrairement à tous les autres modules.
     roles: ['doctor'],
   },
   {
     label: 'Prescriptions',
     icon: 'description',
     route: '/prescriptions',
-    // CanManagePrescriptions (backend/prescriptions/permissions.py): doctor/clinic_admin only.
+    // CanManagePrescriptions (backend/prescriptions/permissions.py) : doctor/clinic_admin uniquement.
     roles: ['doctor', 'clinic_admin'],
   },
   {
     label: 'Facturation',
     icon: 'receipt_long',
     route: '/billing',
-    // CanManageInvoices (backend/billing/permissions.py): read access for secretary/accountant/
+    // CanManageInvoices (backend/billing/permissions.py) : accès en lecture pour secretary/accountant/
     // clinic_admin/doctor.
     roles: ['secretary', 'accountant', 'clinic_admin', 'doctor'],
   },
@@ -97,35 +97,35 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Paiements',
     icon: 'payments',
     route: '/payments',
-    // CanManagePayments (backend/payments/permissions.py): same read audience as billing.
+    // CanManagePayments (backend/payments/permissions.py) : même public en lecture que la facturation.
     roles: ['secretary', 'accountant', 'clinic_admin', 'doctor'],
   },
   {
     label: "Journal d'audit",
     icon: 'history',
     route: '/audit-log',
-    // AuditLogViewSet (backend/common/api/views.py): clinic_admin only.
+    // AuditLogViewSet (backend/common/api/views.py) : clinic_admin uniquement.
     roles: ['clinic_admin'],
   },
   {
     label: "Rapport d'activité",
     icon: 'summarize',
     route: '/reports',
-    // ClinicActivityReportView (backend/reports/api/views.py): clinic_admin only.
+    // ClinicActivityReportView (backend/reports/api/views.py) : clinic_admin uniquement.
     roles: ['clinic_admin'],
   },
   {
     label: 'Médecins',
     icon: 'medical_services',
     route: '/doctors',
-    // CanManageDoctors (backend/doctors/permissions.py): read access for all clinic staff roles.
+    // CanManageDoctors (backend/doctors/permissions.py) : accès en lecture pour tous les rôles du personnel de la clinique.
     roles: ['doctor', 'secretary', 'accountant', 'clinic_admin'],
   },
   {
     label: 'Personnel',
     icon: 'people',
     route: '/staff',
-    // StaffViewSet (backend/accounts/api/views.py): clinic_admin only, business/permissions-matrix.md
+    // StaffViewSet (backend/accounts/api/views.py) : clinic_admin uniquement, business/permissions-matrix.md
     // UTILISATEURS.
     roles: ['clinic_admin'],
   },
@@ -133,25 +133,25 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Paramètres',
     icon: 'settings',
     route: '/settings',
-    // ClinicViewSet.get_permissions() (backend/clinics/api/views.py): clinic_admin only, same
-    // pattern as Staff/Journal d'audit/Rapport d'activité.
+    // ClinicViewSet.get_permissions() (backend/clinics/api/views.py) : clinic_admin uniquement, même
+    // schéma que Staff/Journal d'audit/Rapport d'activité.
     roles: ['clinic_admin'],
   },
   {
     label: 'Départements',
     icon: 'apartment',
     route: '/departments',
-    // CanManageDepartments (backend/departments/permissions.py): read for all staff, write for
-    // clinic_admin only — the route itself is admin-only (app.routes.ts canAccessDepartments),
-    // same pattern as Staff/Journal d'audit/Rapport d'activité/Paramètres.
+    // CanManageDepartments (backend/departments/permissions.py) : lecture pour tout le personnel, écriture pour
+    // clinic_admin uniquement — la route elle-même est réservée aux admins (app.routes.ts canAccessDepartments),
+    // même schéma que Staff/Journal d'audit/Rapport d'activité/Paramètres.
     roles: ['clinic_admin'],
   },
   {
     label: 'Abonnement',
     icon: 'workspace_premium',
     route: '/subscription',
-    // CheckoutSessionView/BillingPortalView (backend/subscriptions/api/views.py): IsClinicAdmin
-    // only, same pattern as Staff/Journal d'audit/Rapport d'activité/Paramètres.
+    // CheckoutSessionView/BillingPortalView (backend/subscriptions/api/views.py) : IsClinicAdmin
+    // uniquement, même schéma que Staff/Journal d'audit/Rapport d'activité/Paramètres.
     roles: ['clinic_admin'],
   },
 ];
@@ -190,16 +190,16 @@ export class Shell {
     NAV_ITEMS.filter((item) => this.auth.hasRole(...item.roles)),
   );
 
-  // Mirrors GlobalSearchView's role gates (backend/common/api/search.py) — every group there
-  // requires at least doctor/secretary/accountant/clinic_admin, so a patient account never sees
-  // a search box with guaranteed-empty results.
+  // Reflète les contrôles de rôle de GlobalSearchView (backend/common/api/search.py) — chaque groupe y
+  // exige au moins doctor/secretary/accountant/clinic_admin, donc un compte patient ne voit jamais
+  // de barre de recherche avec des résultats garantis vides.
   protected readonly canSearch = computed(() =>
     this.auth.hasRole('doctor', 'secretary', 'accountant', 'clinic_admin'),
   );
 
-  // Sidebar branding — falls back to the local_hospital icon + text when no logo is uploaded yet
-  // (Settings feature, features/settings/settings.ts). Only .brand is wired; favicon application
-  // is deferred (build/SSR concern, out of scope here).
+  // Habillage de la sidebar — retombe sur l'icône local_hospital + texte tant qu'aucun logo n'est téléversé
+  // (fonctionnalité Settings, features/settings/settings.ts). Seul .brand est câblé ; l'application du favicon
+  // est reportée (préoccupation build/SSR, hors périmètre ici).
   private readonly clinicResource = httpResource<Clinic | null>(
     () => (this.user()?.clinic ? { url: `${environment.apiBaseUrl}/clinics/${this.user()!.clinic}/` } : undefined),
     { defaultValue: null },

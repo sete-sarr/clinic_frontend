@@ -17,13 +17,13 @@ import { APPOINTMENT_STATUS_LABELS, Appointment } from '../../appointments/appoi
 import { PortalAppointmentForm } from './portal-appointment-form/portal-appointment-form';
 import { PortalAppointmentService } from './portal-appointment.service';
 
-// REST_FRAMEWORK PAGE_SIZE (backend/backend/settings.py) — the default pagination class doesn't
-// expose a page_size query override, so this must match the server's actual page size exactly.
+// REST_FRAMEWORK PAGE_SIZE (backend/backend/settings.py) — la classe de pagination par défaut n'expose
+// pas de surcharge de page_size via un paramètre de requête, donc ceci doit correspondre exactement à la taille de page réelle du serveur.
 const PAGE_SIZE = 20;
 
-// Display-only hint mirroring the backend's APPOINTMENT_CANCELLATION_DEADLINE_HOURS setting
-// (backend/backend/settings.py) — the backend is authoritative; no endpoint exposes this value,
-// so if that setting is ever tuned this copy needs a manual update too (docs/known-issues.md).
+// Indication purement d'affichage reflétant le paramètre backend APPOINTMENT_CANCELLATION_DEADLINE_HOURS
+// (backend/backend/settings.py) — le backend fait autorité ; aucun endpoint n'expose cette valeur,
+// donc si ce paramètre est un jour modifié, cette copie doit aussi être mise à jour manuellement (docs/known-issues.md).
 const CANCELLATION_DEADLINE_HOURS = 24;
 
 @Component({
@@ -55,8 +55,8 @@ export class PortalAppointments {
   protected readonly cancellingId = signal<number | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
 
-  // Same endpoint the staff appointment-list uses — the backend already scopes it to "own
-  // appointments only" for the patient role (patients/../get_queryset patient branch).
+  // Même endpoint que celui utilisé par la liste des rendez-vous du personnel — le backend le restreint déjà
+  // aux "rendez-vous personnels uniquement" pour le rôle patient (patients/../get_queryset, branche patient).
   protected readonly appointmentsResource = httpResource<Paginated<Appointment>>(
     () => ({
       url: `${environment.apiBaseUrl}/appointments/`,
@@ -88,8 +88,8 @@ export class PortalAppointments {
     });
   }
 
-  // Client-side hint only, purely to show/hide the Cancel button — the backend
-  // (cancel_appointment_by_patient) is always the authoritative check on submit.
+  // Simple indication côté client, uniquement pour afficher/masquer le bouton Annuler — le backend
+  // (cancel_appointment_by_patient) reste toujours la vérification faisant autorité à la soumission.
   protected isCancellable(appointment: Appointment): boolean {
     if (appointment.status !== 'pending' && appointment.status !== 'confirmed') {
       return false;

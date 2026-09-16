@@ -1,6 +1,6 @@
-// Mirrors medical_records.api.serializers.MedicalRecordSerializer (backend).
-// No create (auto-provisioned with the patient) and no delete — see
-// medical_records/api/views.py (List/Retrieve/Update only).
+// Reflète medical_records.api.serializers.MedicalRecordSerializer (backend).
+// Pas de création (provisionné automatiquement avec le patient) et pas de suppression — voir
+// medical_records/api/views.py (List/Retrieve/Update uniquement).
 export interface MedicalRecord {
   id: number;
   clinic: number;

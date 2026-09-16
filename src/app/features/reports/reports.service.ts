@@ -9,7 +9,7 @@ export class ReportsService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}/reports/`;
 
-  // See billing/invoice.service.ts::downloadPdf for why this is a blob fetch rather than a plain <a href>.
+  // Voir billing/invoice.service.ts::downloadPdf pour la raison de cette récupération en blob plutôt qu'un simple <a href>.
   downloadActivityReport(dateFrom: string | null, dateTo: string | null): Observable<Blob> {
     return this.http.get(`${this.baseUrl}activity/`, {
       responseType: 'blob',

@@ -6,8 +6,9 @@ const ACCENT_KEY = 'clinic_accent_preference';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
-// Three dedicated dark sidebar palettes (fixed hex values, not derived from --color-primary — see
-// styles.scss :root[data-accent] blocks for the actual token values per palette).
+// Trois palettes de sidebar sombre dédiées (valeurs hexadécimales fixes, non dérivées de
+// --color-primary — voir les blocs styles.scss :root[data-accent] pour les valeurs de tokens
+// réelles de chaque palette).
 export type AccentColor = 'ocean' | 'teal' | 'sky';
 
 const DEFAULT_ACCENT: AccentColor = 'ocean';
@@ -35,8 +36,9 @@ export class ThemeService {
     this.apply(theme);
   }
 
-  // Per-user preference (like light/dark), not per-clinic — every staff member picks their own
-  // sidebar/header accent independently of the clinic's branding logo/colors.
+  // Préférence par utilisateur (comme clair/sombre), pas par clinique — chaque membre du personnel
+  // choisit son propre accent de sidebar/en-tête indépendamment du logo/des couleurs de branding
+  // de la clinique.
   setAccent(accent: AccentColor): void {
     this.accent.set(accent);
     if (this.isBrowser) {
@@ -45,8 +47,9 @@ export class ThemeService {
     this.applyAccent(accent);
   }
 
-  // Resolves 'system' to the browser's actual current preference — needed wherever a caller
-  // needs light/dark specifically (e.g. picking which logo variant to show), not the raw setting.
+  // Résout 'system' vers la préférence actuelle réelle du navigateur — nécessaire partout où un
+  // appelant a besoin spécifiquement de clair/sombre (ex. choisir quelle variante de logo afficher),
+  // pas du réglage brut.
   effectiveTheme(): 'light' | 'dark' {
     const theme = this.theme();
     if (theme !== 'system') {

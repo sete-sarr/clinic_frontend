@@ -1,6 +1,7 @@
-// Mirrors accounts.api.serializers.UserSerializer / TokenObtainPairSerializer (backend).
-// Role vocabulary matches backend/accounts/migrations/0002_seed_roles.py — see CLAUDE.md's
-// role-vocabulary note (secretary ≈ receptionist, accountant ≈ cashier until unified).
+// Reflète accounts.api.serializers.UserSerializer / TokenObtainPairSerializer (backend).
+// Le vocabulaire des rôles correspond à backend/accounts/migrations/0002_seed_roles.py — voir la
+// note sur le vocabulaire des rôles de CLAUDE.md (secretary ≈ receptionist, accountant ≈ cashier
+// jusqu'à unification).
 export type Role = 'doctor' | 'secretary' | 'accountant' | 'clinic_admin' | 'patient';
 
 export interface User {

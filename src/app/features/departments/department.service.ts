@@ -18,8 +18,8 @@ export class DepartmentService {
     return this.http.patch<Department>(`${this.baseUrl}${id}/`, payload);
   }
 
-  // Dedicated actions, not DELETE — business/workflow-policy.md forbids physical deletion;
-  // DepartmentViewSet exposes no DELETE verb (departments/api/views.py http_method_names).
+  // Actions dédiées, pas DELETE — business/workflow-policy.md interdit la suppression physique ;
+  // DepartmentViewSet n'expose aucun verbe DELETE (departments/api/views.py http_method_names).
   archive(id: number): Observable<Department> {
     return this.http.post<Department>(`${this.baseUrl}${id}/archive/`, {});
   }

@@ -1,12 +1,12 @@
-// Mirrors departments.api.serializers.DepartmentSerializer (backend) — summary fields only,
-// enough for pickers (e.g. the doctor form's department select).
+// Reflète departments.api.serializers.DepartmentSerializer (backend) — champs résumés uniquement,
+// suffisants pour les sélecteurs (ex. le select département du formulaire médecin).
 export interface DepartmentSummary {
   id: number;
   name: string;
   code: string;
 }
 
-// Mirrors departments.models.Department.DepartmentType.
+// Reflète departments.models.Department.DepartmentType.
 export type DepartmentType = 'medical' | 'administrative' | 'technical' | 'support';
 
 export const DEPARTMENT_TYPE_LABELS: Record<DepartmentType, string> = {
@@ -16,8 +16,8 @@ export const DEPARTMENT_TYPE_LABELS: Record<DepartmentType, string> = {
   support: 'Support',
 };
 
-// Mirrors departments.models.Department.Status — Actif -> Inactif -> Archivé
-// (business/workflow-policy.md). Archived departments are read-only.
+// Reflète departments.models.Department.Status — Actif -> Inactif -> Archivé
+// (business/workflow-policy.md). Les départements archivés sont en lecture seule.
 export type DepartmentStatus = 'active' | 'inactive' | 'archived';
 
 export const DEPARTMENT_STATUS_LABELS: Record<DepartmentStatus, string> = {
@@ -26,8 +26,9 @@ export const DEPARTMENT_STATUS_LABELS: Record<DepartmentStatus, string> = {
   archived: 'Archivé',
 };
 
-// Full record, used by features/departments/ (list/create/edit) — mirrors DepartmentSerializer's
-// complete field set, not just the picker-oriented DepartmentSummary above.
+// Enregistrement complet, utilisé par features/departments/ (list/create/edit) — reflète
+// l'ensemble complet des champs de DepartmentSerializer, pas seulement le DepartmentSummary
+// ci-dessus orienté sélecteur.
 export interface Department extends DepartmentSummary {
   clinic: number;
   department_type: DepartmentType;

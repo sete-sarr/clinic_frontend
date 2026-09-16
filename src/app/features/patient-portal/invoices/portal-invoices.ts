@@ -41,8 +41,8 @@ export class PortalInvoices {
   protected readonly pageSize = PAGE_SIZE;
   protected readonly statusLabels = INVOICE_STATUS_LABELS;
 
-  // Same endpoint the staff invoice-list uses — CanManageInvoices already scopes SAFE methods to
-  // the patient's own invoices.
+  // Même endpoint que celui utilisé par la liste des factures du personnel — CanManageInvoices restreint déjà
+  // les méthodes SAFE aux propres factures du patient.
   protected readonly invoicesResource = httpResource<Paginated<Invoice>>(
     () => ({ url: `${environment.apiBaseUrl}/billing/`, params: { page: this.page() } }),
     { defaultValue: emptyPage<Invoice>() },

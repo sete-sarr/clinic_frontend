@@ -18,7 +18,7 @@ export class PaymentService {
     return this.http.post<Payment>(`${this.baseUrl}${id}/refund/`, {});
   }
 
-  // See billing/invoice.service.ts::downloadPdf for why this is a blob fetch rather than a plain <a href>.
+  // Voir billing/invoice.service.ts::downloadPdf pour la raison de cette récupération en blob plutôt qu'un simple <a href>.
   downloadReceiptPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}${id}/pdf/`, { responseType: 'blob' });
   }

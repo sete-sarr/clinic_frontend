@@ -1,5 +1,6 @@
-// Local-date <-> ISO ('YYYY-MM-DD') conversions for DRF DateField values. Deliberately not
-// UTC-based (Date#toISOString) — that would shift the date across midnight for any user not on UTC.
+// Conversions date locale <-> ISO ('YYYY-MM-DD') pour les valeurs DRF DateField. Volontairement pas
+// basé sur UTC (Date#toISOString) — cela décalerait la date à travers minuit pour tout utilisateur
+// qui n'est pas sur UTC.
 export function toIsoDate(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');

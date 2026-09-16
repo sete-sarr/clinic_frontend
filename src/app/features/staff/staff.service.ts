@@ -18,8 +18,8 @@ export class StaffService {
     return this.http.patch<StaffMember>(`${this.baseUrl}${id}/`, payload);
   }
 
-  // Dedicated actions, not DELETE — business/permissions-matrix.md distinguishes "Désactiver"
-  // (allowed) from "Supprimer" (forbidden) for this resource; StaffViewSet exposes no DELETE verb.
+  // Actions dédiées, pas de DELETE — business/permissions-matrix.md distingue « Désactiver »
+  // (autorisé) de « Supprimer » (interdit) pour cette ressource ; StaffViewSet n'expose aucun verbe DELETE.
   deactivate(id: number): Observable<StaffMember> {
     return this.http.post<StaffMember>(`${this.baseUrl}${id}/deactivate/`, {});
   }

@@ -22,9 +22,9 @@ export class PrescriptionService {
     return this.http.patch<Prescription>(`${this.baseUrl}${id}/`, { status });
   }
 
-  // The PDF endpoint requires the Bearer token (docs/reporting-guidelines.md: every document must
-  // check access), so it can't be opened as a plain <a href> — fetched as a blob through HttpClient
-  // (and therefore through the auth interceptor) instead.
+  // Le endpoint PDF nécessite le token Bearer (docs/reporting-guidelines.md : chaque document doit
+  // vérifier l'accès), il ne peut donc pas être ouvert comme un simple <a href> — récupéré à la place
+  // en tant que blob via HttpClient (et donc via l'intercepteur d'authentification).
   downloadPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}${id}/pdf/`, { responseType: 'blob' });
   }

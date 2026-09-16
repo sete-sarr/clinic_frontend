@@ -15,8 +15,8 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
   styleUrl: './portal-medical-record.css',
 })
 export class PortalMedicalRecord {
-  // No filter needed — MedicalRecordViewSet.get_queryset() already scopes the patient role to
-  // their own single record (business/access-policy.md "Own Medical Record").
+  // Aucun filtre nécessaire — MedicalRecordViewSet.get_queryset() restreint déjà le rôle patient à
+  // son unique dossier personnel (business/access-policy.md "son propre dossier médical").
   protected readonly recordResource = httpResource<Paginated<MedicalRecord>>(
     () => ({ url: `${environment.apiBaseUrl}/medical-records/` }),
     { defaultValue: emptyPage<MedicalRecord>() },

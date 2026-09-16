@@ -1,4 +1,4 @@
-// Mirrors patients.api.serializers.PatientSerializer and patients.models.Patient (backend).
+// Reflète patients.api.serializers.PatientSerializer et patients.models.Patient (backend).
 export type Gender = 'male' | 'female' | 'other';
 
 export const GENDER_LABELS: Record<Gender, string> = {

@@ -1,4 +1,4 @@
-// Mirrors DRF's PageNumberPagination (backend/backend/settings.py REST_FRAMEWORK config).
+// Reflète le PageNumberPagination de DRF (config REST_FRAMEWORK de backend/backend/settings.py).
 export interface Paginated<T> {
   count: number;
   next: string | null;

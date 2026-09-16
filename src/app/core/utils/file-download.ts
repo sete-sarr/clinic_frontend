@@ -1,5 +1,6 @@
-// CSV exports carry a Content-Disposition: attachment filename — a plain window.open() blob URL
-// ignores it, so the file needs a synthetic <a download> to be saved under the right name.
+// Les exports CSV portent un nom de fichier Content-Disposition: attachment — une simple URL blob
+// via window.open() l'ignore, donc le fichier a besoin d'un <a download> synthétique pour être
+// enregistré sous le bon nom.
 export function triggerBlobDownload(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

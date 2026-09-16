@@ -1,13 +1,14 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
-  // Public, static — safe to prerender.
+  // Publique, statique — peut être pré-rendue sans risque.
   { path: 'login', renderMode: RenderMode.Prerender },
-  // Public, but fetches from the live clinics API on load (clinic autocomplete) — same reasoning
-  // as the authenticated routes below, just client-render rather than prerender/SSR.
+  // Publique, mais interroge l'API clinics en direct au chargement (autocomplétion clinique) — même
+  // raisonnement que les routes authentifiées ci-dessous, simplement en rendu client plutôt qu'en
+  // pré-rendu/SSR.
   { path: 'activate', renderMode: RenderMode.Client },
-  // Everything else lives behind authGuard and reads its JWT from localStorage (browser-only,
-  // see core/auth/auth.service.ts), so it can never be meaningfully rendered on the server —
-  // client-render only rather than prerender/SSR.
+  // Tout le reste se trouve derrière authGuard et lit son JWT depuis localStorage (navigateur
+  // uniquement, voir core/auth/auth.service.ts), donc cela ne peut jamais être rendu de façon
+  // significative côté serveur — rendu client uniquement plutôt que pré-rendu/SSR.
   { path: '**', renderMode: RenderMode.Client },
 ];

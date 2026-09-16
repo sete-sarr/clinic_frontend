@@ -1,5 +1,5 @@
-// Mirrors doctors.api.serializers.DoctorSerializer (backend) — summary fields only,
-// enough for pickers/lists.
+// Reflète doctors.api.serializers.DoctorSerializer (backend) — champs résumés uniquement,
+// suffisants pour les sélecteurs/listes.
 export interface DoctorSummary {
   id: number;
   user: {
@@ -12,8 +12,9 @@ export interface DoctorSummary {
   specialty: string;
 }
 
-// Full record, used by features/doctors/ (list/create/edit) — mirrors DoctorSerializer's complete
-// field set, not just the picker-oriented DoctorSummary above.
+// Enregistrement complet, utilisé par features/doctors/ (list/create/edit) — reflète l'ensemble
+// complet des champs de DoctorSerializer, pas seulement le DoctorSummary ci-dessus orienté
+// sélecteur.
 export interface Doctor extends DoctorSummary {
   clinic: number;
   department: number | null;

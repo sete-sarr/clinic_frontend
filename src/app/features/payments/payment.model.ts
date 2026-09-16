@@ -1,6 +1,6 @@
-// Mirrors payments.api.serializers.PaymentSerializer and payments.models.Payment (backend).
-// No update, no delete — payments are immutable once created (business/permissions-matrix.md);
-// the only allowed transition is validated -> refunded via the dedicated refund action.
+// Reflète payments.api.serializers.PaymentSerializer et payments.models.Payment (backend).
+// Aucune mise à jour, aucune suppression — les paiements sont immuables une fois créés (business/permissions-matrix.md) ;
+// la seule transition autorisée est validated -> refunded via l'action dédiée de remboursement.
 export type PaymentMethod = 'cash' | 'mobile_money' | 'card';
 
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {

@@ -18,8 +18,8 @@ export class DoctorService {
     return this.http.put<Doctor>(`${this.baseUrl}${id}/`, payload);
   }
 
-  // Soft delete — DoctorViewSet inherits TenantScopedModelViewSet.perform_destroy, which sets
-  // is_active=False on DELETE, never a physical delete (business/permissions-matrix.md).
+  // Suppression logique — DoctorViewSet hérite de TenantScopedModelViewSet.perform_destroy, qui positionne
+  // is_active=False sur DELETE, jamais une suppression physique (business/permissions-matrix.md).
   deactivate(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}${id}/`);
   }

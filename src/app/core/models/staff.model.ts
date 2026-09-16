@@ -1,8 +1,8 @@
 import { Role } from './user.model';
 
-// Mirrors accounts.api.serializers.StaffListSerializer/StaffCreateSerializer (backend). Assignable
-// through the staff screen only — "doctor" (own profile model, managed under /doctors) and
-// "patient" (own OTP activation flow) are excluded, matching
+// Reflète accounts.api.serializers.StaffListSerializer/StaffCreateSerializer (backend). Assignable
+// uniquement via l'écran staff — "doctor" (modèle de profil propre, géré sous /doctors) et
+// "patient" (flux d'activation OTP propre) sont exclus, conformément à
 // accounts.services.STAFF_ROLES_ASSIGNABLE.
 export type StaffRole = Extract<Role, 'secretary' | 'accountant' | 'clinic_admin'>;
 

@@ -121,15 +121,15 @@ export class InvoiceForm {
 
   protected readonly currentStatus = computed(() => this.invoiceResource.value()?.status ?? 'draft');
   protected readonly isLocked = computed(() => LOCKED_INVOICE_STATUSES.has(this.currentStatus()));
-  // CanManageInvoices.has_object_permission (backend/billing/permissions.py): secretary can create
-  // but cannot edit/issue an existing invoice — only accountant/clinic_admin can from here on.
+  // CanManageInvoices.has_object_permission (backend/billing/permissions.py) : le/la secrétaire peut créer
+  // mais ne peut pas modifier/émettre une facture existante — seuls accountant/clinic_admin le peuvent à partir d'ici.
   protected readonly canEditExisting = computed(() => this.auth.hasRole('accountant', 'clinic_admin'));
   protected readonly formEditable = computed(
     () => !this.isLocked() && (!this.isEditMode() || this.canEditExisting()),
   );
-  // CanAccessMedicalRecord (backend/medical_records/permissions.py): doctor-only, even clinic_admin
-  // is excluded (unlike every other module — see shell.ts's "Dossiers médicaux" nav entry) —
-  // secretary/accountant handling billing must never get a path into it from here either.
+  // CanAccessMedicalRecord (backend/medical_records/permissions.py) : réservé au médecin, même clinic_admin
+  // en est exclu (contrairement à tous les autres modules — voir l'entrée de navigation "Dossiers médicaux" de shell.ts) —
+  // secretary/accountant qui gèrent la facturation ne doivent jamais non plus y accéder depuis ici.
   protected readonly canViewMedicalRecord = computed(() => this.auth.hasRole('doctor'));
 
   protected readonly model = signal<InvoiceFormModel>({
@@ -173,8 +173,8 @@ export class InvoiceForm {
     applyEach(path.lines, lineSchema);
   });
 
-  // CanManagePayments (backend/payments/permissions.py): create is accountant/clinic_admin only;
-  // refund requires an explicit clinic_admin check in the view.
+  // CanManagePayments (backend/payments/permissions.py) : la création est réservée à accountant/clinic_admin ;
+  // le remboursement nécessite une vérification explicite de clinic_admin dans la vue.
   protected readonly methodLabels = PAYMENT_METHOD_LABELS;
   protected readonly methodOptions = Object.entries(PAYMENT_METHOD_LABELS) as [PaymentMethod, string][];
   protected readonly paymentStatusLabels = PAYMENT_STATUS_LABELS;

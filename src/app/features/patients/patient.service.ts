@@ -18,13 +18,13 @@ export class PatientService {
     return this.http.put<Patient>(`${this.baseUrl}${id}/`, payload);
   }
 
-  // Soft delete — backend TenantScopedModelViewSet.perform_destroy sets is_active=False,
-  // never a physical delete (business/permissions-matrix.md).
+  // Suppression logique — TenantScopedModelViewSet.perform_destroy (backend) positionne is_active=False,
+  // jamais une suppression physique (business/permissions-matrix.md).
   deactivate(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}${id}/`);
   }
 
-  // See billing/invoice.service.ts::downloadPdf for why this is a blob fetch rather than a plain <a href>.
+  // Voir billing/invoice.service.ts::downloadPdf pour la raison de cette récupération en blob plutôt qu'un simple <a href>.
   downloadStatementPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}${id}/statement-pdf/`, { responseType: 'blob' });
   }

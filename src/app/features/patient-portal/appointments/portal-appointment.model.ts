@@ -1,7 +1,7 @@
-// Same shape as AppointmentPayload (appointments/appointment.model.ts) minus `patient` — the
-// backend resolves `patient` server-side from request.user.patient_profile for a patient-role
-// caller (AppointmentViewSet.perform_create) and ignores/rejects any client-supplied value, so
-// it's intentionally not part of this payload type.
+// Même forme qu'AppointmentPayload (appointments/appointment.model.ts) sans `patient` — le
+// backend résout `patient` côté serveur à partir de request.user.patient_profile pour un appelant
+// de rôle patient (AppointmentViewSet.perform_create) et ignore/rejette toute valeur fournie par le
+// client, donc il est volontairement exclu de ce type de payload.
 export interface PortalAppointmentPayload {
   doctor: number;
   date: string;

@@ -103,9 +103,9 @@ export class PrescriptionForm {
   protected readonly formatDoctor = formatDoctor;
   protected readonly statusLabels = PRESCRIPTION_STATUS_LABELS;
 
-  // A doctor always prescribes under their own name (backend/prescriptions/api/views.py
-  // PrescriptionViewSet.perform_create overrides the doctor field regardless of what's submitted),
-  // so the picker only makes sense for clinic_admin, who can act on behalf of any doctor.
+  // Un médecin prescrit toujours sous son propre nom (backend/prescriptions/api/views.py
+  // PrescriptionViewSet.perform_create écrase le champ doctor quelle que soit la valeur soumise),
+  // donc le sélecteur n'a de sens que pour clinic_admin, qui peut agir au nom de n'importe quel médecin.
   protected readonly ownDoctorId = computed(() => this.auth.user()?.doctor_id ?? null);
   protected readonly isSelfDoctor = computed(
     () => this.auth.hasRole('doctor') && !this.auth.hasRole('clinic_admin') && this.ownDoctorId() !== null,
@@ -151,7 +151,7 @@ export class PrescriptionForm {
     { defaultValue: emptyPage<DoctorSummary>() },
   );
 
-  // Only fetched for create mode — in edit mode the consultation link is immutable (see disabled() below).
+  // Récupéré uniquement en mode création — en mode édition, le lien vers la consultation est immuable (voir disabled() ci-dessous).
   protected readonly consultationsResource = httpResource<Paginated<Consultation>>(
     () =>
       this.selectedPatientId()
@@ -165,8 +165,8 @@ export class PrescriptionForm {
 
   protected readonly prescriptionForm = form(this.model, (path) => {
     disabled(path, () => this.isLocked());
-    // The consultation link is one-to-one and set at creation only (prescriptions/services.py
-    // rejects re-pointing a prescription at an already-used consultation) — never editable after.
+    // Le lien vers la consultation est en relation un-à-un et défini uniquement à la création (prescriptions/services.py
+    // rejette le rattachement d'une prescription à une consultation déjà utilisée) — jamais modifiable ensuite.
     disabled(path.patient, () => this.isEditMode());
     disabled(path.consultation, () => this.isEditMode());
     required(path.patient, { message: 'Patient requis' });

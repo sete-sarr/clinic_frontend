@@ -53,9 +53,9 @@ export class PatientList {
   private readonly breakpointObserver = inject(BreakpointObserver);
   protected readonly auth = inject(AuthService);
 
-  // design-system/tables.md §Mobile — below this breakpoint a table row is unreadable, so the
-  // table is replaced by stacked cards (design-system/cards.md "Carte Patient"). Same
-  // BreakpointObserver + Breakpoints.Handset pattern as shared/layout/shell/shell.ts.
+  // design-system/tables.md §Mobile — en dessous de ce point de rupture, une ligne de tableau est illisible, donc
+  // le tableau est remplacé par des cartes empilées (design-system/cards.md "Carte Patient"). Même
+  // pattern BreakpointObserver + Breakpoints.Handset que shared/layout/shell/shell.ts.
   protected readonly isHandset = toSignal(
     this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
     { initialValue: false },
@@ -89,8 +89,8 @@ export class PatientList {
 
   protected readonly canManage = computed(() => this.auth.hasRole('secretary', 'clinic_admin'));
   protected readonly canDeactivate = computed(() => this.auth.hasRole('clinic_admin'));
-  // business/reporting-export-policy.md: patient statement is a financial report — accountant/secretary/
-  // clinic_admin may view it, doctor may not.
+  // business/reporting-export-policy.md : le relevé patient est un rapport financier — accountant/secretary/
+  // clinic_admin peuvent le consulter, le médecin non.
   protected readonly canViewStatement = computed(() => this.auth.hasRole('secretary', 'accountant', 'clinic_admin'));
 
   constructor() {

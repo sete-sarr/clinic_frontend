@@ -97,9 +97,9 @@ export class ConsultationForm {
   protected readonly formatDoctor = formatDoctor;
   protected readonly statusLabels = CONSULTATION_STATUS_LABELS;
 
-  // A doctor always creates/owns their own consultations (backend/consultations/api/views.py
-  // ConsultationViewSet.perform_create overrides the doctor field regardless of what's submitted),
-  // so the picker only makes sense for clinic_admin, who can act on behalf of any doctor.
+  // Un médecin crée et possède toujours ses propres consultations (backend/consultations/api/views.py
+  // ConsultationViewSet.perform_create écrase le champ doctor quelle que soit la valeur soumise),
+  // donc le sélecteur n'a de sens que pour clinic_admin, qui peut agir au nom de n'importe quel médecin.
   protected readonly ownDoctorId = computed(() => this.auth.user()?.doctor_id ?? null);
   protected readonly isSelfDoctor = computed(
     () => this.auth.hasRole('doctor') && !this.auth.hasRole('clinic_admin') && this.ownDoctorId() !== null,
@@ -131,8 +131,8 @@ export class ConsultationForm {
     treatment_plan: '',
   });
 
-  // consultations/services.py only requires chief_complaint/diagnosis/treatment_plan when
-  // completing (not on draft creation) — mirrored here to gate the "Terminer" action, not `required()`.
+  // consultations/services.py n'exige chief_complaint/diagnosis/treatment_plan que lors de la
+  // finalisation (pas à la création du brouillon) — reproduit ici pour conditionner l'action "Terminer", pas `required()`.
   protected readonly canComplete = computed(() => {
     const value = this.model();
     return !!(value.chief_complaint && value.diagnosis && value.treatment_plan);
@@ -155,10 +155,10 @@ export class ConsultationForm {
   );
 
   protected readonly consultationForm = form(this.model, (path) => {
-    // Signal Forms' own disabled() propagates to every descendant field — including Material
-    // components' own `disabled` input via [formField] — so a validated (locked) consultation
-    // is genuinely read-only, not just visually so (docs/security.md: never frontend-only, but
-    // the UI should still reflect backend-enforced immutability accurately).
+    // Le disabled() propre à Signal Forms se propage à chaque champ descendant — y compris l'input
+    // `disabled` propre aux composants Material via [formField] — donc une consultation validée
+    // (verrouillée) est véritablement en lecture seule, pas seulement en apparence (docs/security.md :
+    // jamais seulement côté frontend, mais l'UI doit refléter fidèlement l'immutabilité imposée par le backend).
     disabled(path, () => this.isLocked());
     required(path.patient, { message: 'Patient requis' });
     required(path.doctor, { message: 'Médecin requis' });

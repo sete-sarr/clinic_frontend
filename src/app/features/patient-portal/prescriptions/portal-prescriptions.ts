@@ -41,8 +41,8 @@ export class PortalPrescriptions {
   protected readonly pageSize = PAGE_SIZE;
   protected readonly statusLabels = PRESCRIPTION_STATUS_LABELS;
 
-  // Same endpoint the staff prescription-list uses — CanManagePrescriptions already scopes SAFE
-  // methods to the patient's own prescriptions.
+  // Même endpoint que celui utilisé par la liste des ordonnances du personnel — CanManagePrescriptions restreint déjà
+  // les méthodes SAFE aux propres ordonnances du patient.
   protected readonly prescriptionsResource = httpResource<Paginated<Prescription>>(
     () => ({ url: `${environment.apiBaseUrl}/prescriptions/`, params: { page: this.page() } }),
     { defaultValue: emptyPage<Prescription>() },

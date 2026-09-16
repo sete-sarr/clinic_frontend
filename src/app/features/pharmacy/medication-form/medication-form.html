@@ -46,18 +46,18 @@
 
       <div class="field-row">
         <mat-form-field appearance="outline" class="half-width">
-          <mat-label>Seuil minimal (stock bas)</mat-label>
+          <mat-label>Seuil minimal</mat-label>
           <input matInput type="number" [formField]="medicationForm.min_threshold" />
-          <span matTextSuffix>0 = pas d'alerte</span>
+          <mat-hint>0 = pas d'alerte</mat-hint>
           @if (medicationForm.min_threshold().touched() && medicationForm.min_threshold().invalid()) {
             <mat-error>{{ medicationForm.min_threshold().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="half-width">
-          <mat-label>Seuil maximal (surstock)</mat-label>
+          <mat-label>Seuil maximal</mat-label>
           <input matInput type="number" [formField]="medicationForm.max_threshold" />
-          <span matTextSuffix>vide = pas de plafond</span>
+          <mat-hint>vide = pas de plafond</mat-hint>
         </mat-form-field>
       </div>
 

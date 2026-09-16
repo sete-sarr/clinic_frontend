@@ -1,0 +1,82 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>Réceptionner un lot — {{ data.medicationName }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(false)" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Numéro de lot</mat-label>
+        <input matInput [formField]="batchForm.batch_number" />
+        @if (batchForm.batch_number().touched() && batchForm.batch_number().invalid()) {
+          <mat-error>{{ batchForm.batch_number().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Date de réception</mat-label>
+        <input matInput [matDatepicker]="receivedPicker" [formField]="batchForm.received_date" />
+        <mat-datepicker-toggle matIconSuffix [for]="receivedPicker" />
+        <mat-datepicker #receivedPicker />
+        @if (batchForm.received_date().touched() && batchForm.received_date().invalid()) {
+          <mat-error>{{ batchForm.received_date().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Date de péremption</mat-label>
+        <input matInput [matDatepicker]="expiryPicker" [formField]="batchForm.expiry_date" />
+        <mat-datepicker-toggle matIconSuffix [for]="expiryPicker" />
+        <mat-datepicker #expiryPicker />
+        @if (batchForm.expiry_date().touched() && batchForm.expiry_date().invalid()) {
+          <mat-error>{{ batchForm.expiry_date().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Quantité reçue</mat-label>
+        <input matInput type="number" [formField]="batchForm.quantity_received" />
+        @if (batchForm.quantity_received().touched() && batchForm.quantity_received().invalid()) {
+          <mat-error>{{ batchForm.quantity_received().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Coût unitaire</mat-label>
+        <input matInput type="number" step="0.01" [formField]="batchForm.unit_cost" />
+        @if (batchForm.unit_cost().touched() && batchForm.unit_cost().invalid()) {
+          <mat-error>{{ batchForm.unit_cost().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Fournisseur (optionnel)</mat-label>
+        <input matInput [formField]="batchForm.supplier" />
+      </mat-form-field>
+    </div>
+
+    @if (batchForm().errors().length > 0) {
+      <p class="server-error" role="alert">{{ batchForm().errors()[0].message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close(false)">Annuler</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="batchForm().submitting()">
+        @if (batchForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          Réceptionner
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

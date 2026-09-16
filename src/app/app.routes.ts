@@ -48,6 +48,10 @@ const canAccessSubscription = roleGuard('clinic_admin');
 // Clinique peuvent archiver ou restaurer des départements" (le personnel accède aux départements en
 // lecture seule via des sélecteurs, par ex. le formulaire médecin).
 const canAccessDepartments = roleGuard('clinic_admin');
+// CanManageMedications/CanManageStock (backend/pharmacy/permissions.py) : lecture pour tout le
+// personnel, écriture (catalogue + réception de lot) pour pharmacist/clinic_admin uniquement — la
+// route elle-même est réservée à ces deux rôles, même schéma que Départements ci-dessus.
+const canAccessPharmacy = roleGuard('pharmacist', 'clinic_admin');
 
 export const routes: Routes = [
   {
@@ -190,6 +194,12 @@ export const routes: Routes = [
         canActivate: [canAccessDepartments],
         loadComponent: () =>
           import('./features/departments/department-list/department-list').then((m) => m.DepartmentList),
+      },
+      {
+        path: 'pharmacy',
+        canActivate: [canAccessPharmacy],
+        loadComponent: () =>
+          import('./features/pharmacy/medication-list/medication-list').then((m) => m.MedicationList),
       },
       {
         path: 'subscription',

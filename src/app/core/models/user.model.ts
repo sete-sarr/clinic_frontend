@@ -1,8 +1,9 @@
 // Reflète accounts.api.serializers.UserSerializer / TokenObtainPairSerializer (backend).
-// Le vocabulaire des rôles correspond à backend/accounts/migrations/0002_seed_roles.py — voir la
-// note sur le vocabulaire des rôles de CLAUDE.md (secretary ≈ receptionist, accountant ≈ cashier
-// jusqu'à unification).
-export type Role = 'doctor' | 'secretary' | 'accountant' | 'clinic_admin' | 'patient';
+// Le vocabulaire des rôles correspond à backend/accounts/migrations/0002_seed_roles.py +
+// 0004_seed_pharmacist_role.py — voir la note sur le vocabulaire des rôles de CLAUDE.md
+// (secretary ≈ receptionist, accountant ≈ cashier jusqu'à unification ; pharmacist reprend le nom
+// déjà utilisé par business/access-policy.md et permissions-matrix.md, aucune ambiguïté ici).
+export type Role = 'doctor' | 'secretary' | 'accountant' | 'clinic_admin' | 'pharmacist' | 'patient';
 
 export interface User {
   id: number;

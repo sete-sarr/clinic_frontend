@@ -32,11 +32,12 @@ const ROLE_LABEL: Record<Role, string> = {
   doctor: 'Médecin',
   secretary: 'Secrétaire',
   accountant: 'Comptable',
+  pharmacist: 'Pharmacien',
   patient: 'Patient',
 };
 
 // Du plus privilégié au moins privilégié — un utilisateur avec plusieurs rôles n'affiche qu'un seul libellé dans la puce de l'en-tête.
-const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'secretary', 'patient'];
+const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmacist', 'secretary', 'patient'];
 
 // Ne liste que les routes qui existent réellement. Ajouter une entrée ici (avec les rôles autorisés à la voir,
 // selon business/access-policy.md) à chaque nouveau module de fonctionnalité livré.
@@ -145,6 +146,16 @@ const NAV_ITEMS: NavItem[] = [
     // clinic_admin uniquement — la route elle-même est réservée aux admins (app.routes.ts canAccessDepartments),
     // même schéma que Staff/Journal d'audit/Rapport d'activité/Paramètres.
     roles: ['clinic_admin'],
+  },
+  {
+    label: 'Pharmacie',
+    icon: 'medication',
+    route: '/pharmacy',
+    // CanManageMedications/CanManageStock (backend/pharmacy/permissions.py) : lecture pour tout le
+    // personnel, écriture (catalogue + réception de lot) pour pharmacist/clinic_admin uniquement —
+    // route réservée à ces deux rôles (app.routes.ts canAccessPharmacy), même schéma que
+    // Départements (écran de gestion, pas un simple sélecteur en lecture).
+    roles: ['pharmacist', 'clinic_admin'],
   },
   {
     label: 'Abonnement',

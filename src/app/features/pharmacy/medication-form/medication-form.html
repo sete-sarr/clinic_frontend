@@ -1,0 +1,80 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le médicament' : 'Nouveau médicament' }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(false)" aria-label="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  @if (isEditMode() && medicationResource.isLoading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else if (isArchived()) {
+    <p class="server-error" role="alert">
+      Ce médicament est archivé et en lecture seule. Restaurez-le avant de le modifier.
+    </p>
+  } @else {
+    <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom du médicament</mat-label>
+          <input matInput [formField]="medicationForm.name" />
+          @if (medicationForm.name().touched() && medicationForm.name().invalid()) {
+            <mat-error>{{ medicationForm.name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Unité</mat-label>
+          <input matInput placeholder="boîte, comprimé, flacon..." [formField]="medicationForm.unit" />
+          @if (medicationForm.unit().touched() && medicationForm.unit().invalid()) {
+            <mat-error>{{ medicationForm.unit().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Prix unitaire</mat-label>
+          <input matInput type="number" step="0.01" [formField]="medicationForm.unit_price" />
+          @if (medicationForm.unit_price().touched() && medicationForm.unit_price().invalid()) {
+            <mat-error>{{ medicationForm.unit_price().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Seuil minimal (stock bas)</mat-label>
+          <input matInput type="number" [formField]="medicationForm.min_threshold" />
+          <span matTextSuffix>0 = pas d'alerte</span>
+          @if (medicationForm.min_threshold().touched() && medicationForm.min_threshold().invalid()) {
+            <mat-error>{{ medicationForm.min_threshold().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Seuil maximal (surstock)</mat-label>
+          <input matInput type="number" [formField]="medicationForm.max_threshold" />
+          <span matTextSuffix>vide = pas de plafond</span>
+        </mat-form-field>
+      </div>
+
+      @if (medicationForm().errors().length > 0) {
+        <p class="server-error" role="alert">{{ medicationForm().errors()[0].message }}</p>
+      }
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="dialogRef.close(false)">Annuler</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="medicationForm().submitting()">
+          @if (medicationForm().submitting()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            Enregistrer
+          }
+        </button>
+      </div>
+    </form>
+  }
+</mat-dialog-content>

@@ -21,6 +21,9 @@ export interface InvoiceLine {
   quantity: number;
   unit_price: number;
   line_total?: string;
+  // Ligne liée au catalogue pharmacie : le stock est décrémenté à l'émission de la facture
+  // (pharmacy/services.py::sync_invoice_stock). null = prestation sans article de stock.
+  medication: number | null;
 }
 
 export interface Invoice {

@@ -1,5 +1,9 @@
 <div class="page-header">
   <h1>Paramètres</h1>
+  <button mat-stroked-button type="button" (click)="downloadUserGuide()">
+    <mat-icon>menu_book</mat-icon>
+    Télécharger le guide d'utilisation
+  </button>
 </div>
 
 @if (clinicResource.isLoading()) {

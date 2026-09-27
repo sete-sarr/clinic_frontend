@@ -1,6 +1,6 @@
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { FieldTree, FormField, form, maxLength, min, required, submit } from '@angular/forms/signals';
+import { FieldTree, FormField, form, maxLength, min, required, submit, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -72,6 +72,20 @@ export class MedicationForm {
     maxLength(path.unit, 50, { message: 'Unité trop longue (50 caractères maximum)' });
     min(path.unit_price, 0, { message: 'Le prix ne peut pas être négatif' });
     min(path.min_threshold, 0, { message: 'Le seuil minimal ne peut pas être négatif' });
+    // Reflète la contrainte medication_max_threshold_gte_min_threshold (pharmacy/models.py), revérifiée
+    // côté serveur par MedicationSerializer.validate — ici uniquement pour un retour immédiat.
+    validate(path.max_threshold, ({ value, valueOf }) => {
+      const max = value();
+      if (max === null || (max as unknown) === '') {
+        return undefined;
+      }
+      if (max < 0) {
+        return { kind: 'min', message: 'Le seuil maximal ne peut pas être négatif' };
+      }
+      return max < (valueOf(path.min_threshold) ?? 0)
+        ? { kind: 'maxBelowMin', message: 'Le seuil maximal doit être supérieur ou égal au seuil minimal' }
+        : undefined;
+    });
   });
 
   constructor() {

@@ -66,6 +66,12 @@
           </span>
         </button>
         <mat-menu #userMenu="matMenu">
+          @if (canDownloadUserGuide()) {
+            <button mat-menu-item (click)="downloadUserGuide()">
+              <mat-icon>menu_book</mat-icon>
+              <span>Télécharger le guide d'utilisation</span>
+            </button>
+          }
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
             <span>Déconnexion</span>

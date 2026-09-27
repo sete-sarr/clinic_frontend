@@ -84,6 +84,26 @@
 
         @for (lineField of invoiceForm.lines; track $index) {
           <div class="line-row">
+            <mat-form-field appearance="outline" class="line-medication">
+              <mat-label>Médicament (facultatif)</mat-label>
+              <mat-select
+                [formField]="lineField.medication"
+                (selectionChange)="onMedicationSelected($index, $event.value)"
+              >
+                <mat-option [value]="null">Aucun (prestation)</mat-option>
+                @for (medication of medicationsResource.value().results; track medication.id) {
+                  <mat-option [value]="medication.id">{{ medication.name }} ({{ medication.unit }})</mat-option>
+                }
+                @if (lineField.medication().value() && !medicationFor(lineField.medication().value())) {
+                  <!-- Médicament archivé depuis : conservé pour l'affichage de la ligne existante. -->
+                  <mat-option [value]="lineField.medication().value()">{{ lineField.description().value() }}</mat-option>
+                }
+              </mat-select>
+              @if (medicationFor(lineField.medication().value()); as medication) {
+                <mat-hint>Stock disponible : {{ medication.current_stock }} {{ medication.unit }}</mat-hint>
+              }
+            </mat-form-field>
+
             <mat-form-field appearance="outline" class="line-description">
               <mat-label>Description</mat-label>
               <input matInput [formField]="lineField.description" />
@@ -221,6 +241,10 @@
         </button>
       }
     </div>
+
+    @if (actionError()) {
+      <p class="server-error" role="alert">{{ actionError() }}</p>
+    }
 
     <div class="payments-card">
         <h2 class="section-title">Paiements</h2>

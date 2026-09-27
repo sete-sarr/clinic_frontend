@@ -16,6 +16,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { Clinic } from '../../../core/models/clinic.model';
 import { Role } from '../../../core/models/user.model';
 import { ThemeService } from '../../../core/services/theme.service';
+import { UserGuideService } from '../../../core/services/user-guide.service';
 import { GlobalSearch } from '../../components/global-search/global-search';
 
 interface NavItem {
@@ -208,6 +209,9 @@ export class Shell {
     this.auth.hasRole('doctor', 'secretary', 'accountant', 'clinic_admin'),
   );
 
+  private readonly userGuideService = inject(UserGuideService);
+  protected readonly canDownloadUserGuide = computed(() => this.auth.hasRole('clinic_admin'));
+
   // Habillage de la sidebar — retombe sur l'icône local_hospital + texte tant qu'aucun logo n'est téléversé
   // (fonctionnalité Settings, features/settings/settings.ts). Seul .brand est câblé ; l'application du favicon
   // est reportée (préoccupation build/SSR, hors périmètre ici).
@@ -240,6 +244,10 @@ export class Shell {
     const last = current.last_name?.[0] ?? '';
     return (first + last).toUpperCase() || current.username[0]?.toUpperCase() || '';
   });
+
+  protected downloadUserGuide(): void {
+    this.userGuideService.download();
+  }
 
   protected logout(): void {
     this.auth.logout();

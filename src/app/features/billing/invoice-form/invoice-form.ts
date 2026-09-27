@@ -21,6 +21,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { DoctorSummary } from '../../../core/models/doctor.model';
 import { PatientSummary } from '../../../core/models/patient.model';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
+import { Medication } from '../../../core/models/pharmacy.model';
 import { parseIsoDate, toIsoDate } from '../../../core/utils/date';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
@@ -59,7 +60,7 @@ function emptyPaymentEntry(): PaymentEntryModel {
 }
 
 function emptyLine(): InvoiceLine {
-  return { description: '', quantity: 1, unit_price: 0 };
+  return { description: '', quantity: 1, unit_price: 0, medication: null };
 }
 
 function formatPatient(patient: PatientSummary): string {
@@ -166,6 +167,24 @@ export class InvoiceForm {
     { defaultValue: emptyPage<DoctorSummary>() },
   );
 
+  // Catalogue pharmacie (lecture ouverte à tout le personnel, CanManageMedications) — seuls les
+  // médicaments actifs sont proposés pour une nouvelle ligne.
+  protected readonly medicationsResource = httpResource<Paginated<Medication>>(
+    () => ({ url: `${environment.apiBaseUrl}/pharmacy/medications/`, params: { is_active: true, page_size: 200 } }),
+    { defaultValue: emptyPage<Medication>() },
+  );
+
+  private readonly medicationsById = computed(
+    () => new Map(this.medicationsResource.value().results.map((medication) => [medication.id, medication])),
+  );
+
+  protected medicationFor(id: number | null | undefined): Medication | undefined {
+    return id == null ? undefined : this.medicationsById().get(id);
+  }
+
+  // Erreur des actions Émettre/Annuler (ex. stock insuffisant à l'émission), hors du formulaire.
+  protected readonly actionError = signal<string | null>(null);
+
   protected readonly invoiceForm = form(this.model, (path) => {
     disabled(path, () => !this.formEditable());
     required(path.patient, { message: 'Patient requis' });
@@ -232,6 +251,22 @@ export class InvoiceForm {
     return formatPatient(patient);
   }
 
+  // Pré-remplit la ligne depuis le catalogue ; description et prix restent modifiables ensuite.
+  protected onMedicationSelected(index: number, medicationId: number | null): void {
+    const medication = this.medicationFor(medicationId);
+    if (!medication) {
+      return;
+    }
+    this.model.update((current) => ({
+      ...current,
+      lines: current.lines.map((line, i) =>
+        i === index
+          ? { ...line, description: `${medication.name} (${medication.unit})`, unit_price: Number(medication.unit_price) }
+          : line,
+      ),
+    }));
+  }
+
   protected addLine(): void {
     this.model.update((current) => ({ ...current, lines: [...current.lines, emptyLine()] }));
   }
@@ -289,7 +324,14 @@ export class InvoiceForm {
     if (!id) {
       return;
     }
-    this.invoiceService.issue(Number(id)).subscribe(() => this.invoiceResource.reload());
+    this.actionError.set(null);
+    this.invoiceService.issue(Number(id)).subscribe({
+      next: () => {
+        this.invoiceResource.reload();
+        this.medicationsResource.reload();
+      },
+      error: (error) => this.actionError.set(parseApiError(error, "Impossible d'émettre la facture.").message),
+    });
   }
 
   protected cancelInvoice(): void {
@@ -301,7 +343,14 @@ export class InvoiceForm {
     if (!confirmed) {
       return;
     }
-    this.invoiceService.cancel(Number(id)).subscribe(() => this.invoiceResource.reload());
+    this.actionError.set(null);
+    this.invoiceService.cancel(Number(id)).subscribe({
+      next: () => {
+        this.invoiceResource.reload();
+        this.medicationsResource.reload();
+      },
+      error: (error) => this.actionError.set(parseApiError(error, "Impossible d'annuler la facture.").message),
+    });
   }
 
   protected downloadPdf(): void {

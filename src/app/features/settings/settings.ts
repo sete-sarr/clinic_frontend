@@ -14,6 +14,7 @@ import { parseApiError } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
 import { Clinic, LOCALE_LABELS, Locale } from '../../core/models/clinic.model';
 import { AccentColor, ThemePreference, ThemeService } from '../../core/services/theme.service';
+import { UserGuideService } from '../../core/services/user-guide.service';
 import { SuccessNotifier } from '../../shared/notifications/success-notifier';
 import { ClinicService } from './clinic.service';
 
@@ -48,6 +49,8 @@ export class Settings {
   private readonly clinicService = inject(ClinicService);
   private readonly successNotifier = inject(SuccessNotifier);
   protected readonly themeService = inject(ThemeService);
+
+  private readonly userGuideService = inject(UserGuideService);
 
   protected readonly logoFields = LOGO_FIELDS;
   protected readonly localeOptions = Object.entries(LOCALE_LABELS) as [Locale, string][];
@@ -127,5 +130,9 @@ export class Settings {
 
   protected setAccent(accent: AccentColor): void {
     this.themeService.setAccent(accent);
+  }
+
+  protected downloadUserGuide(): void {
+    this.userGuideService.download();
   }
 }

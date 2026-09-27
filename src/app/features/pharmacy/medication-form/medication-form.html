@@ -58,6 +58,9 @@
           <mat-label>Seuil maximal</mat-label>
           <input matInput type="number" [formField]="medicationForm.max_threshold" />
           <mat-hint>vide = pas de plafond</mat-hint>
+          @if (medicationForm.max_threshold().touched() && medicationForm.max_threshold().invalid()) {
+            <mat-error>{{ medicationForm.max_threshold().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+          }
         </mat-form-field>
       </div>
 

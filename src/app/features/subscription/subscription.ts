@@ -133,7 +133,7 @@ import {
   SUBSCRIPTION_STATUS_LABELS,
 } from '../../core/models/clinic.model';
 import { SuccessNotifier } from '../../shared/notifications/success-notifier';
-import { PLAN_CATALOG, indicativePriceForCycle } from './plan-catalog';
+import { CURRENCY_LABEL, PLAN_CATALOG, TRIAL_DAYS, priceForCycle } from './plan-catalog';
 import { SubscriptionService } from './subscription.service';
 
 type CheckoutNotice =
@@ -171,7 +171,9 @@ export class Subscription {
 
   protected readonly plans = PLAN_CATALOG;
   protected readonly statusLabels = SUBSCRIPTION_STATUS_LABELS;
-  protected readonly indicativePriceForCycle = indicativePriceForCycle;
+  protected readonly priceForCycle = priceForCycle;
+  protected readonly currencyLabel = CURRENCY_LABEL;
+  protected readonly trialDays = TRIAL_DAYS;
 
   protected readonly billingCycle = signal<BillingCycle>('monthly');
 
@@ -239,15 +241,31 @@ export class Subscription {
   protected isCurrentPlan(tier: PlanTier): boolean {
     const clinic = this.clinicResource.value();
 
+    // Une clinique en essai (ou suspendue à la fin de son essai) a plan_tier = 'starter' par défaut
+    // sans avoir souscrit : seule une souscription en cours (active / paiement en retard) compte
+    // comme formule actuelle, sinon le bouton de souscription Starter serait désactivé.
     return (
-      !!clinic &&
-      clinic.plan_tier === tier &&
-      clinic.subscription_status !== 'cancelled'
+      this.hasSubscription() &&
+      clinic!.plan_tier === tier &&
+      clinic!.billing_cycle === this.billingCycle()
     );
+  }
+
+  // Souscription en cours : un choix de formule modifie l'abonnement existant au lieu d'ouvrir une
+  // nouvelle page de paiement (qui créerait un second abonnement).
+  protected hasSubscription(): boolean {
+    const status = this.clinicResource.value()?.subscription_status;
+    return status === 'active' || status === 'past_due';
   }
 
   protected async selectPlan(tier: PlanTier): Promise<void> {
     this.errorMessage.set(null);
+
+    if (this.hasSubscription()) {
+      await this.changePlan(tier);
+      return;
+    }
+
     this.working.set(tier);
 
     try {
@@ -266,6 +284,28 @@ export class Subscription {
       );
 
       this.errorMessage.set(apiError.message);
+      this.working.set(null);
+    }
+  }
+
+  private async changePlan(tier: PlanTier): Promise<void> {
+    const plan = this.plans.find((candidate) => candidate.tier === tier);
+    const cycleLabel = this.billingCycle() === 'annual' ? 'annuelle' : 'mensuelle';
+    const confirmed = confirm(
+      `Passer à la formule ${plan?.label ?? tier} (${cycleLabel}) ? La différence est calculée au prorata par Stripe ` +
+        'et reportée sur votre prochaine facture (un changement de cycle est facturé immédiatement).',
+    );
+    if (!confirmed) {
+      return;
+    }
+    this.working.set(tier);
+    try {
+      await firstValueFrom(this.subscriptionService.changePlan(tier, this.billingCycle()));
+      this.successNotifier.show('Votre formule a été modifiée.');
+      this.clinicResource.reload();
+    } catch (error) {
+      this.errorMessage.set(parseApiError(error, "Impossible de changer de formule pour l'instant.").message);
+    } finally {
       this.working.set(null);
     }
   }

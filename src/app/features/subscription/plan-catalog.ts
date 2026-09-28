@@ -1,12 +1,17 @@
 import { BillingCycle, PlanTier } from '../../core/models/clinic.model';
 
-// Reflète backend/subscriptions/catalog.py::PLAN_LIMITS. Tarification TEMPORAIRE — indicative seulement,
-// en attente de validation métier réelle (business/subscription-billing-policy.md). Le montant réellement
-// facturé provient toujours du Stripe Price résolu côté serveur ; ces montants en $ sont uniquement d'affichage UI.
+// Reflète backend/subscriptions/catalog.py (décision métier du 2026-09-28) : francs CFA (XOF), deux
+// formules proposées, annuel = 10 mois (2 mois offerts), premier mois gratuit. Le montant réellement
+// prélevé provient toujours du Stripe Price résolu côté serveur ; ces montants servent uniquement à
+// l'affichage et doivent rester alignés sur les Prices créés dans Stripe.
+export const CURRENCY_LABEL = 'FCFA';
+export const TRIAL_DAYS = 30;
+const ANNUAL_MONTHS_BILLED = 10;
+
 export interface PlanDefinition {
   tier: PlanTier;
   label: string;
-  indicativeMonthlyUsd: number;
+  monthlyPriceXof: number;
   maxDoctors: number | null;
   maxPatients: number | null;
   highlights: string[];
@@ -16,34 +21,33 @@ export const PLAN_CATALOG: PlanDefinition[] = [
   {
     tier: 'starter',
     label: 'Starter',
-    indicativeMonthlyUsd: 29,
+    monthlyPriceXof: 10_000,
     maxDoctors: 3,
     maxPatients: 500,
-    highlights: ['Jusqu’à 3 médecins', 'Jusqu’à 500 patients', 'Facturation et rendez-vous inclus'],
+    highlights: [
+      'Jusqu’à 3 médecins',
+      'Jusqu’à 500 patients',
+      'Facturation et rendez-vous inclus',
+      'Notifications de rendez-vous par e-mail',
+    ],
   },
   {
     tier: 'professional',
     label: 'Professional',
-    indicativeMonthlyUsd: 79,
+    monthlyPriceXof: 15_000,
     maxDoctors: 10,
     maxPatients: 5000,
-    highlights: ['Jusqu’à 10 médecins', 'Jusqu’à 5000 patients', 'Rapports et exports avancés'],
-  },
-  {
-    tier: 'enterprise',
-    label: 'Enterprise',
-    indicativeMonthlyUsd: 199,
-    maxDoctors: null,
-    maxPatients: null,
-    highlights: ['Médecins illimités', 'Patients illimités', 'Support prioritaire'],
+    // SMS et rappel de la veille : réservés à Professional (subscriptions/catalog.py PLAN_FEATURES).
+    highlights: [
+      'Jusqu’à 10 médecins',
+      'Jusqu’à 5000 patients',
+      'Rapports et exports avancés',
+      'SMS de rendez-vous aux patients',
+      'Rappel automatique la veille du rendez-vous',
+    ],
   },
 ];
 
-// La tarification annuelle reflète le facteur x10 (2 mois offerts) utilisé lors de la création des Stripe Prices.
-export function indicativeAnnualUsd(plan: PlanDefinition): number {
-  return plan.indicativeMonthlyUsd * 10;
-}
-
-export function indicativePriceForCycle(plan: PlanDefinition, cycle: BillingCycle): number {
-  return cycle === 'annual' ? indicativeAnnualUsd(plan) : plan.indicativeMonthlyUsd;
+export function priceForCycle(plan: PlanDefinition, cycle: BillingCycle): number {
+  return cycle === 'annual' ? plan.monthlyPriceXof * ANNUAL_MONTHS_BILLED : plan.monthlyPriceXof;
 }

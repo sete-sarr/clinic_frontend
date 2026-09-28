@@ -14,6 +14,14 @@ export class SubscriptionService {
     return this.http.post<{ portal_url: string }>(`${this.baseUrl}billing-portal/`, {});
   }
 
+  // Clinique déjà abonnée : modifie l'abonnement existant (jamais un second abonnement).
+  changePlan(planTier: PlanTier, billingCycle: BillingCycle): Observable<{ plan_tier: PlanTier; billing_cycle: BillingCycle }> {
+    return this.http.post<{ plan_tier: PlanTier; billing_cycle: BillingCycle }>(`${this.baseUrl}change-plan/`, {
+      plan_tier: planTier,
+      billing_cycle: billingCycle,
+    });
+  }
+
   startCheckout(planTier: PlanTier, billingCycle: BillingCycle): Observable<{ checkout_url: string }> {
     return this.http.post<{ checkout_url: string }>(`${this.baseUrl}checkout-session/`, {
       plan_tier: planTier,

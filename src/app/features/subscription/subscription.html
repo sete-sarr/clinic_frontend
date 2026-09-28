@@ -29,7 +29,9 @@
           </div>
           <div class="status-item">
             <span class="status-label">Formule actuelle</span>
-            <span class="status-value">{{ clinic.plan_tier | titlecase }}</span>
+            <span class="status-value">
+              {{ clinic.subscription_status === 'trial' ? 'Aucune (essai gratuit)' : (clinic.plan_tier | titlecase) }}
+            </span>
           </div>
           @if (clinic.subscription_status === 'trial' && clinic.trial_ends_at) {
             <div class="status-item">
@@ -45,6 +47,12 @@
           }
         </div>
 
+        @if (clinic.subscription_status === 'trial') {
+          <p class="warning-text warning-info">
+            <mat-icon>info</mat-icon>
+            Vous profitez de votre mois d'essai gratuit. Choisissez une formule dès maintenant : aucun prélèvement n'aura lieu avant la fin de l'essai.
+          </p>
+        }
         @if (clinic.subscription_status === 'past_due') {
           <p class="warning-text">
             <mat-icon>warning</mat-icon>
@@ -54,7 +62,7 @@
         @if (clinic.subscription_status === 'suspended') {
           <p class="warning-text warning-error">
             <mat-icon>error</mat-icon>
-            Votre abonnement est suspendu. La création de nouveaux enregistrements est bloquée ; vos données existantes restent accessibles.
+            Votre abonnement est suspendu. La création de nouveaux enregistrements est bloquée ; vos données existantes restent accessibles. Choisissez une formule ci-dessous pour réactiver votre compte.
           </p>
         }
 
@@ -89,7 +97,7 @@
         </mat-card-header>
         <mat-card-content>
           <div class="plan-price">
-            <span class="price-amount">{{ indicativePriceForCycle(plan, billingCycle()) | number: '1.0-0' }} $</span>
+            <span class="price-amount">{{ priceForCycle(plan, billingCycle()) | number: '1.0-0' }} {{ currencyLabel }}</span>
             <span class="price-period">/ {{ billingCycle() === 'annual' ? 'an' : 'mois' }}</span>
           </div>
           <ul class="plan-highlights">
@@ -109,7 +117,7 @@
               @if (working() === plan.tier) {
                 <mat-spinner diameter="18" />
               } @else {
-                Choisir cette formule
+                {{ hasSubscription() ? 'Passer à cette formule' : 'Choisir cette formule' }}
               }
             </button>
           }
@@ -123,6 +131,6 @@
   }
 
   <p class="pricing-disclaimer">
-    Tarifs indicatifs en USD, hors taxes. La facturation réelle est gérée de façon sécurisée par Stripe.
+    Tarifs en francs CFA (XOF). Le premier mois ({{ trialDays }} jours) est gratuit ; le paiement est géré de façon sécurisée par Stripe.
   </p>
 }

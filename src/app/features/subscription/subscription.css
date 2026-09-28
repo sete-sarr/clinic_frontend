@@ -97,6 +97,10 @@
   color: var(--color-error);
 }
 
+.warning-text.warning-info {
+  color: var(--color-info);
+}
+
 .manage-action {
   margin-top: var(--space-4);
 }

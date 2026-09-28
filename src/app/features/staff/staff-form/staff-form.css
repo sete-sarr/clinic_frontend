@@ -36,6 +36,20 @@
   margin: 0 0 var(--space-4);
 }
 
+/* Mobile : un champ par ligne sur toute la largeur (listes déroulantes comprises) — deux champs
+   côte à côte ne laissent que ~146px chacun, libellés tronqués. Même point d'arrêt que shell.css. */
+@media (max-width: 599px) {
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .half-width {
+    flex: none;
+    width: 100%;
+  }
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;

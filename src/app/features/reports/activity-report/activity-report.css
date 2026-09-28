@@ -1,9 +1,12 @@
-.page-header {
-  margin-bottom: var(--space-4);
+/* Page étroite centrée dans l'espace de travail (même principe que Paramètres). */
+:host {
+  display: block;
+  max-width: 560px;
+  margin-inline: auto;
 }
 
-.form-card {
-  max-width: 560px;
+.page-header {
+  margin-bottom: var(--space-4);
 }
 
 .hint {

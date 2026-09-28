@@ -17,6 +17,25 @@
   width: 180px;
 }
 
+/* Mobile : la liste « Action » sur toute la largeur, les dates « Du » / « Au » côte à côte sur une
+   même ligne (moitié de la largeur chacune). Même point d'arrêt que shell.css. */
+@media (max-width: 599px) {
+  .filters {
+    gap: 0 var(--space-3);
+  }
+
+  .action-field {
+    flex: 1 1 100%;
+    width: auto;
+  }
+
+  .date-field {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+}
+
 .loading {
   display: flex;
   justify-content: center;

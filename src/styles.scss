@@ -151,7 +151,9 @@ body {
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-6);
-  margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-4);
+  // Pas de marges négatives : .mat-mdc-dialog-surface n'a aucun padding, elles faisaient déborder
+  // le bandeau de 24px de chaque côté (défilement horizontal de toute la fenêtre sur mobile).
+  margin: 0 0 var(--space-4);
   background-color: var(--sidebar-bg);
   border-bottom: 1px solid var(--color-border);
   border-radius: 4px 4px 0 0;
@@ -160,6 +162,10 @@ body {
 // `!important` needed: the `mat-dialog-title` directive applies its own system-token color
 // directly on the host <h2>, which otherwise wins over this plain descendant-selector rule.
 .app-dialog-header h2 {
+  // mat-dialog-title impose flex: 0 0 auto : sans ceci, un titre long garde sa largeur sur une ligne
+  // et déborde de la fenêtre sur mobile au lieu de passer à la ligne.
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
   font-size: 1.125rem;
   font-weight: var(--font-weight-semibold);

@@ -14,7 +14,7 @@
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="filter-field">
+  <mat-form-field appearance="outline" class="filter-field action-field">
     <mat-label>Action</mat-label>
     <mat-select [value]="action() ?? ''" (selectionChange)="onActionFilterChange($event.value)">
       <mat-option value="">Toutes</mat-option>
@@ -24,14 +24,14 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="filter-field">
+  <mat-form-field appearance="outline" class="filter-field date-field">
     <mat-label>Du</mat-label>
     <input matInput [matDatepicker]="fromPicker" (dateChange)="onDateFromChange($event)" />
     <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
     <mat-datepicker #fromPicker />
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="filter-field">
+  <mat-form-field appearance="outline" class="filter-field date-field">
     <mat-label>Au</mat-label>
     <input matInput [matDatepicker]="toPicker" (dateChange)="onDateToChange($event)" />
     <mat-datepicker-toggle matIconSuffix [for]="toPicker" />

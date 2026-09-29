@@ -176,6 +176,23 @@ body {
   color: var(--sidebar-text) !important;
 }
 
+// Formulaires en fenêtre modale, sur mobile : un champ par ligne sur toute la largeur (listes
+// déroulantes comprises). Deux champs côte à côte n'y laissent que ~146px chacun (libellés
+// tronqués). Global car tous les formulaires modaux partagent .field-row/.half-width ; sélecteur
+// volontairement plus spécifique que les styles de composant (.field-row[_ngcontent-…]) pour les
+// surcharger. Même point d'arrêt que shell.css (599px).
+@media (max-width: 599px) {
+  .mat-mdc-dialog-surface .mat-mdc-dialog-content .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mat-mdc-dialog-surface .mat-mdc-dialog-content .field-row > .half-width {
+    flex: none;
+    width: 100%;
+  }
+}
+
 // Mobile table overflow (design-system/tables.md §Mobile — défilement horizontal). Without this,
 // a table wider than the viewport pushes .shell-workspace's width, and since nothing clips it the
 // overflow bubbles up to the whole page (sidebar/header scroll sideways too, not just the table).

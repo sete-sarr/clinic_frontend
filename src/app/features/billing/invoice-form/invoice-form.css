@@ -49,6 +49,18 @@
   width: 260px;
 }
 
+.vat-hint {
+  white-space: nowrap;
+}
+
+/* Mobile : taux de TVA sur toute la largeur, comme les autres champs (voir styles.scss), pour que
+   l'indication « (ex. 0.18 = 18%) » tienne sur une ligne. */
+@media (max-width: 599px) {
+  .vat-field {
+    width: 100%;
+  }
+}
+
 .section-title {
   margin: var(--space-4) 0 var(--space-2);
   font-size: 1rem;

@@ -1,27 +1,27 @@
 <div class="page-header">
-  <h1>Paiements</h1>
+  <h1>{{ 'payments.title' | transloco }}</h1>
   <button mat-stroked-button (click)="exportCsv()">
     <mat-icon>download</mat-icon>
-    Exporter CSV
+    {{ 'common.actions.exportCsv' | transloco }}
   </button>
 </div>
 
 <div class="filters">
   <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Rechercher</mat-label>
+    <mat-label>{{ 'common.search' | transloco }}</mat-label>
     <input
       matInput
       [value]="searchInput()"
       (input)="onSearchInput($any($event.target).value)"
-      placeholder="Nom du patient, n° facture..."
+      [placeholder]="'common.invoiceFilterPlaceholder' | transloco"
     />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Statut</mat-label>
+    <mat-label>{{ 'common.status' | transloco }}</mat-label>
     <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
-      <mat-option value="">Tous</mat-option>
+      <mat-option value="">{{ 'common.all' | transloco }}</mat-option>
       @for (option of statusOptions; track option[0]) {
         <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
       }
@@ -29,9 +29,9 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Méthode</mat-label>
+    <mat-label>{{ 'payments.method' | transloco }}</mat-label>
     <mat-select [value]="method() ?? ''" (selectionChange)="onMethodFilterChange($event.value)">
-      <mat-option value="">Toutes</mat-option>
+      <mat-option value="">{{ 'common.allFeminine' | transloco }}</mat-option>
       @for (option of methodOptions; track option[0]) {
         <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
       }
@@ -44,39 +44,39 @@
     <mat-spinner diameter="32" />
   </div>
 } @else if (dataSource.data.length === 0) {
-  <app-empty-state icon="payments" message="Aucun paiement pour ce filtre." />
+  <app-empty-state icon="payments" [message]="'payments.empty' | transloco" />
 } @else {
   <div class="table-scroll">
   <table mat-table [dataSource]="dataSource" class="payments-table">
     <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
       <td mat-cell *matCellDef="let payment">{{ payment.date | date: 'mediumDate' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="invoice">
-      <th mat-header-cell *matHeaderCellDef>Facture</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'payments.invoice' | transloco }}</th>
       <td mat-cell *matCellDef="let payment">
         <a [routerLink]="['/billing']">{{ payment.invoice_number }}</a>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="patient">
-      <th mat-header-cell *matHeaderCellDef>Patient</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
       <td mat-cell *matCellDef="let payment">{{ payment.patient_display }}</td>
     </ng-container>
 
     <ng-container matColumnDef="amount">
-      <th mat-header-cell *matHeaderCellDef>Montant</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'payments.amount' | transloco }}</th>
       <td mat-cell *matCellDef="let payment">{{ payment.amount }}</td>
     </ng-container>
 
     <ng-container matColumnDef="method">
-      <th mat-header-cell *matHeaderCellDef>Méthode</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'payments.method' | transloco }}</th>
       <td mat-cell *matCellDef="let payment">{{ methodLabel(payment) }}</td>
     </ng-container>
 
     <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
       <td mat-cell *matCellDef="let payment">
         <mat-chip [class]="'status-chip status-' + payment.status" disableRipple>
           {{ statusLabel(payment) }}
@@ -85,13 +85,13 @@
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
       <td mat-cell *matCellDef="let payment">
-        <button mat-icon-button matTooltip="Télécharger le reçu" (click)="downloadReceipt(payment)">
+        <button mat-icon-button [matTooltip]="'payments.downloadReceipt' | transloco" (click)="downloadReceipt(payment)">
           <mat-icon>picture_as_pdf</mat-icon>
         </button>
         @if (canRefund() && payment.status === 'validated') {
-          <button mat-icon-button matTooltip="Rembourser" (click)="refund(payment)">
+          <button mat-icon-button [matTooltip]="'payments.refund' | transloco" (click)="refund(payment)">
             <mat-icon>undo</mat-icon>
           </button>
         }

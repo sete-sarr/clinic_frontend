@@ -1,15 +1,13 @@
+import { translatedLabels } from '../i18n/translated-labels';
+
 // Reflète clinics.api.serializers.ClinicSerializer (backend).
 export type SubscriptionStatus = 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled';
 export type PlanTier = 'starter' | 'professional' | 'enterprise';
 export type BillingCycle = 'monthly' | 'annual';
 
-export const SUBSCRIPTION_STATUS_LABELS: Record<SubscriptionStatus, string> = {
-  trial: 'Essai',
-  active: 'Actif',
-  past_due: 'Paiement en retard',
-  suspended: 'Suspendu',
-  cancelled: 'Annulé',
-};
+export const SUBSCRIPTION_STATUS_LABELS: Record<SubscriptionStatus, string> = translatedLabels<SubscriptionStatus>('labels.subscriptionStatus', [
+  'trial', 'active', 'past_due', 'suspended', 'cancelled',
+]);
 
 export const PLAN_TIER_LABELS: Record<PlanTier, string> = {
   starter: 'Starter',

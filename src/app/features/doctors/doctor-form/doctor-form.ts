@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -45,6 +46,7 @@ interface DoctorFormModel {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './doctor-form.html',
   styleUrl: './doctor-form.css',
@@ -83,15 +85,15 @@ export class DoctorForm {
   });
 
   protected readonly doctorForm = form(this.model, (path) => {
-    required(path.first_name, { message: 'Prénom requis' });
-    required(path.last_name, { message: 'Nom requis' });
-    required(path.professional_number, { message: 'N° professionnel requis' });
-    required(path.specialty, { message: 'Spécialité requise' });
-    email(path.email, { message: 'Adresse e-mail invalide' });
+    required(path.first_name, { message: translate('common.validation.firstNameRequired') });
+    required(path.last_name, { message: translate('common.validation.lastNameRequired') });
+    required(path.professional_number, { message: translate('doctors.professionalNumberRequired') });
+    required(path.specialty, { message: translate('doctors.specialtyRequired') });
+    email(path.email, { message: translate('common.validation.emailInvalid') });
     if (!this.isEditMode()) {
-      required(path.username, { message: "Nom d'utilisateur requis" });
-      required(path.email, { message: 'Adresse e-mail requise' });
-      required(path.password, { message: 'Mot de passe requis' });
+      required(path.username, { message: translate('common.validation.usernameRequired') });
+      required(path.email, { message: translate('common.validation.emailRequiredFem') });
+      required(path.password, { message: translate('common.validation.passwordRequired') });
     }
   });
 
@@ -143,11 +145,11 @@ export class DoctorForm {
             }),
           );
         }
-        this.successNotifier.show('Médecin enregistré avec succès.');
+        this.successNotifier.show(translate('doctors.saved'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer ce médecin.");
+        const apiError = parseApiError(error, translate('doctors.saveError'));
         const fieldsByName = {
           username: this.doctorForm.username,
           first_name: this.doctorForm.first_name,

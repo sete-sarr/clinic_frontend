@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -35,6 +36,7 @@ interface MedicalRecordFormModel {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './medical-record-form.html',
   styleUrl: './medical-record-form.css',
@@ -81,11 +83,11 @@ export class MedicalRecordForm {
 
       try {
         await firstValueFrom(this.medicalRecordService.update(Number(this.currentId()), payload));
-        this.successNotifier.show('Dossier médical enregistré avec succès.');
+        this.successNotifier.show(translate('medicalRecords.saved'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer le dossier médical.");
+        const apiError = parseApiError(error, translate('medicalRecords.saveError'));
         const fieldsByName = {
           allergies: this.medicalRecordForm.allergies,
           medical_history: this.medicalRecordForm.medical_history,

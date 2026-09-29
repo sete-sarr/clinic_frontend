@@ -1,14 +1,14 @@
 <div class="page-header">
-  <h1>Rendez-vous</h1>
+  <h1>{{ 'appointments.title' | transloco }}</h1>
   <div class="header-actions">
     <button mat-stroked-button (click)="exportCsv()">
       <mat-icon>download</mat-icon>
-      Exporter CSV
+      {{ 'common.actions.exportCsv' | transloco }}
     </button>
     @if (canManage()) {
       <button mat-flat-button color="primary" (click)="openCreate()">
         <mat-icon>add</mat-icon>
-        Nouveau rendez-vous
+        {{ 'appointments.new' | transloco }}
       </button>
     }
   </div>
@@ -16,20 +16,20 @@
 
 <div class="filters">
   <mat-form-field appearance="outline" class="patient-number-filter">
-    <mat-label>N° patient</mat-label>
+    <mat-label>{{ 'appointments.patientNumber' | transloco }}</mat-label>
     <input
       matInput
       [value]="patientNumberInput()"
       (input)="onPatientNumberInput($any($event.target).value)"
-      placeholder="Numéro sur le ticket..."
+      [placeholder]="'appointments.ticketPlaceholder' | transloco"
     />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="status-filter">
-    <mat-label>Statut</mat-label>
+    <mat-label>{{ 'common.status' | transloco }}</mat-label>
     <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
-      <mat-option value="">Tous</mat-option>
+      <mat-option value="">{{ 'common.all' | transloco }}</mat-option>
       @for (option of statusOptions; track option[0]) {
         <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
       }
@@ -37,7 +37,7 @@
   </mat-form-field>
 
   <mat-checkbox [checked]="checkedIn() === true" (change)="onCheckedInFilterChange($event.checked)">
-    Arrivés uniquement
+    {{ 'appointments.checkedInOnly' | transloco }}
   </mat-checkbox>
 </div>
 
@@ -46,7 +46,7 @@
     <mat-spinner diameter="32" />
   </div>
 } @else if (dataSource.data.length === 0) {
-  <app-empty-state icon="event_busy" message="Aucun rendez-vous pour ce filtre." />
+  <app-empty-state icon="event_busy" [message]="'appointments.empty' | transloco" />
 } @else {
   @if (isHandset()) {
     <div class="appointment-cards">
@@ -60,48 +60,48 @@
           </div>
           <div class="appointment-card-body">
             <div class="appointment-card-row">
-              <span class="label">Patient</span>
+              <span class="label">{{ 'common.fields.patient' | transloco }}</span>
               <span>
                 {{ appointment.patient_display }}
                 @if (isCheckedIn(appointment)) {
-                  <mat-icon class="checked-in-icon" matTooltip="Patient arrivé ({{ appointment.ticket_number }})">
+                  <mat-icon class="checked-in-icon" [matTooltip]="'appointments.checkedIn' | transloco: { ticket: appointment.ticket_number }">
                     how_to_reg
                   </mat-icon>
                 }
               </span>
             </div>
             <div class="appointment-card-row">
-              <span class="label">Médecin</span>
+              <span class="label">{{ 'common.fields.doctor' | transloco }}</span>
               <span>{{ appointment.doctor_display }}</span>
             </div>
           </div>
           <div class="appointment-card-actions">
             @if (canManage() && canCheckIn(appointment)) {
-              <button mat-icon-button matTooltip="Enregistrer l'arrivée" (click)="checkIn(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.checkIn' | transloco" (click)="checkIn(appointment)">
                 <mat-icon>how_to_reg</mat-icon>
               </button>
             }
             @if (isCheckedIn(appointment)) {
-              <button mat-icon-button matTooltip="Imprimer le ticket" (click)="downloadTicket(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.printSlip' | transloco" (click)="downloadTicket(appointment)">
                 <mat-icon>confirmation_number</mat-icon>
               </button>
             }
             @if (canManage() && !isTerminal(appointment)) {
               @if (appointment.status === 'pending') {
-                <button mat-icon-button matTooltip="Confirmer" (click)="confirm(appointment)">
+                <button mat-icon-button [matTooltip]="'appointments.confirm' | transloco" (click)="confirm(appointment)">
                   <mat-icon>event_available</mat-icon>
                 </button>
               }
-              <button mat-icon-button matTooltip="Modifier" (click)="openEdit(appointment)">
+              <button mat-icon-button [matTooltip]="'common.actions.edit' | transloco" (click)="openEdit(appointment)">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button matTooltip="Marquer terminé" (click)="complete(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.markCompleted' | transloco" (click)="complete(appointment)">
                 <mat-icon>check_circle</mat-icon>
               </button>
-              <button mat-icon-button matTooltip="Absence" (click)="markNoShow(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.noShow' | transloco" (click)="markNoShow(appointment)">
                 <mat-icon>person_off</mat-icon>
               </button>
-              <button mat-icon-button matTooltip="Annuler" (click)="cancel(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.cancel' | transloco" (click)="cancel(appointment)">
                 <mat-icon>cancel</mat-icon>
               </button>
             }
@@ -113,28 +113,28 @@
     <div class="table-scroll">
     <table mat-table [dataSource]="dataSource" class="appointments-table">
       <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef>Date / Heure</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'appointments.dateTime' | transloco }}</th>
         <td mat-cell *matCellDef="let appointment">{{ appointment.date }} · {{ appointment.time }}</td>
       </ng-container>
 
       <ng-container matColumnDef="patient">
-        <th mat-header-cell *matHeaderCellDef>Patient</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
         <td mat-cell *matCellDef="let appointment">{{ appointment.patient_display }}</td>
       </ng-container>
 
       <ng-container matColumnDef="doctor">
-        <th mat-header-cell *matHeaderCellDef>Médecin</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.doctor' | transloco }}</th>
         <td mat-cell *matCellDef="let appointment">{{ appointment.doctor_display }}</td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
         <td mat-cell *matCellDef="let appointment">
           <mat-chip [class]="'status-chip status-' + appointment.status" disableRipple>
             {{ statusLabel(appointment) }}
           </mat-chip>
           @if (isCheckedIn(appointment)) {
-            <mat-icon class="checked-in-icon" matTooltip="Patient arrivé ({{ appointment.ticket_number }})">
+            <mat-icon class="checked-in-icon" [matTooltip]="'appointments.checkedIn' | transloco: { ticket: appointment.ticket_number }">
               how_to_reg
             </mat-icon>
           }
@@ -142,35 +142,35 @@
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
         <td mat-cell *matCellDef="let appointment">
           <div class="actions">
             @if (canManage() && canCheckIn(appointment)) {
-              <button mat-icon-button matTooltip="Enregistrer l'arrivée" (click)="checkIn(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.checkIn' | transloco" (click)="checkIn(appointment)">
                 <mat-icon>how_to_reg</mat-icon>
               </button>
             }
             @if (isCheckedIn(appointment)) {
-              <button mat-icon-button matTooltip="Imprimer le ticket" (click)="downloadTicket(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.printSlip' | transloco" (click)="downloadTicket(appointment)">
                 <mat-icon>confirmation_number</mat-icon>
               </button>
             }
             @if (canManage() && !isTerminal(appointment)) {
               @if (appointment.status === 'pending') {
-                <button mat-icon-button matTooltip="Confirmer" (click)="confirm(appointment)">
+                <button mat-icon-button [matTooltip]="'appointments.confirm' | transloco" (click)="confirm(appointment)">
                   <mat-icon>event_available</mat-icon>
                 </button>
               }
-              <button mat-icon-button matTooltip="Modifier" (click)="openEdit(appointment)">
+              <button mat-icon-button [matTooltip]="'common.actions.edit' | transloco" (click)="openEdit(appointment)">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button matTooltip="Marquer terminé" (click)="complete(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.markCompleted' | transloco" (click)="complete(appointment)">
                 <mat-icon>check_circle</mat-icon>
               </button>
-              <button mat-icon-button matTooltip="Absence" (click)="markNoShow(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.noShow' | transloco" (click)="markNoShow(appointment)">
                 <mat-icon>person_off</mat-icon>
               </button>
-              <button mat-icon-button matTooltip="Annuler" (click)="cancel(appointment)">
+              <button mat-icon-button [matTooltip]="'appointments.cancel' | transloco" (click)="cancel(appointment)">
                 <mat-icon>cancel</mat-icon>
               </button>
             }

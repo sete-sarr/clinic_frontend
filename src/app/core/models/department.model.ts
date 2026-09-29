@@ -1,3 +1,5 @@
+import { translatedLabels } from '../i18n/translated-labels';
+
 // Reflète departments.api.serializers.DepartmentSerializer (backend) — champs résumés uniquement,
 // suffisants pour les sélecteurs (ex. le select département du formulaire médecin).
 export interface DepartmentSummary {
@@ -9,22 +11,17 @@ export interface DepartmentSummary {
 // Reflète departments.models.Department.DepartmentType.
 export type DepartmentType = 'medical' | 'administrative' | 'technical' | 'support';
 
-export const DEPARTMENT_TYPE_LABELS: Record<DepartmentType, string> = {
-  medical: 'Médical',
-  administrative: 'Administratif',
-  technical: 'Technique',
-  support: 'Support',
-};
+export const DEPARTMENT_TYPE_LABELS: Record<DepartmentType, string> = translatedLabels<DepartmentType>('labels.departmentType', [
+  'medical', 'administrative', 'technical', 'support',
+]);
 
 // Reflète departments.models.Department.Status — Actif -> Inactif -> Archivé
 // (business/workflow-policy.md). Les départements archivés sont en lecture seule.
 export type DepartmentStatus = 'active' | 'inactive' | 'archived';
 
-export const DEPARTMENT_STATUS_LABELS: Record<DepartmentStatus, string> = {
-  active: 'Actif',
-  inactive: 'Inactif',
-  archived: 'Archivé',
-};
+export const DEPARTMENT_STATUS_LABELS: Record<DepartmentStatus, string> = translatedLabels<DepartmentStatus>('labels.departmentStatus', [
+  'active', 'inactive', 'archived',
+]);
 
 // Enregistrement complet, utilisé par features/departments/ (list/create/edit) — reflète
 // l'ensemble complet des champs de DepartmentSerializer, pas seulement le DepartmentSummary

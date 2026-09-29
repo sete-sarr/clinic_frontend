@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -37,6 +38,7 @@ interface MedicationFormModel {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './medication-form.html',
   styleUrl: './medication-form.css',
@@ -66,12 +68,12 @@ export class MedicationForm {
   });
 
   protected readonly medicationForm = form(this.model, (path) => {
-    required(path.name, { message: 'Nom du médicament requis' });
-    maxLength(path.name, 200, { message: 'Nom trop long (200 caractères maximum)' });
-    required(path.unit, { message: 'Unité requise (ex. boîte, comprimé, flacon)' });
-    maxLength(path.unit, 50, { message: 'Unité trop longue (50 caractères maximum)' });
-    min(path.unit_price, 0, { message: 'Le prix ne peut pas être négatif' });
-    min(path.min_threshold, 0, { message: 'Le seuil minimal ne peut pas être négatif' });
+    required(path.name, { message: translate('pharmacy.nameRequired') });
+    maxLength(path.name, 200, { message: translate('pharmacy.nameTooLong') });
+    required(path.unit, { message: translate('pharmacy.unitRequired') });
+    maxLength(path.unit, 50, { message: translate('pharmacy.unitTooLong') });
+    min(path.unit_price, 0, { message: translate('pharmacy.priceNotNegative') });
+    min(path.min_threshold, 0, { message: translate('pharmacy.minNotNegative') });
     // Reflète la contrainte medication_max_threshold_gte_min_threshold (pharmacy/models.py), revérifiée
     // côté serveur par MedicationSerializer.validate — ici uniquement pour un retour immédiat.
     validate(path.max_threshold, ({ value, valueOf }) => {
@@ -80,10 +82,10 @@ export class MedicationForm {
         return undefined;
       }
       if (max < 0) {
-        return { kind: 'min', message: 'Le seuil maximal ne peut pas être négatif' };
+        return { kind: 'min', message: translate('pharmacy.maxNotNegative') };
       }
       return max < (valueOf(path.min_threshold) ?? 0)
-        ? { kind: 'maxBelowMin', message: 'Le seuil maximal doit être supérieur ou égal au seuil minimal' }
+        ? { kind: 'maxBelowMin', message: translate('pharmacy.maxBelowMin') }
         : undefined;
     });
   });
@@ -113,11 +115,11 @@ export class MedicationForm {
         } else {
           await firstValueFrom(this.medicationService.create(value));
         }
-        this.successNotifier.show('Médicament enregistré avec succès.');
+        this.successNotifier.show(translate('pharmacy.saved'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer ce médicament.");
+        const apiError = parseApiError(error, translate('pharmacy.saveError'));
         const fieldsByName = {
           name: this.medicationForm.name,
           unit: this.medicationForm.unit,

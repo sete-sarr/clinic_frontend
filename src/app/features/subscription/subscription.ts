@@ -122,6 +122,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { parseApiError } from '../../core/api/api-error';
@@ -158,6 +159,7 @@ type CheckoutNotice =
     MatChipsModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './subscription.html',
   styleUrl: './subscription.css',
@@ -203,14 +205,12 @@ export class Subscription {
   private static readonly CHECKOUT_NOTICES = {
     success: {
       kind: 'success' as const,
-      message:
-        'Paiement confirmé — votre abonnement est en cours de mise à jour.',
+      message: 'subscription.checkoutSuccess', // clé de traduction, traduite à l'affichage
     },
 
     cancelled: {
       kind: 'cancelled' as const,
-      message:
-        'Le paiement a été annulé. Aucun changement n’a été effectué.',
+      message: 'subscription.checkoutCancelled',
     },
   };
 
@@ -280,7 +280,7 @@ export class Subscription {
     } catch (error) {
       const apiError = parseApiError(
         error,
-        "Impossible de démarrer le paiement pour l'instant.",
+        translate('subscription.checkoutError'),
       );
 
       this.errorMessage.set(apiError.message);
@@ -290,21 +290,18 @@ export class Subscription {
 
   private async changePlan(tier: PlanTier): Promise<void> {
     const plan = this.plans.find((candidate) => candidate.tier === tier);
-    const cycleLabel = this.billingCycle() === 'annual' ? 'annuelle' : 'mensuelle';
-    const confirmed = confirm(
-      `Passer à la formule ${plan?.label ?? tier} (${cycleLabel}) ? La différence est calculée au prorata par Stripe ` +
-        'et reportée sur votre prochaine facture (un changement de cycle est facturé immédiatement).',
-    );
+    const cycleLabel = translate(this.billingCycle() === 'annual' ? 'subscription.cycleAnnual' : 'subscription.cycleMonthly');
+    const confirmed = confirm(translate('subscription.confirmChange', { plan: plan?.label ?? tier, cycle: cycleLabel }));
     if (!confirmed) {
       return;
     }
     this.working.set(tier);
     try {
       await firstValueFrom(this.subscriptionService.changePlan(tier, this.billingCycle()));
-      this.successNotifier.show('Votre formule a été modifiée.');
+      this.successNotifier.show(translate('subscription.planChanged'));
       this.clinicResource.reload();
     } catch (error) {
-      this.errorMessage.set(parseApiError(error, "Impossible de changer de formule pour l'instant.").message);
+      this.errorMessage.set(parseApiError(error, translate('subscription.changeError')).message);
     } finally {
       this.working.set(null);
     }
@@ -323,7 +320,7 @@ export class Subscription {
     } catch (error) {
       const apiError = parseApiError(
         error,
-        "Impossible d'ouvrir la gestion de l'abonnement.",
+        translate('subscription.portalError'),
       );
 
       this.errorMessage.set(apiError.message);

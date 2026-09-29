@@ -1,22 +1,22 @@
-<h1>Mon dossier médical</h1>
+<h1>{{ 'portal.nav.medicalRecord' | transloco }}</h1>
 
 @if (recordResource.isLoading()) {
   <div class="loading">
     <mat-spinner diameter="32" />
   </div>
 } @else if (!record()) {
-  <app-empty-state icon="folder_off" message="Aucun dossier médical n'est encore associé à votre profil." />
+  <app-empty-state icon="folder_off" [message]="'portal.medicalRecord.empty' | transloco" />
 } @else {
   <mat-card class="record-card">
     <mat-card-content>
-      <h2>Allergies</h2>
-      <p>{{ record()!.allergies || 'Aucune allergie renseignée.' }}</p>
+      <h2>{{ 'portal.medicalRecord.allergies' | transloco }}</h2>
+      <p>{{ record()!.allergies || ('portal.medicalRecord.noAllergies' | transloco) }}</p>
 
-      <h2>Antécédents médicaux</h2>
-      <p>{{ record()!.medical_history || 'Aucun antécédent renseigné.' }}</p>
+      <h2>{{ 'portal.medicalRecord.history' | transloco }}</h2>
+      <p>{{ record()!.medical_history || ('portal.medicalRecord.noHistory' | transloco) }}</p>
 
-      <h2>Observations</h2>
-      <p>{{ record()!.observations || 'Aucune observation.' }}</p>
+      <h2>{{ 'portal.medicalRecord.observations' | transloco }}</h2>
+      <p>{{ record()!.observations || ('portal.medicalRecord.noObservations' | transloco) }}</p>
     </mat-card-content>
   </mat-card>
 }

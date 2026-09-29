@@ -2,6 +2,7 @@ import { httpResource } from '@angular/common/http';
 import { Component, computed } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { MedicalRecord } from '../../medical-records/medical-record.model';
@@ -10,7 +11,7 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 
 @Component({
   selector: 'app-portal-medical-record',
-  imports: [EmptyState, MatCardModule, MatProgressSpinnerModule],
+  imports: [EmptyState, MatCardModule, MatProgressSpinnerModule, TranslocoPipe],
   templateUrl: './portal-medical-record.html',
   styleUrl: './portal-medical-record.css',
 })

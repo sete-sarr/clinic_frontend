@@ -1,12 +1,12 @@
 <div class="page-header">
-  <h1>Abonnement</h1>
+  <h1>{{ 'subscription.title' | transloco }}</h1>
 </div>
 
 @if (checkoutNotice(); as notice) {
   <div class="checkout-notice" [class.notice-success]="notice.kind === 'success'" [class.notice-cancelled]="notice.kind === 'cancelled'" role="status">
     <mat-icon>{{ notice.kind === 'success' ? 'check_circle' : 'info' }}</mat-icon>
-    <span>{{ notice.message }}</span>
-    <button mat-icon-button (click)="dismissNotice()" aria-label="Fermer">
+    <span>{{ notice.message | transloco }}</span>
+    <button mat-icon-button (click)="dismissNotice()" [attr.aria-label]="'common.actions.close' | transloco">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -22,26 +22,26 @@
       <mat-card-content>
         <div class="status-row">
           <div class="status-item">
-            <span class="status-label">Statut</span>
+            <span class="status-label">{{ 'subscription.status' | transloco }}</span>
             <mat-chip [class]="'status-chip status-' + clinic.subscription_status">
               {{ statusLabels[clinic.subscription_status] }}
             </mat-chip>
           </div>
           <div class="status-item">
-            <span class="status-label">Formule actuelle</span>
+            <span class="status-label">{{ 'subscription.currentPlan' | transloco }}</span>
             <span class="status-value">
-              {{ clinic.subscription_status === 'trial' ? 'Aucune (essai gratuit)' : (clinic.plan_tier | titlecase) }}
+              {{ clinic.subscription_status === 'trial' ? ('subscription.noPlanTrial' | transloco) : (clinic.plan_tier | titlecase) }}
             </span>
           </div>
           @if (clinic.subscription_status === 'trial' && clinic.trial_ends_at) {
             <div class="status-item">
-              <span class="status-label">Fin de l'essai</span>
+              <span class="status-label">{{ 'subscription.trialEnd' | transloco }}</span>
               <span class="status-value">{{ clinic.trial_ends_at | date: 'mediumDate' }}</span>
             </div>
           }
           @if (clinic.current_period_end) {
             <div class="status-item">
-              <span class="status-label">Prochain renouvellement</span>
+              <span class="status-label">{{ 'subscription.nextRenewal' | transloco }}</span>
               <span class="status-value">{{ clinic.current_period_end | date: 'mediumDate' }}</span>
             </div>
           }
@@ -50,19 +50,19 @@
         @if (clinic.subscription_status === 'trial') {
           <p class="warning-text warning-info">
             <mat-icon>info</mat-icon>
-            Vous profitez de votre mois d'essai gratuit. Choisissez une formule dès maintenant : aucun prélèvement n'aura lieu avant la fin de l'essai.
+            {{ 'subscription.trialInfo' | transloco }}
           </p>
         }
         @if (clinic.subscription_status === 'past_due') {
           <p class="warning-text">
             <mat-icon>warning</mat-icon>
-            Votre dernier paiement a échoué. Merci de mettre à jour votre moyen de paiement pour éviter la suspension du compte.
+            {{ 'subscription.pastDue' | transloco }}
           </p>
         }
         @if (clinic.subscription_status === 'suspended') {
           <p class="warning-text warning-error">
             <mat-icon>error</mat-icon>
-            Votre abonnement est suspendu. La création de nouveaux enregistrements est bloquée ; vos données existantes restent accessibles. Choisissez une formule ci-dessous pour réactiver votre compte.
+            {{ 'subscription.suspended' | transloco }}
           </p>
         }
 
@@ -74,7 +74,7 @@
               } @else {
                 <mat-icon>credit_card</mat-icon>
               }
-              Gérer l'abonnement
+              {{ 'subscription.manage' | transloco }}
             </button>
           </div>
         }
@@ -83,9 +83,9 @@
   }
 
   <div class="cycle-toggle">
-    <mat-button-toggle-group [value]="billingCycle()" (change)="billingCycle.set($event.value)" aria-label="Cycle de facturation">
-      <mat-button-toggle value="monthly">Mensuel</mat-button-toggle>
-      <mat-button-toggle value="annual">Annuel <span class="save-badge">2 mois offerts</span></mat-button-toggle>
+    <mat-button-toggle-group [value]="billingCycle()" (change)="billingCycle.set($event.value)" [attr.aria-label]="'subscription.billingCycle' | transloco">
+      <mat-button-toggle value="monthly">{{ 'subscription.monthly' | transloco }}</mat-button-toggle>
+      <mat-button-toggle value="annual">{{ 'subscription.annual' | transloco }} <span class="save-badge">{{ 'subscription.twoMonthsFree' | transloco }}</span></mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 
@@ -98,26 +98,26 @@
         <mat-card-content>
           <div class="plan-price">
             <span class="price-amount">{{ priceForCycle(plan, billingCycle()) | number: '1.0-0' }} {{ currencyLabel }}</span>
-            <span class="price-period">/ {{ billingCycle() === 'annual' ? 'an' : 'mois' }}</span>
+            <span class="price-period">/ {{ (billingCycle() === 'annual' ? 'subscription.perYear' : 'subscription.perMonth') | transloco }}</span>
           </div>
           <ul class="plan-highlights">
             @for (highlight of plan.highlights; track highlight) {
               <li>
                 <mat-icon>check</mat-icon>
-                {{ highlight }}
+                {{ highlight | transloco }}
               </li>
             }
           </ul>
         </mat-card-content>
         <mat-card-actions>
           @if (isCurrentPlan(plan.tier)) {
-            <button mat-flat-button disabled>Formule actuelle</button>
+            <button mat-flat-button disabled>{{ 'subscription.currentPlan' | transloco }}</button>
           } @else {
             <button mat-flat-button color="primary" (click)="selectPlan(plan.tier)" [disabled]="working() !== null">
               @if (working() === plan.tier) {
                 <mat-spinner diameter="18" />
               } @else {
-                {{ hasSubscription() ? 'Passer à cette formule' : 'Choisir cette formule' }}
+                {{ (hasSubscription() ? 'subscription.switchToPlan' : 'subscription.choosePlan') | transloco }}
               }
             </button>
           }
@@ -131,6 +131,6 @@
   }
 
   <p class="pricing-disclaimer">
-    Tarifs en francs CFA (XOF). Le premier mois ({{ trialDays }} jours) est gratuit ; le paiement est géré de façon sécurisée par Stripe.
+    {{ 'subscription.disclaimer' | transloco: { days: trialDays } }}
   </p>
 }

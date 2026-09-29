@@ -1,14 +1,12 @@
+import { translatedLabels } from '../../core/i18n/translated-labels';
+
 // Reflète billing.api.serializers.InvoiceSerializer/InvoiceLineSerializer et
 // billing.models.Invoice.Status (backend).
 export type InvoiceStatus = 'draft' | 'issued' | 'pending_payment' | 'paid' | 'cancelled';
 
-export const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = {
-  draft: 'Brouillon',
-  issued: 'Émise',
-  pending_payment: 'Paiement partiel',
-  paid: 'Payée',
-  cancelled: 'Annulée',
-};
+export const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = translatedLabels<InvoiceStatus>('labels.invoiceStatus', [
+  'draft', 'issued', 'pending_payment', 'paid', 'cancelled',
+]);
 
 // billing/services/__init__.py LOCKED_STATUSES.
 export const LOCKED_INVOICE_STATUSES: ReadonlySet<InvoiceStatus> = new Set(['paid', 'cancelled']);

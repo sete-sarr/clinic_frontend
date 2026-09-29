@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -45,6 +46,7 @@ interface CredentialsFormModel {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './activation.html',
   styleUrl: './activation.css',
@@ -75,10 +77,10 @@ export class Activation {
   });
 
   protected readonly identityForm = form(this.identityModel, (path) => {
-    required(path.clinic, { message: 'Clinique requise' });
-    required(path.patient_number, { message: 'Numéro patient requis' });
-    required(path.phone, { message: 'Téléphone requis' });
-    required(path.date_of_birth, { message: 'Date de naissance requise' });
+    required(path.clinic, { message: translate('activation.clinicRequired') });
+    required(path.patient_number, { message: translate('common.validation.patientNumberRequired') });
+    required(path.phone, { message: translate('common.validation.phoneRequired') });
+    required(path.date_of_birth, { message: translate('common.validation.dateOfBirthRequired') });
   });
 
   protected readonly credentialsModel = signal<CredentialsFormModel>({
@@ -88,10 +90,10 @@ export class Activation {
   });
 
   protected readonly credentialsForm = form(this.credentialsModel, (path) => {
-    required(path.code, { message: 'Code requis' });
-    maxLength(path.code, 6, { message: '6 chiffres maximum' });
-    required(path.username, { message: "Nom d'utilisateur requis" });
-    required(path.password, { message: 'Mot de passe requis' });
+    required(path.code, { message: translate('activation.codeRequired') });
+    maxLength(path.code, 6, { message: translate('activation.codeMaxLength') });
+    required(path.username, { message: translate('common.validation.usernameRequired') });
+    required(path.password, { message: translate('common.validation.passwordRequired') });
   });
 
   protected onClinicQueryInput(value: string): void {
@@ -120,7 +122,7 @@ export class Activation {
         this.step.set('verify');
         return undefined;
       } catch (error) {
-        const { message } = parseApiError(error, 'Impossible d’envoyer le code. Réessayez.');
+        const { message } = parseApiError(error, translate('activation.sendError'));
         return [{ kind: 'server', message }];
       }
     });
@@ -145,7 +147,7 @@ export class Activation {
         this.step.set('done');
         return undefined;
       } catch (error) {
-        const { message } = parseApiError(error, 'Code invalide ou expiré.');
+        const { message } = parseApiError(error, translate('activation.verifyError'));
         return [{ kind: 'server', message }];
       }
     });

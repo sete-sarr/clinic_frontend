@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -31,6 +32,7 @@ interface LoginFormModel {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -46,9 +48,9 @@ export class Login {
   protected readonly model = signal<LoginFormModel>({ email: '', password: '' });
 
   protected readonly loginForm = form(this.model, (path) => {
-    required(path.email, { message: 'Email requis' });
-    email(path.email, { message: 'Adresse e-mail invalide' });
-    required(path.password, { message: 'Mot de passe requis' });
+    required(path.email, { message: translate('common.validation.emailRequired') });
+    email(path.email, { message: translate('common.validation.emailInvalid') });
+    required(path.password, { message: translate('common.validation.passwordRequired') });
   });
 
   protected togglePasswordVisibility(): void {
@@ -65,7 +67,7 @@ export class Login {
         }
         return undefined;
       } catch (error) {
-        const { message } = parseApiError(error, 'Connexion impossible. Réessayez dans un instant.');
+        const { message } = parseApiError(error, translate('auth.login.error'));
         return [{ kind: 'server', message }];
       }
     });

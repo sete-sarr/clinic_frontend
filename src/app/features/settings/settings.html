@@ -1,8 +1,8 @@
 <div class="page-header">
-  <h1>Paramètres</h1>
+  <h1>{{ 'settings.title' | transloco }}</h1>
   <button mat-stroked-button type="button" (click)="downloadUserGuide()">
     <mat-icon>menu_book</mat-icon>
-    Télécharger le guide d'utilisation
+    {{ 'settings.downloadGuide' | transloco }}
   </button>
 </div>
 
@@ -14,16 +14,16 @@
   <div class="settings-grid">
     <mat-card class="settings-card">
       <mat-card-header>
-        <mat-card-title>Logo</mat-card-title>
+        <mat-card-title>{{ 'settings.logo' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="logo-grid">
           @for (field of logoFields; track field.key) {
             <div class="logo-field">
-              <span class="logo-label">{{ field.label }}</span>
+              <span class="logo-label">{{ field.labelKey | transloco }}</span>
               <div class="logo-preview">
                 @if (previewFor(field.key); as url) {
-                  <img [src]="url" [alt]="field.label" />
+                  <img [src]="url" [alt]="field.labelKey | transloco" />
                 } @else {
                   <mat-icon>image</mat-icon>
                 }
@@ -37,7 +37,7 @@
               />
               <label [for]="'file-' + field.key" mat-stroked-button class="upload-button">
                 <mat-icon>upload</mat-icon>
-                Choisir un fichier
+                {{ 'settings.chooseFile' | transloco }}
               </label>
             </div>
           }
@@ -47,45 +47,42 @@
 
     <mat-card class="settings-card">
       <mat-card-header>
-        <mat-card-title>Langue</mat-card-title>
+        <mat-card-title>{{ 'settings.language' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <mat-form-field appearance="outline" class="locale-field">
-          <mat-label>Langue de l'interface</mat-label>
+          <mat-label>{{ 'settings.clinicLanguage' | transloco }}</mat-label>
           <mat-select [value]="locale()" (selectionChange)="locale.set($event.value)">
             @for (option of localeOptions; track option[0]) {
               <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
-        <p class="hint">
-          La préférence est enregistrée ; la traduction complète de l'interface arrivera dans une
-          prochaine version.
-        </p>
+        <p class="hint">{{ 'settings.clinicLanguageHint' | transloco }}</p>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="settings-card">
       <mat-card-header>
-        <mat-card-title>Thème</mat-card-title>
+        <mat-card-title>{{ 'settings.theme' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <mat-button-toggle-group
           [value]="themeService.current()"
           (change)="setTheme($event.value)"
-          aria-label="Thème"
+          [attr.aria-label]="'settings.theme' | transloco"
         >
           <mat-button-toggle value="light">
             <mat-icon>light_mode</mat-icon>
-            Clair
+            {{ 'settings.themeLight' | transloco }}
           </mat-button-toggle>
           <mat-button-toggle value="dark">
             <mat-icon>dark_mode</mat-icon>
-            Sombre
+            {{ 'settings.themeDark' | transloco }}
           </mat-button-toggle>
           <mat-button-toggle value="system">
             <mat-icon>brightness_auto</mat-icon>
-            Système
+            {{ 'settings.themeSystem' | transloco }}
           </mat-button-toggle>
         </mat-button-toggle-group>
       </mat-card-content>
@@ -93,31 +90,28 @@
 
     <mat-card class="settings-card">
       <mat-card-header>
-        <mat-card-title>Couleur d'accent</mat-card-title>
+        <mat-card-title>{{ 'settings.accent' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <mat-button-toggle-group
           [value]="themeService.currentAccent()"
           (change)="setAccent($event.value)"
-          aria-label="Couleur d'accent"
+          [attr.aria-label]="'settings.accent' | transloco"
         >
           <mat-button-toggle value="ocean">
             <span class="accent-swatch accent-swatch-ocean"></span>
-            Bleu océan
+            {{ 'settings.accentOcean' | transloco }}
           </mat-button-toggle>
           <mat-button-toggle value="teal">
             <span class="accent-swatch accent-swatch-teal"></span>
-            Teal profond
+            {{ 'settings.accentTeal' | transloco }}
           </mat-button-toggle>
           <mat-button-toggle value="sky">
             <span class="accent-swatch accent-swatch-sky"></span>
-            Bleu ciel
+            {{ 'settings.accentSky' | transloco }}
           </mat-button-toggle>
         </mat-button-toggle-group>
-        <p class="hint">
-          S'applique à la barre latérale, aux en-têtes de tableaux, aux en-têtes de fenêtres
-          modales et au menu du haut.
-        </p>
+        <p class="hint">{{ 'settings.accentHint' | transloco }}</p>
       </mat-card-content>
     </mat-card>
 
@@ -130,7 +124,7 @@
         @if (saving()) {
           <mat-spinner diameter="20" />
         } @else {
-          Enregistrer
+          {{ 'common.actions.save' | transloco }}
         }
       </button>
     </div>

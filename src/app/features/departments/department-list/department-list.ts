@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
@@ -42,6 +43,7 @@ const PAGE_SIZE = 20;
     MatSelectModule,
     MatTableModule,
     MatTooltipModule,
+    TranslocoPipe,
   ],
   templateUrl: './department-list.html',
   styleUrl: './department-list.css',
@@ -132,7 +134,7 @@ export class DepartmentList {
       await firstValueFrom(request$);
       this.departmentsResource.reload();
     } catch (error) {
-      const apiError = parseApiError(error, 'Impossible de modifier le statut de ce département.');
+      const apiError = parseApiError(error, translate('departments.statusError'));
       this.actionError.set(apiError.message);
     } finally {
       this.actionPending.set(null);
@@ -149,11 +151,11 @@ export class DepartmentList {
           : this.departmentService.archive(department.id);
       await firstValueFrom(request$);
       this.successNotifier.show(
-        department.status === 'archived' ? 'Département restauré avec succès.' : 'Département archivé avec succès.',
+        translate(department.status === 'archived' ? 'departments.restored' : 'departments.archived'),
       );
       this.departmentsResource.reload();
     } catch (error) {
-      const apiError = parseApiError(error, 'Impossible de modifier ce département.');
+      const apiError = parseApiError(error, translate('departments.updateError'));
       this.actionError.set(apiError.message);
     } finally {
       this.actionPending.set(null);

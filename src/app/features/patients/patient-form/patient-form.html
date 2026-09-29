@@ -1,6 +1,6 @@
 <div class="app-dialog-header">
-  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le patient' : 'Nouveau patient' }}</h2>
-  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+  <h2 mat-dialog-title>{{ (isEditMode() ? 'patients.edit' : 'patients.new') | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" [attr.aria-label]="'common.actions.close' | transloco">
     <mat-icon>close</mat-icon>
   </button>
 </div>
@@ -14,67 +14,67 @@
       <form novalidate (submit)="$event.preventDefault(); onSubmit()">
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Prénom</mat-label>
+            <mat-label>{{ 'common.fields.firstName' | transloco }}</mat-label>
             <input matInput [formField]="patientForm.first_name" />
             @if (patientForm.first_name().touched() && patientForm.first_name().invalid()) {
-              <mat-error>{{ patientForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ patientForm.first_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Nom</mat-label>
+            <mat-label>{{ 'common.fields.lastName' | transloco }}</mat-label>
             <input matInput [formField]="patientForm.last_name" />
             @if (patientForm.last_name().touched() && patientForm.last_name().invalid()) {
-              <mat-error>{{ patientForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ patientForm.last_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Date de naissance</mat-label>
+            <mat-label>{{ 'common.fields.dateOfBirth' | transloco }}</mat-label>
             <input matInput [matDatepicker]="dobPicker" [formField]="patientForm.date_of_birth" [max]="today" />
             <mat-datepicker-toggle matIconSuffix [for]="dobPicker" />
             <mat-datepicker #dobPicker />
             @if (patientForm.date_of_birth().touched() && patientForm.date_of_birth().invalid()) {
-              <mat-error>{{ patientForm.date_of_birth().errors()[0]?.message ?? 'Date invalide' }}</mat-error>
+              <mat-error>{{ patientForm.date_of_birth().errors()[0]?.message ?? ('common.invalidDate' | transloco) }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Genre</mat-label>
+            <mat-label>{{ 'common.fields.gender' | transloco }}</mat-label>
             <mat-select [formField]="patientForm.gender">
               @for (option of genderOptions; track option[0]) {
                 <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
               }
             </mat-select>
             @if (patientForm.gender().touched() && patientForm.gender().invalid()) {
-              <mat-error>{{ patientForm.gender().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ patientForm.gender().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Téléphone</mat-label>
+            <mat-label>{{ 'common.fields.phone' | transloco }}</mat-label>
             <input matInput [formField]="patientForm.phone" autocomplete="tel" />
             @if (patientForm.phone().touched() && patientForm.phone().invalid()) {
-              <mat-error>{{ patientForm.phone().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ patientForm.phone().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>E-mail (facultatif)</mat-label>
+            <mat-label>{{ 'common.fields.emailOptional' | transloco }}</mat-label>
             <input matInput type="email" [formField]="patientForm.email" autocomplete="email" />
             @if (patientForm.email().touched() && patientForm.email().invalid()) {
-              <mat-error>{{ patientForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ patientForm.email().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Groupe sanguin</mat-label>
+            <mat-label>{{ 'patients.bloodType' | transloco }}</mat-label>
             <mat-select [formField]="patientForm.blood_type">
               @for (option of bloodTypeOptions; track option[0]) {
                 <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
@@ -83,7 +83,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>N° identité nationale (facultatif)</mat-label>
+            <mat-label>{{ 'patients.nationalIdOptional' | transloco }}</mat-label>
             <input matInput [formField]="patientForm.national_id" />
           </mat-form-field>
         </div>
@@ -93,12 +93,12 @@
         }
 
         <div class="form-actions">
-          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">Annuler</button>
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">{{ 'common.actions.cancel' | transloco }}</button>
           <button mat-flat-button color="primary" type="submit" [disabled]="patientForm().submitting()">
             @if (patientForm().submitting()) {
               <mat-spinner diameter="20" />
             } @else {
-              Enregistrer
+              {{ 'common.actions.save' | transloco }}
             }
           </button>
         </div>

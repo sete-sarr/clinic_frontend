@@ -8,13 +8,13 @@
   >
     <div class="brand">
       @if (logoUrl(); as url) {
-        <img [src]="url" alt="Logo de la clinique" class="brand-logo" />
+        <img [src]="url" [alt]="'shell.clinicLogoAlt' | transloco" class="brand-logo" />
       } @else {
         <mat-icon class="brand-icon">local_hospital</mat-icon>
       }
       <div class="brand-text">
         <span class="brand-title">Clinic Management</span>
-        <span class="brand-subtitle">Gestion de clinique</span>
+        <span class="brand-subtitle">{{ 'shell.brandSubtitle' | transloco }}</span>
       </div>
     </div>
 
@@ -27,7 +27,7 @@
           (click)="isHandset() && drawer.close()"
         >
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.label }}</span>
+          <span matListItemTitle>{{ item.labelKey | transloco }}</span>
         </a>
       }
     </mat-nav-list>
@@ -35,10 +35,8 @@
     <div class="compliance-card">
       <mat-icon class="compliance-icon">security</mat-icon>
       <div class="compliance-body">
-        <span class="compliance-title">Sécurité &amp; Conformité</span>
-        <p class="compliance-text">
-          Vos données sont protégées conformément aux exigences HIPAA et RGPD.
-        </p>
+        <span class="compliance-title">{{ 'shell.complianceTitle' | transloco }}</span>
+        <p class="compliance-text">{{ 'shell.complianceText' | transloco }}</p>
       </div>
     </div>
   </mat-sidenav>
@@ -46,7 +44,7 @@
   <mat-sidenav-content>
     <mat-toolbar class="shell-header">
       @if (isHandset()) {
-        <button mat-icon-button (click)="drawer.toggle()" aria-label="Ouvrir le menu">
+        <button mat-icon-button (click)="drawer.toggle()" [attr.aria-label]="'shell.openMenu' | transloco">
           <mat-icon>menu</mat-icon>
         </button>
       }
@@ -57,24 +55,26 @@
 
       <span class="spacer"></span>
 
+      <app-language-switcher class="header-language" />
+
       @if (user(); as currentUser) {
         <button mat-button class="user-chip" [matMenuTriggerFor]="userMenu">
           <span class="user-avatar">{{ userInitials() }}</span>
           <span class="user-text">
             <span class="user-name">{{ currentUser.first_name || currentUser.username }}</span>
-            <span class="user-role">{{ primaryRoleLabel() }}</span>
+            <span class="user-role">{{ primaryRoleKey() ? (primaryRoleKey() | transloco) : '' }}</span>
           </span>
         </button>
         <mat-menu #userMenu="matMenu">
           @if (canDownloadUserGuide()) {
             <button mat-menu-item (click)="downloadUserGuide()">
               <mat-icon>menu_book</mat-icon>
-              <span>Télécharger le guide d'utilisation</span>
+              <span>{{ 'userMenu.downloadGuide' | transloco }}</span>
             </button>
           }
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
-            <span>Déconnexion</span>
+            <span>{{ 'userMenu.logout' | transloco }}</span>
           </button>
         </mat-menu>
       }

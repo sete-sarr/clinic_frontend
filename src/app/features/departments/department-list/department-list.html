@@ -1,21 +1,21 @@
 <div class="page-header">
-  <h1>Départements</h1>
+  <h1>{{ 'departments.title' | transloco }}</h1>
   <div class="header-actions">
     <button mat-flat-button color="primary" (click)="openCreate()">
       <mat-icon>add</mat-icon>
-      Nouveau département
+      {{ 'departments.new' | transloco }}
     </button>
   </div>
 </div>
 
 <div class="filters">
   <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Statut</mat-label>
+    <mat-label>{{ 'common.status' | transloco }}</mat-label>
     <mat-select [value]="status() ?? ''" (selectionChange)="onStatusFilterChange($event.value)">
-      <mat-option value="">Tous</mat-option>
-      <mat-option value="active">Actif</mat-option>
-      <mat-option value="inactive">Inactif</mat-option>
-      <mat-option value="archived">Archivé</mat-option>
+      <mat-option value="">{{ 'common.all' | transloco }}</mat-option>
+      <mat-option value="active">{{ 'labels.departmentStatus.active' | transloco }}</mat-option>
+      <mat-option value="inactive">{{ 'labels.departmentStatus.inactive' | transloco }}</mat-option>
+      <mat-option value="archived">{{ 'labels.departmentStatus.archived' | transloco }}</mat-option>
     </mat-select>
   </mat-form-field>
 </div>
@@ -29,29 +29,29 @@
     <mat-spinner diameter="32" />
   </div>
 } @else if (dataSource.data.length === 0) {
-  <app-empty-state icon="apartment" message="Aucun département trouvé." />
+  <app-empty-state icon="apartment" [message]="'departments.empty' | transloco" />
 } @else {
   <div class="table-scroll">
   <table mat-table [dataSource]="dataSource" class="department-table">
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.name' | transloco }}</th>
       <td mat-cell *matCellDef="let department">{{ department.name }}</td>
     </ng-container>
 
     <ng-container matColumnDef="code">
-      <th mat-header-cell *matHeaderCellDef>Code</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'departments.code' | transloco }}</th>
       <td mat-cell *matCellDef="let department">{{ department.code }}</td>
     </ng-container>
 
     <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'departments.type' | transloco }}</th>
       <td mat-cell *matCellDef="let department">
         <mat-chip disableRipple>{{ typeLabel(department) }}</mat-chip>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
       <td mat-cell *matCellDef="let department">
         <mat-chip disableRipple [class]="'status-chip-' + department.status">
           {{ statusLabel(department) }}
@@ -60,12 +60,12 @@
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
       <td mat-cell *matCellDef="let department">
         <div class="actions">
           <button
             mat-icon-button
-            matTooltip="Modifier"
+            [matTooltip]="'common.actions.edit' | transloco"
             [disabled]="department.status === 'archived'"
             (click)="openEdit(department)"
           >
@@ -76,7 +76,7 @@
             @if (department.status === 'inactive') {
               <button
                 mat-icon-button
-                matTooltip="Activer"
+                [matTooltip]="'common.actions.activate' | transloco"
                 [disabled]="actionPending() === department.id"
                 (click)="toggleActive(department)"
               >
@@ -85,7 +85,7 @@
             } @else {
               <button
                 mat-icon-button
-                matTooltip="Désactiver"
+                [matTooltip]="'common.actions.deactivate' | transloco"
                 [disabled]="actionPending() === department.id"
                 (click)="toggleActive(department)"
               >
@@ -95,7 +95,7 @@
 
             <button
               mat-icon-button
-              matTooltip="Archiver"
+              [matTooltip]="'common.actions.archive' | transloco"
               [disabled]="actionPending() === department.id"
               (click)="toggleArchived(department)"
             >
@@ -104,7 +104,7 @@
           } @else {
             <button
               mat-icon-button
-              matTooltip="Restaurer"
+              [matTooltip]="'common.actions.restore' | transloco"
               [disabled]="actionPending() === department.id"
               (click)="toggleArchived(department)"
             >

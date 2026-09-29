@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -56,6 +57,7 @@ function formatDoctor(doctor: DoctorSummary): string {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './appointment-form.html',
   styleUrl: './appointment-form.css',
@@ -102,11 +104,11 @@ export class AppointmentForm {
   );
 
   protected readonly appointmentForm = form(this.model, (path) => {
-    required(path.patient, { message: 'Patient requis' });
-    required(path.doctor, { message: 'Médecin requis' });
-    required(path.date, { message: 'Date requise' });
-    required(path.time, { message: 'Heure requise' });
-    maxLength(path.reason, 255, { message: '255 caractères maximum' });
+    required(path.patient, { message: translate('common.validation.patientRequired') });
+    required(path.doctor, { message: translate('common.validation.doctorRequired') });
+    required(path.date, { message: translate('common.validation.dateRequired') });
+    required(path.time, { message: translate('common.validation.timeRequired') });
+    maxLength(path.reason, 255, { message: translate('common.validation.max255') });
   });
 
   constructor() {
@@ -158,11 +160,11 @@ export class AppointmentForm {
         } else {
           await firstValueFrom(this.appointmentService.create(payload));
         }
-        this.successNotifier.show('Rendez-vous enregistré avec succès.');
+        this.successNotifier.show(translate('appointments.saved'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer le rendez-vous.");
+        const apiError = parseApiError(error, translate('appointments.saveError'));
         const fieldsByName = {
           patient: this.appointmentForm.patient,
           doctor: this.appointmentForm.doctor,

@@ -1,3 +1,5 @@
+import { translatedLabels } from '../../../core/i18n/translated-labels';
+
 export interface SearchResultItem {
   id: number;
   title: string;
@@ -14,8 +16,6 @@ export interface GlobalSearchResults {
 
 export const EMPTY_SEARCH_RESULTS: GlobalSearchResults = { patients: [], doctors: [], appointments: [] };
 
-export const SEARCH_GROUP_LABELS: Record<keyof GlobalSearchResults, string> = {
-  patients: 'Patients',
-  doctors: 'Médecins',
-  appointments: 'Rendez-vous',
-};
+export const SEARCH_GROUP_LABELS: Record<keyof GlobalSearchResults, string> = translatedLabels<keyof GlobalSearchResults>('labels.searchGroup', [
+  'patients', 'doctors', 'appointments',
+]);

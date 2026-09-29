@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -35,6 +36,7 @@ const PAGE_SIZE = 20;
     MatProgressSpinnerModule,
     MatTableModule,
     MatTooltipModule,
+    TranslocoPipe,
   ],
   templateUrl: './medication-list.html',
   styleUrl: './medication-list.css',
@@ -79,11 +81,11 @@ export class MedicationList {
   protected stockStatusLabel(medication: Medication): string {
     switch (this.stockStatus(medication)) {
       case 'low':
-        return 'Stock bas';
+        return translate('pharmacy.stockLow');
       case 'over':
-        return 'Surstock';
+        return translate('pharmacy.stockOver');
       default:
-        return 'Normal';
+        return translate('pharmacy.stockNormal');
     }
   }
 
@@ -117,7 +119,7 @@ export class MedicationList {
     });
     ref.afterClosed().subscribe((result) => {
       if (result) {
-        this.successNotifier.show('Lot réceptionné avec succès, stock mis à jour.');
+        this.successNotifier.show(translate('pharmacy.batchReceived'));
         this.medicationsResource.reload();
       }
     });
@@ -132,11 +134,11 @@ export class MedicationList {
         : this.medicationService.restore(medication.id);
       await firstValueFrom(request$);
       this.successNotifier.show(
-        medication.is_active ? 'Médicament archivé avec succès.' : 'Médicament restauré avec succès.',
+        translate(medication.is_active ? 'pharmacy.archived' : 'pharmacy.restored'),
       );
       this.medicationsResource.reload();
     } catch (error) {
-      const apiError = parseApiError(error, 'Impossible de modifier ce médicament.');
+      const apiError = parseApiError(error, translate('pharmacy.updateError'));
       this.actionError.set(apiError.message);
     } finally {
       this.actionPending.set(null);

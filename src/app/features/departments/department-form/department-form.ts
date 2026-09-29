@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -42,6 +43,7 @@ interface DepartmentFormModel {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './department-form.html',
   styleUrl: './department-form.css',
@@ -72,11 +74,11 @@ export class DepartmentForm {
   });
 
   protected readonly departmentForm = form(this.model, (path) => {
-    required(path.name, { message: 'Nom du département requis' });
-    maxLength(path.name, 150, { message: 'Nom trop long (150 caractères maximum)' });
-    required(path.code, { message: 'Code du département requis' });
-    maxLength(path.code, 30, { message: 'Code trop long (30 caractères maximum)' });
-    required(path.department_type, { message: 'Type de département requis' });
+    required(path.name, { message: translate('departments.nameRequired') });
+    maxLength(path.name, 150, { message: translate('departments.nameTooLong') });
+    required(path.code, { message: translate('departments.codeRequired') });
+    maxLength(path.code, 30, { message: translate('departments.codeTooLong') });
+    required(path.department_type, { message: translate('departments.typeRequired') });
   });
 
   constructor() {
@@ -103,11 +105,11 @@ export class DepartmentForm {
         } else {
           await firstValueFrom(this.departmentService.create(value));
         }
-        this.successNotifier.show('Département enregistré avec succès.');
+        this.successNotifier.show(translate('departments.saved'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer ce département.");
+        const apiError = parseApiError(error, translate('departments.saveError'));
         const fieldsByName = {
           name: this.departmentForm.name,
           code: this.departmentForm.code,

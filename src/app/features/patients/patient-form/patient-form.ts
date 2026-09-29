@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -45,6 +46,7 @@ interface PatientFormModel {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './patient-form.html',
   styleUrl: './patient-form.css',
@@ -79,12 +81,12 @@ export class PatientForm {
   });
 
   protected readonly patientForm = form(this.model, (path) => {
-    required(path.first_name, { message: 'Prénom requis' });
-    required(path.last_name, { message: 'Nom requis' });
-    required(path.phone, { message: 'Téléphone requis' });
-    required(path.date_of_birth, { message: 'Date de naissance requise' });
-    required(path.gender, { message: 'Genre requis' });
-    email(path.email, { message: 'Adresse e-mail invalide' });
+    required(path.first_name, { message: translate('common.validation.firstNameRequired') });
+    required(path.last_name, { message: translate('common.validation.lastNameRequired') });
+    required(path.phone, { message: translate('common.validation.phoneRequired') });
+    required(path.date_of_birth, { message: translate('common.validation.dateOfBirthRequired') });
+    required(path.gender, { message: translate('patients.genderRequired') });
+    email(path.email, { message: translate('common.validation.emailInvalid') });
   });
 
   constructor() {
@@ -126,11 +128,11 @@ export class PatientForm {
         } else {
           await firstValueFrom(this.patientService.create(payload));
         }
-        this.successNotifier.show('Patient enregistré avec succès.');
+        this.successNotifier.show(translate('patients.saved'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer le patient.");
+        const apiError = parseApiError(error, translate('patients.saveError'));
         const fieldsByName = {
           first_name: this.patientForm.first_name,
           last_name: this.patientForm.last_name,

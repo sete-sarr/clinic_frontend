@@ -5,6 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import {
@@ -19,7 +20,7 @@ const MIN_QUERY_LENGTH = 2;
 
 @Component({
   selector: 'app-global-search',
-  imports: [MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule],
+  imports: [MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, TranslocoPipe],
   templateUrl: './global-search.html',
   styleUrl: './global-search.css',
 })

@@ -1,27 +1,25 @@
 <div class="auth-page">
+  <app-language-switcher class="page-language" />
   <div class="auth-brand">
     <div class="auth-brand-content">
       <div class="auth-brand-logo">
         <mat-icon>local_hospital</mat-icon>
         <span>Clinic Management</span>
       </div>
-      <h1 class="auth-brand-title">La gestion de clinique, simplifiée.</h1>
-      <p class="auth-brand-text">
-        Rendez-vous, dossiers médicaux, ordonnances et facturation réunis dans une seule
-        plateforme sécurisée, pensée pour le rythme d'une équipe soignante.
-      </p>
+      <h1 class="auth-brand-title">{{ 'auth.brand.loginTitle' | transloco }}</h1>
+      <p class="auth-brand-text">{{ 'auth.brand.loginText' | transloco }}</p>
       <ul class="auth-brand-list">
         <li>
           <mat-icon>verified_user</mat-icon>
-          <span>Données de santé protégées, conformes RGPD/HIPAA</span>
+          <span>{{ 'auth.brand.loginPoint1' | transloco }}</span>
         </li>
         <li>
           <mat-icon>groups</mat-icon>
-          <span>Un accès adapté à chaque rôle de votre équipe</span>
+          <span>{{ 'auth.brand.loginPoint2' | transloco }}</span>
         </li>
         <li>
           <mat-icon>bolt</mat-icon>
-          <span>Pensée pour la productivité entre deux patients</span>
+          <span>{{ 'auth.brand.loginPoint3' | transloco }}</span>
         </li>
       </ul>
     </div>
@@ -30,22 +28,22 @@
   <div class="auth-form-side">
     <mat-card class="auth-card">
       <div class="auth-card-header">
-        <h2>Connexion</h2>
-        <p>Accédez à l'espace de votre clinique.</p>
+        <h2>{{ 'auth.login.title' | transloco }}</h2>
+        <p>{{ 'auth.login.subtitle' | transloco }}</p>
       </div>
 
       <form novalidate (submit)="$event.preventDefault(); onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
+          <mat-label>{{ 'common.fields.email' | transloco }}</mat-label>
           <mat-icon matPrefix>person_outline</mat-icon>
           <input matInput [formField]="loginForm.email" type="email" autocomplete="email" />
           @if (loginForm.email().touched() && loginForm.email().invalid()) {
-            <mat-error>{{ loginForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            <mat-error>{{ loginForm.email().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Mot de passe</mat-label>
+          <mat-label>{{ 'common.fields.password' | transloco }}</mat-label>
           <mat-icon matPrefix>lock_outline</mat-icon>
           <input
             matInput
@@ -58,12 +56,12 @@
             matSuffix
             type="button"
             (click)="togglePasswordVisibility()"
-            [attr.aria-label]="hidePassword() ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+            [attr.aria-label]="(hidePassword() ? 'common.showPassword' : 'common.hidePassword') | transloco"
           >
             <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (loginForm.password().touched() && loginForm.password().invalid()) {
-            <mat-error>{{ loginForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            <mat-error>{{ loginForm.password().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }
         </mat-form-field>
 
@@ -84,21 +82,21 @@
           @if (loginForm().submitting()) {
             <mat-spinner diameter="20" />
           } @else {
-            Se connecter
+            {{ 'auth.login.submit' | transloco }}
           }
         </button>
       </form>
 
-      <div class="auth-divider"><span>ou</span></div>
+      <div class="auth-divider"><span>{{ 'common.or' | transloco }}</span></div>
 
       <p class="auth-link">
-        Patient et pas encore de compte ?
-        <a routerLink="/activate">Activer mon compte</a>
+        {{ 'auth.login.noAccountPatient' | transloco }}
+        <a routerLink="/activate">{{ 'auth.login.activateAccount' | transloco }}</a>
       </p>
 
       <p class="auth-link">
-        Nouvelle clinique ?
-        <a routerLink="/register">Créer votre clinique</a>
+        {{ 'auth.login.newClinic' | transloco }}
+        <a routerLink="/register">{{ 'auth.login.createClinic' | transloco }}</a>
       </p>
     </mat-card>
   </div>

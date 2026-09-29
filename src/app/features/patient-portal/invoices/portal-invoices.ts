@@ -15,12 +15,14 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { INVOICE_STATUS_LABELS, Invoice } from '../../billing/invoice.model';
 import { InvoiceService } from '../../billing/invoice.service';
+import { MoneyPipe } from '../../../core/utils/money';
 
 const PAGE_SIZE = 20;
 
 @Component({
   selector: 'app-portal-invoices',
   imports: [
+    MoneyPipe,
     DatePipe,
     EmptyState,
     MatButtonModule,

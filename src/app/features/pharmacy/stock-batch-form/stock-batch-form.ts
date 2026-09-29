@@ -13,6 +13,8 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { parseApiError } from '../../../core/api/api-error';
 import { toIsoDate } from '../../../core/utils/date';
 import { MedicationService } from '../medication.service';
+import { DEFAULT_CURRENCY, currencySymbol } from '../../../core/utils/money';
+import { AuthService } from '../../../core/auth/auth.service';
 
 export interface StockBatchFormDialogData {
   medicationId: number;
@@ -45,6 +47,8 @@ interface StockBatchFormModel {
   styleUrl: './stock-batch-form.css',
 })
 export class StockBatchForm {
+  // Prix saisis dans la devise actuelle de la clinique (docs/i18n.md §8).
+  protected readonly currencySymbol = currencySymbol(inject(AuthService).user()?.clinic_currency ?? DEFAULT_CURRENCY);
   private readonly medicationService = inject(MedicationService);
   protected readonly dialogRef = inject(MatDialogRef<StockBatchForm>);
   protected readonly data = inject<StockBatchFormDialogData>(MAT_DIALOG_DATA);

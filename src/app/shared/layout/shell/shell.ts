@@ -20,6 +20,7 @@ import { UserGuideService } from '../../../core/services/user-guide.service';
 import { GlobalSearch } from '../../components/global-search/global-search';
 import { LanguageSwitcher } from '../../components/language-switcher/language-switcher';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { APP_NAME } from '../../../core/brand';
 
 interface NavItem {
   labelKey: string; // clé de traduction (i18n/*.json → nav.*)
@@ -179,6 +180,7 @@ const NAV_ITEMS: NavItem[] = [
   styleUrl: './shell.css',
 })
 export class Shell {
+  protected readonly appName = APP_NAME;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly breakpointObserver = inject(BreakpointObserver);

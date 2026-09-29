@@ -13,6 +13,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageSwitcher } from '../../../shared/components/language-switcher/language-switcher';
+import { APP_NAME } from '../../../core/brand';
 
 interface RegisterClinicFormModel {
   clinic_name: string;
@@ -43,6 +44,7 @@ interface RegisterClinicFormModel {
   styleUrl: './register-clinic.css',
 })
 export class RegisterClinic {
+  protected readonly appName = APP_NAME;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 

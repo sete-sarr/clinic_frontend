@@ -191,6 +191,29 @@ body {
     flex: none;
     width: 100%;
   }
+
+  // Tout champ d'une fenêtre modale occupe toute la largeur, y compris ceux des lignes composées
+  // (lignes de facture, médicaments d'une prescription, saisie d'un paiement) qui ont une largeur
+  // fixe sur ordinateur. !important : ces largeurs de composant sont elles-mêmes forcées
+  // (.item-field-narrow…) ou plus spécifiques.
+  .mat-mdc-dialog-surface .mat-mdc-dialog-content mat-form-field {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  // Exception : deux champs logiquement liés (prénom / nom, date / heure, date du / au, seuils
+  // minimal / maximal) restent côte à côte — marqués .field-row.field-pair dans le gabarit.
+  .mat-mdc-dialog-surface .mat-mdc-dialog-content .field-row.field-pair {
+    flex-direction: row;
+    gap: var(--space-2);
+  }
+
+  .mat-mdc-dialog-surface .mat-mdc-dialog-content .field-row.field-pair > mat-form-field {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0;
+  }
 }
 
 // Mobile table overflow (design-system/tables.md §Mobile — défilement horizontal). Without this,

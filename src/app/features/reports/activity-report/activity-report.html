@@ -7,7 +7,7 @@
     <p class="hint">{{ 'reports.hint' | transloco }}</p>
 
     <form novalidate (submit)="$event.preventDefault(); onSubmit()">
-      <div class="field-row">
+      <div class="field-row field-pair">
         <mat-form-field appearance="outline" class="half-width">
           <mat-label>{{ 'common.fields.from' | transloco }}</mat-label>
           <input matInput [matDatepicker]="fromPicker" [formField]="reportForm.dateFrom" [max]="today" />

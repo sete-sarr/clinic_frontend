@@ -35,7 +35,7 @@
         @if (isEditMode()) {
           <p class="readonly-name">{{ model().first_name }} {{ model().last_name }}</p>
         } @else {
-          <div class="field-row">
+          <div class="field-row field-pair">
             <mat-form-field appearance="outline" class="half-width">
               <mat-label>{{ 'common.fields.firstName' | transloco }}</mat-label>
               <input matInput [formField]="doctorForm.first_name" />

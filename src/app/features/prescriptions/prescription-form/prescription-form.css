@@ -77,6 +77,15 @@
   right: var(--space-1);
 }
 
+/* Mobile : les champs prennent toute la largeur (styles.scss) ; le bouton de suppression ne doit
+   plus recouvrir le premier champ, il se range en bas à droite du bloc. */
+@media (max-width: 599px) {
+  .item-row button[mat-icon-button] {
+    position: static;
+    align-self: flex-end;
+  }
+}
+
 .add-item-button {
   margin-bottom: var(--space-4);
 }

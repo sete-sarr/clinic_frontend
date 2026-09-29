@@ -62,9 +62,9 @@
     <ng-container matColumnDef="total">
       <th mat-header-cell *matHeaderCellDef>{{ 'billing.total' | transloco }}</th>
       <td mat-cell *matCellDef="let invoice">
-        {{ invoice.total_amount }}
+        {{ invoice.total_amount | money: invoice.currency }}
         @if (invoice.balance_due !== '0.00' && invoice.status !== 'draft' && invoice.status !== 'cancelled') {
-          <span class="balance-due">{{ 'billing.balanceDue' | transloco: { amount: invoice.balance_due } }}</span>
+          <span class="balance-due">{{ 'billing.balanceDue' | transloco: { amount: (invoice.balance_due | money: invoice.currency) } }}</span>
         }
       </td>
     </ng-container>

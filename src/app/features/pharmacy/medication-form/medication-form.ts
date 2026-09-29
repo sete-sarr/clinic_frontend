@@ -15,6 +15,8 @@ import { parseApiError } from '../../../core/api/api-error';
 import { Medication } from '../../../core/models/pharmacy.model';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { MedicationService } from '../medication.service';
+import { DEFAULT_CURRENCY, currencySymbol } from '../../../core/utils/money';
+import { AuthService } from '../../../core/auth/auth.service';
 
 export interface MedicationFormDialogData {
   id?: string;
@@ -44,6 +46,8 @@ interface MedicationFormModel {
   styleUrl: './medication-form.css',
 })
 export class MedicationForm {
+  // Prix saisis dans la devise actuelle de la clinique (docs/i18n.md §8).
+  protected readonly currencySymbol = currencySymbol(inject(AuthService).user()?.clinic_currency ?? DEFAULT_CURRENCY);
   private readonly medicationService = inject(MedicationService);
   private readonly successNotifier = inject(SuccessNotifier);
   protected readonly dialogRef = inject(MatDialogRef<MedicationForm>);

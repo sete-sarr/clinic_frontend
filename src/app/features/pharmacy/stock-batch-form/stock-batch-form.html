@@ -51,6 +51,7 @@
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>{{ 'pharmacy.batch.unitCost' | transloco }}</mat-label>
         <input matInput type="number" step="0.01" [formField]="batchForm.unit_cost" />
+        <span matTextSuffix class="currency-suffix">{{ currencySymbol }}</span>
         @if (batchForm.unit_cost().touched() && batchForm.unit_cost().invalid()) {
           <mat-error>{{ batchForm.unit_cost().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
         }

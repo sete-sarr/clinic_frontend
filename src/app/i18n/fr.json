@@ -641,7 +641,10 @@
     "accentSky": "Bleu ciel",
     "accentHint": "S'applique à la barre latérale, aux en-têtes de tableaux, aux en-têtes de fenêtres modales et au menu du haut.",
     "saved": "Paramètres enregistrés avec succès.",
-    "saveError": "Impossible d'enregistrer les paramètres."
+    "saveError": "Impossible d'enregistrer les paramètres.",
+    "currency": "Devise",
+    "clinicCurrency": "Devise de facturation",
+    "clinicCurrencyHint": "Devise des factures, paiements et prix de la pharmacie. Elle s'applique aux nouvelles factures : les factures existantes gardent leur devise d'origine. Aucune conversion n'est faite."
   },
   "subscription": {
     "title": "Abonnement",
@@ -713,5 +716,21 @@
     "invoices": "factures-export.csv",
     "patients": "patients-export.csv",
     "payments": "paiements-export.csv"
+  },
+  "currencies": {
+    "XOF": "Franc CFA (BCEAO)",
+    "XAF": "Franc CFA (BEAC)",
+    "GNF": "Franc guinéen",
+    "CDF": "Franc congolais",
+    "MAD": "Dirham marocain",
+    "DZD": "Dinar algérien",
+    "NGN": "Naira nigérian",
+    "GHS": "Cedi ghanéen",
+    "KES": "Shilling kényan",
+    "EUR": "Euro",
+    "USD": "Dollar américain",
+    "GBP": "Livre sterling",
+    "CAD": "Dollar canadien",
+    "CHF": "Franc suisse"
   }
 }

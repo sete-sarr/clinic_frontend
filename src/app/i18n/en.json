@@ -641,7 +641,10 @@
     "accentSky": "Sky blue",
     "accentHint": "Applies to the sidebar, table headers, dialog headers and the top menu.",
     "saved": "Settings saved.",
-    "saveError": "Unable to save the settings."
+    "saveError": "Unable to save the settings.",
+    "currency": "Currency",
+    "clinicCurrency": "Billing currency",
+    "clinicCurrencyHint": "Currency used for invoices, payments and pharmacy prices. It applies to new invoices: existing invoices keep their original currency. No conversion is made."
   },
   "subscription": {
     "title": "Subscription",
@@ -713,5 +716,21 @@
     "invoices": "invoices-export.csv",
     "patients": "patients-export.csv",
     "payments": "payments-export.csv"
+  },
+  "currencies": {
+    "XOF": "West African CFA franc",
+    "XAF": "Central African CFA franc",
+    "GNF": "Guinean franc",
+    "CDF": "Congolese franc",
+    "MAD": "Moroccan dirham",
+    "DZD": "Algerian dinar",
+    "NGN": "Nigerian naira",
+    "GHS": "Ghanaian cedi",
+    "KES": "Kenyan shilling",
+    "EUR": "Euro",
+    "USD": "US dollar",
+    "GBP": "British pound",
+    "CAD": "Canadian dollar",
+    "CHF": "Swiss franc"
   }
 }

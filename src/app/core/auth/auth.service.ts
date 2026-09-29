@@ -58,13 +58,20 @@ export class AuthService {
   // jour l'utilisateur en session.
   updateLanguage(language: 'fr' | 'en'): Observable<User> {
     return this.http.patch<User>(`${environment.apiBaseUrl}/accounts/me/`, { language }).pipe(
-      tap((user) => {
-        this.user.set(user);
-        if (this.isBrowser) {
-          localStorage.setItem(USER_KEY, JSON.stringify(user));
-        }
-      }),
+      tap((user) => this.storeUser(user)),
     );
+  }
+
+  // Recharge le profil (GET /accounts/me/) — au démarrage de l'espace connecté, pour que les
+  // réglages de la clinique modifiés depuis la connexion (devise…) soient pris en compte.
+  refreshUser(): void {
+    if (!this.accessToken()) {
+      return;
+    }
+    this.http.get<User>(`${environment.apiBaseUrl}/accounts/me/`).subscribe({
+      next: (user) => this.storeUser(user),
+      error: () => undefined,
+    });
   }
 
   refreshAccessToken(): Observable<AuthTokens> {
@@ -98,6 +105,13 @@ export class AuthService {
       localStorage.setItem(ACCESS_TOKEN_KEY, response.access);
       localStorage.setItem(REFRESH_TOKEN_KEY, response.refresh);
       localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+    }
+  }
+
+  private storeUser(user: User): void {
+    this.user.set(user);
+    if (this.isBrowser) {
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
     }
   }
 

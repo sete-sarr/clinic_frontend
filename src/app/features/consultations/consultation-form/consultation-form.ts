@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -80,6 +81,7 @@ function formatDoctor(doctor: DoctorSummary): string {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './consultation-form.html',
   styleUrl: './consultation-form.css',
@@ -160,10 +162,10 @@ export class ConsultationForm {
     // (verrouillée) est véritablement en lecture seule, pas seulement en apparence (docs/security.md :
     // jamais seulement côté frontend, mais l'UI doit refléter fidèlement l'immutabilité imposée par le backend).
     disabled(path, () => this.isLocked());
-    required(path.patient, { message: 'Patient requis' });
-    required(path.doctor, { message: 'Médecin requis' });
-    required(path.date, { message: 'Date requise' });
-    required(path.time, { message: 'Heure requise' });
+    required(path.patient, { message: translate('common.validation.patientRequired') });
+    required(path.doctor, { message: translate('common.validation.doctorRequired') });
+    required(path.date, { message: translate('common.validation.dateRequired') });
+    required(path.time, { message: translate('common.validation.timeRequired') });
   });
 
   constructor() {
@@ -223,17 +225,17 @@ export class ConsultationForm {
         const id = this.currentId();
         if (id) {
           await firstValueFrom(this.consultationService.update(Number(id), payload));
-          this.successNotifier.show('Consultation mise à jour avec succès.');
+          this.successNotifier.show(translate('consultations.updated'));
           this.dialogRef.close(true);
         } else {
           const created = await firstValueFrom(this.consultationService.create(payload));
           this.currentId.set(String(created.id));
           this.consultationResource.reload();
-          this.successNotifier.show('Consultation créée avec succès.');
+          this.successNotifier.show(translate('consultations.created'));
         }
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer la consultation.");
+        const apiError = parseApiError(error, translate('consultations.saveError'));
         const fieldsByName = {
           patient: this.consultationForm.patient,
           doctor: this.consultationForm.doctor,
@@ -261,7 +263,7 @@ export class ConsultationForm {
     if (!id) {
       return;
     }
-    const confirmed = confirm('Valider verrouille définitivement cette consultation. Continuer ?');
+    const confirmed = confirm(translate('consultations.confirmFinalize'));
     if (!confirmed) {
       return;
     }

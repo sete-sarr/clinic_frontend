@@ -1,3 +1,5 @@
+import { translatedLabels } from '../../core/i18n/translated-labels';
+
 // Reflète common.models.AuditLog.Action et common.api.serializers.AuditLogSerializer (backend).
 export type AuditAction =
   | 'create'
@@ -11,18 +13,9 @@ export type AuditAction =
   | 'logout'
   | 'permission_change';
 
-export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = {
-  create: 'Création',
-  update: 'Modification',
-  cancel: 'Annulation',
-  archive: 'Archivage',
-  view: 'Consultation',
-  print: 'Impression',
-  export: 'Export',
-  login: 'Connexion',
-  logout: 'Déconnexion',
-  permission_change: 'Changement de permission',
-};
+export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = translatedLabels<AuditAction>('labels.auditAction', [
+  'create', 'update', 'cancel', 'archive', 'view', 'print', 'export', 'login', 'logout', 'permission_change',
+]);
 
 export interface AuditLogEntry {
   id: number;

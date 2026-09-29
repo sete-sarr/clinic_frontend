@@ -1,5 +1,5 @@
 import { httpResource } from '@angular/common/http';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, LOCALE_ID, computed, effect, inject, signal } from '@angular/core';
 import {
   FieldTree,
   FormField,
@@ -20,7 +20,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -65,12 +67,12 @@ function formatDoctor(doctor: DoctorSummary): string {
 }
 
 const itemSchema = schema<PrescriptionItem>((item) => {
-  required(item.medication_name, { message: 'Nom du médicament requis' });
-  required(item.dosage, { message: 'Dosage requis' });
-  required(item.frequency, { message: 'Fréquence requise' });
-  required(item.duration, { message: 'Durée requise' });
-  required(item.quantity, { message: 'Quantité requise' });
-  min(item.quantity, 1, { message: 'Quantité minimale : 1' });
+  required(item.medication_name, { message: translate('prescriptions.medicationRequired') });
+  required(item.dosage, { message: translate('prescriptions.dosageRequired') });
+  required(item.frequency, { message: translate('prescriptions.frequencyRequired') });
+  required(item.duration, { message: translate('prescriptions.durationRequired') });
+  required(item.quantity, { message: translate('prescriptions.quantityRequired') });
+  min(item.quantity, 1, { message: translate('prescriptions.quantityMin') });
 });
 
 @Component({
@@ -86,11 +88,14 @@ const itemSchema = schema<PrescriptionItem>((item) => {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatTooltipModule,
+    TranslocoPipe,
   ],
   templateUrl: './prescription-form.html',
   styleUrl: './prescription-form.css',
 })
 export class PrescriptionForm {
+  private readonly locale = inject(LOCALE_ID);
   private readonly prescriptionService = inject(PrescriptionService);
   private readonly auth = inject(AuthService);
   private readonly successNotifier = inject(SuccessNotifier);
@@ -169,9 +174,9 @@ export class PrescriptionForm {
     // rejette le rattachement d'une prescription à une consultation déjà utilisée) — jamais modifiable ensuite.
     disabled(path.patient, () => this.isEditMode());
     disabled(path.consultation, () => this.isEditMode());
-    required(path.patient, { message: 'Patient requis' });
-    required(path.doctor, { message: 'Médecin requis' });
-    required(path.consultation, { message: 'Consultation requise' });
+    required(path.patient, { message: translate('common.validation.patientRequired') });
+    required(path.doctor, { message: translate('common.validation.doctorRequired') });
+    required(path.consultation, { message: translate('prescriptions.consultationRequired') });
     applyEach(path.items, itemSchema);
   });
 
@@ -215,8 +220,8 @@ export class PrescriptionForm {
   }
 
   protected formatConsultationOption(consultation: Consultation): string {
-    const complaint = consultation.chief_complaint.slice(0, 40) || 'Sans motif renseigné';
-    return `${new Date(consultation.date).toLocaleString()} — ${complaint}`;
+    const complaint = consultation.chief_complaint.slice(0, 40) || translate('prescriptions.noComplaint');
+    return `${new Date(consultation.date).toLocaleString(this.locale)} — ${complaint}`;
   }
 
   protected addItem(): void {
@@ -245,17 +250,17 @@ export class PrescriptionForm {
         const id = this.currentId();
         if (id) {
           await firstValueFrom(this.prescriptionService.update(Number(id), payload));
-          this.successNotifier.show('Prescription mise à jour avec succès.');
+          this.successNotifier.show(translate('prescriptions.updated'));
           this.dialogRef.close(true);
         } else {
           const created = await firstValueFrom(this.prescriptionService.create(payload));
           this.currentId.set(String(created.id));
           this.prescriptionResource.reload();
-          this.successNotifier.show('Prescription créée avec succès.');
+          this.successNotifier.show(translate('prescriptions.created'));
         }
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer la prescription.");
+        const apiError = parseApiError(error, translate('prescriptions.saveError'));
         const fieldsByName = {
           patient: this.prescriptionForm.patient,
           doctor: this.prescriptionForm.doctor,
@@ -274,7 +279,7 @@ export class PrescriptionForm {
     if (!id) {
       return;
     }
-    const confirmed = confirm('Valider verrouille définitivement cette prescription. Continuer ?');
+    const confirmed = confirm(translate('prescriptions.confirmFinalize'));
     if (!confirmed) {
       return;
     }
@@ -288,7 +293,7 @@ export class PrescriptionForm {
     if (!id) {
       return;
     }
-    const confirmed = confirm('Annuler cette prescription ? Cette action est définitive.');
+    const confirmed = confirm(translate('prescriptions.confirmCancel'));
     if (!confirmed) {
       return;
     }

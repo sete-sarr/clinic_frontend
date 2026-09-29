@@ -1,12 +1,12 @@
+import { translatedLabels } from '../../core/i18n/translated-labels';
+
 // Reflète prescriptions.api.serializers.PrescriptionSerializer/PrescriptionItemSerializer
 // et prescriptions.models.Prescription.Status (backend).
 export type PrescriptionStatus = 'draft' | 'validated' | 'cancelled';
 
-export const PRESCRIPTION_STATUS_LABELS: Record<PrescriptionStatus, string> = {
-  draft: 'Brouillon',
-  validated: 'Validée',
-  cancelled: 'Annulée',
-};
+export const PRESCRIPTION_STATUS_LABELS: Record<PrescriptionStatus, string> = translatedLabels<PrescriptionStatus>('labels.prescriptionStatus', [
+  'draft', 'validated', 'cancelled',
+]);
 
 // prescriptions/services/__init__.py LOCKED_STATUSES — validated et cancelled sont tous deux en lecture seule.
 export const LOCKED_PRESCRIPTION_STATUSES: ReadonlySet<PrescriptionStatus> = new Set([

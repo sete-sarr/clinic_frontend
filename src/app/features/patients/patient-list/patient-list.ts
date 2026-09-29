@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { map } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -42,6 +43,7 @@ const SEARCH_DEBOUNCE_MS = 300;
     MatSelectModule,
     MatTableModule,
     MatTooltipModule,
+    TranslocoPipe,
   ],
   templateUrl: './patient-list.html',
   styleUrl: './patient-list.css',
@@ -155,7 +157,10 @@ export class PatientList {
 
   protected deactivate(patient: Patient): void {
     const confirmed = confirm(
-      `Désactiver ${patient.first_name} ${patient.last_name} (${patient.patient_number}) ?`,
+      translate('patients.confirmDeactivate', {
+        name: `${patient.first_name} ${patient.last_name}`,
+        number: patient.patient_number,
+      }),
     );
     if (!confirmed) {
       return;
@@ -168,6 +173,6 @@ export class PatientList {
   }
 
   protected exportCsv(): void {
-    this.patientService.exportCsv().subscribe((blob) => triggerBlobDownload(blob, 'patients-export.csv'));
+    this.patientService.exportCsv().subscribe((blob) => triggerBlobDownload(blob, translate('exports.patients')));
   }
 }

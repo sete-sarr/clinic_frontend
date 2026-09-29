@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { toIsoDate } from '../../../core/utils/date';
@@ -30,6 +31,7 @@ interface ActivityReportFormModel {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './activity-report.html',
   styleUrl: './activity-report.css',
@@ -56,7 +58,7 @@ export class ActivityReport {
         openBlobInNewTab(blob);
         return undefined;
       } catch (error) {
-        const { message } = parseApiError(error, 'Génération du rapport impossible. Réessayez dans un instant.');
+        const { message } = parseApiError(error, translate('reports.error'));
         return [{ kind: 'server', message }];
       }
     });

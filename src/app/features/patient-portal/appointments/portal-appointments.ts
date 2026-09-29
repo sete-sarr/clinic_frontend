@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -36,6 +37,7 @@ const CANCELLATION_DEADLINE_HOURS = 24;
     MatIconModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './portal-appointments.html',
   styleUrl: './portal-appointments.css',
@@ -119,7 +121,7 @@ export class PortalAppointments {
       error: (error) => {
         this.cancellingId.set(null);
         this.confirmingCancelId.set(null);
-        this.errorMessage.set(parseApiError(error, "Impossible d'annuler ce rendez-vous.").message);
+        this.errorMessage.set(parseApiError(error, translate('portal.appointments.cancelError')).message);
       },
     });
   }

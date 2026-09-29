@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { translate } from '@jsverse/transloco';
 
 // Reflète common.exceptions.api_exception_handler (docs/api-guidelines.md
 // "Standardized errors: code, message, field when relevant").
@@ -21,30 +22,30 @@ function isApiErrorShape(value: unknown): value is ApiError {
 // l'utilisateur ni au support de distinguer un endpoint non déployé d'une panne serveur.
 function describeHttpFailure(status: number): string {
   if (status === 0) {
-    return 'Serveur injoignable : vérifiez votre connexion internet puis réessayez.';
+    return translate('httpErrors.unreachable');
   }
   if (status === 401) {
-    return 'Votre session a expiré : reconnectez-vous puis réessayez (erreur 401).';
+    return translate('httpErrors.sessionExpired');
   }
   if (status === 403) {
-    return "Vous n'avez pas les droits nécessaires pour cette action (erreur 403).";
+    return translate('httpErrors.forbidden');
   }
   if (status === 404) {
-    return "Ce service n'est pas disponible sur le serveur : contactez l'administrateur (erreur 404).";
+    return translate('httpErrors.notFound');
   }
   if (status === 408 || status === 504) {
-    return `Le serveur a mis trop de temps à répondre : réessayez dans quelques instants (erreur ${status}).`;
+    return translate('httpErrors.timeout', { status });
   }
   if (status === 413) {
-    return 'Les données envoyées sont trop volumineuses (erreur 413).';
+    return translate('httpErrors.tooLarge');
   }
   if (status === 429) {
-    return 'Trop de requêtes : patientez quelques instants avant de réessayer (erreur 429).';
+    return translate('httpErrors.tooManyRequests');
   }
   if (status >= 500) {
-    return `Erreur interne du serveur : réessayez plus tard ou contactez l'administrateur (erreur ${status}).`;
+    return translate('httpErrors.serverError', { status });
   }
-  return `Erreur inattendue (erreur ${status}).`;
+  return translate('httpErrors.unexpected', { status });
 }
 
 export function parseApiError(error: unknown, fallbackMessage: string): ApiError {

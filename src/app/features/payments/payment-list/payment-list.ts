@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -46,6 +47,7 @@ const SEARCH_DEBOUNCE_MS = 300;
     MatSelectModule,
     MatTableModule,
     MatTooltipModule,
+    TranslocoPipe,
   ],
   templateUrl: './payment-list.html',
   styleUrl: './payment-list.css',
@@ -127,7 +129,7 @@ export class PaymentList {
   }
 
   protected refund(payment: Payment): void {
-    const confirmed = confirm(`Rembourser le paiement de ${payment.amount} sur la facture ${payment.invoice_number} ?`);
+    const confirmed = confirm(translate('payments.confirmRefundInvoice', { amount: payment.amount, invoice: payment.invoice_number }));
     if (!confirmed) {
       return;
     }
@@ -139,6 +141,6 @@ export class PaymentList {
   }
 
   protected exportCsv(): void {
-    this.paymentService.exportCsv().subscribe((blob) => triggerBlobDownload(blob, 'paiements-export.csv'));
+    this.paymentService.exportCsv().subscribe((blob) => triggerBlobDownload(blob, translate('exports.payments')));
   }
 }

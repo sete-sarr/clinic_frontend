@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
@@ -28,6 +29,7 @@ const PAGE_SIZE = 20;
     MatIconModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './portal-prescriptions.html',
   styleUrl: './portal-prescriptions.css',

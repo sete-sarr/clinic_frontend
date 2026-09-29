@@ -1,10 +1,18 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
+import { TranslocoService } from '@jsverse/transloco';
 
+import { translocoTesting } from '../i18n/transloco-testing';
 import { parseApiError } from './api-error';
 
 const FALLBACK = "Impossible d'enregistrer ce médicament.";
 
 describe('parseApiError', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [translocoTesting('fr')] });
+    TestBed.inject(TranslocoService);
+  });
+
   it('returns the backend ApiError unchanged when the body has the standard shape', () => {
     const body = { code: 400, message: 'Nom déjà utilisé.', field: 'name' };
     const error = new HttpErrorResponse({ status: 400, error: body });
@@ -37,5 +45,14 @@ describe('parseApiError', () => {
 
   it('keeps the bare fallback for non-HTTP errors', () => {
     expect(parseApiError(new Error('boom'), FALLBACK)).toEqual({ code: 0, message: FALLBACK, field: null });
+  });
+
+  it("explique l'erreur dans la langue de l'interface (anglais)", () => {
+    TestBed.inject(TranslocoService).setActiveLang('en');
+    const error = new HttpErrorResponse({ status: 404, error: '<!doctype html>' });
+
+    expect(parseApiError(error, 'Unable to save.').message).toBe(
+      'Unable to save. This service is not available on the server: contact the administrator (error 404).',
+    );
   });
 });

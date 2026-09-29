@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { parseApiError } from '../../core/api/api-error';
@@ -20,14 +21,14 @@ import { ClinicService } from './clinic.service';
 
 interface LogoField {
   key: 'logo_light' | 'logo_dark' | 'logo_print' | 'favicon';
-  label: string;
+  labelKey: string; // i18n/*.json → settings.*
 }
 
 const LOGO_FIELDS: LogoField[] = [
-  { key: 'logo_light', label: 'Logo clair' },
-  { key: 'logo_dark', label: 'Logo sombre' },
-  { key: 'logo_print', label: "Logo d'impression" },
-  { key: 'favicon', label: 'Favicon' },
+  { key: 'logo_light', labelKey: 'settings.logoLight' },
+  { key: 'logo_dark', labelKey: 'settings.logoDark' },
+  { key: 'logo_print', labelKey: 'settings.logoPrint' },
+  { key: 'favicon', labelKey: 'settings.favicon' },
 ];
 
 @Component({
@@ -40,6 +41,7 @@ const LOGO_FIELDS: LogoField[] = [
     MatIconModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './settings.html',
   styleUrl: './settings.css',
@@ -114,10 +116,10 @@ export class Settings {
     try {
       await firstValueFrom(this.clinicService.updateSettings(id, formData));
       this.pendingFiles.set({});
-      this.successNotifier.show('Paramètres enregistrés avec succès.');
+      this.successNotifier.show(translate('settings.saved'));
       this.clinicResource.reload();
     } catch (error) {
-      const apiError = parseApiError(error, "Impossible d'enregistrer les paramètres.");
+      const apiError = parseApiError(error, translate('settings.saveError'));
       this.errorMessage.set(apiError.message);
     } finally {
       this.saving.set(false);

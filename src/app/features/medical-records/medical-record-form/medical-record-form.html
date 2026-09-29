@@ -1,6 +1,6 @@
 <div class="app-dialog-header">
-  <h2 mat-dialog-title>Dossier médical — {{ patientLabel() }}</h2>
-  <button mat-icon-button type="button" (click)="dialogRef.close()" aria-label="Fermer">
+  <h2 mat-dialog-title>{{ 'medicalRecords.dialogTitle' | transloco: { patient: patientLabel() } }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
     <mat-icon>close</mat-icon>
   </button>
 </div>
@@ -13,17 +13,17 @@
   } @else {
       <form novalidate (submit)="$event.preventDefault(); onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Allergies</mat-label>
+          <mat-label>{{ 'medicalRecords.allergies' | transloco }}</mat-label>
           <textarea matInput rows="3" [formField]="medicalRecordForm.allergies"></textarea>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Antécédents médicaux</mat-label>
+          <mat-label>{{ 'medicalRecords.history' | transloco }}</mat-label>
           <textarea matInput rows="4" [formField]="medicalRecordForm.medical_history"></textarea>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Observations</mat-label>
+          <mat-label>{{ 'medicalRecords.observations' | transloco }}</mat-label>
           <textarea matInput rows="4" [formField]="medicalRecordForm.observations"></textarea>
         </mat-form-field>
 
@@ -32,12 +32,12 @@
         }
 
         <div class="form-actions">
-          <button mat-button type="button" (click)="dialogRef.close()">Annuler</button>
+          <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
           <button mat-flat-button color="primary" type="submit" [disabled]="medicalRecordForm().submitting()">
             @if (medicalRecordForm().submitting()) {
               <mat-spinner diameter="20" />
             } @else {
-              Enregistrer
+              {{ 'common.actions.save' | transloco }}
             }
           </button>
         </div>

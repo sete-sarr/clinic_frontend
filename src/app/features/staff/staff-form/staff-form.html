@@ -1,6 +1,6 @@
 <div class="app-dialog-header">
-  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le membre du personnel' : 'Nouveau membre du personnel' }}</h2>
-  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+  <h2 mat-dialog-title>{{ (isEditMode() ? 'staff.editTitle' : 'staff.newTitle') | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" [attr.aria-label]="'common.actions.close' | transloco">
     <mat-icon>close</mat-icon>
   </button>
 </div>
@@ -15,15 +15,15 @@
         @if (!isEditMode()) {
           <div class="field-row">
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Nom d'utilisateur</mat-label>
+              <mat-label>{{ 'common.fields.username' | transloco }}</mat-label>
               <input matInput [formField]="staffForm.username" autocomplete="username" />
               @if (staffForm.username().touched() && staffForm.username().invalid()) {
-                <mat-error>{{ staffForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+                <mat-error>{{ staffForm.username().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Rôle</mat-label>
+              <mat-label>{{ 'staff.role' | transloco }}</mat-label>
               <mat-select [formField]="staffForm.role">
                 @for (option of roleOptions; track option[0]) {
                   <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
@@ -35,37 +35,37 @@
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Prénom</mat-label>
+            <mat-label>{{ 'common.fields.firstName' | transloco }}</mat-label>
             <input matInput [formField]="staffForm.first_name" />
             @if (staffForm.first_name().touched() && staffForm.first_name().invalid()) {
-              <mat-error>{{ staffForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ staffForm.first_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Nom</mat-label>
+            <mat-label>{{ 'common.fields.lastName' | transloco }}</mat-label>
             <input matInput [formField]="staffForm.last_name" />
             @if (staffForm.last_name().touched() && staffForm.last_name().invalid()) {
-              <mat-error>{{ staffForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ staffForm.last_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>E-mail</mat-label>
+            <mat-label>{{ 'common.fields.email' | transloco }}</mat-label>
             <input matInput type="email" [formField]="staffForm.email" autocomplete="email" />
             @if (staffForm.email().touched() && staffForm.email().invalid()) {
-              <mat-error>{{ staffForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ staffForm.email().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
 
           @if (!isEditMode()) {
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Mot de passe</mat-label>
+              <mat-label>{{ 'common.fields.password' | transloco }}</mat-label>
               <input matInput type="password" [formField]="staffForm.password" autocomplete="new-password" />
               @if (staffForm.password().touched() && staffForm.password().invalid()) {
-                <mat-error>{{ staffForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+                <mat-error>{{ staffForm.password().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
               }
             </mat-form-field>
           }
@@ -76,12 +76,12 @@
         }
 
         <div class="form-actions">
-          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">Annuler</button>
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">{{ 'common.actions.cancel' | transloco }}</button>
           <button mat-flat-button color="primary" type="submit" [disabled]="staffForm().submitting()">
             @if (staffForm().submitting()) {
               <mat-spinner diameter="20" />
             } @else {
-              Enregistrer
+              {{ 'common.actions.save' | transloco }}
             }
           </button>
         </div>
@@ -89,10 +89,10 @@
 
       @if (isEditMode()) {
         <div class="role-section">
-          <h2>Rôle</h2>
+          <h2>{{ 'staff.role' | transloco }}</h2>
           <div class="field-row">
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Changer le rôle</mat-label>
+              <mat-label>{{ 'staff.changeRole' | transloco }}</mat-label>
               <mat-select [value]="model().role" (selectionChange)="onRoleChange($event.value)" [disabled]="roleChangePending()">
                 @for (option of roleOptions; track option[0]) {
                   <mat-option [value]="option[0]">{{ option[1] }}</mat-option>

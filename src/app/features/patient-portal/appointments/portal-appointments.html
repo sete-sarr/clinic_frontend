@@ -1,8 +1,8 @@
 <div class="page-header">
-  <h1>Mes rendez-vous</h1>
+  <h1>{{ 'portal.nav.appointments' | transloco }}</h1>
   <button mat-flat-button color="primary" (click)="openCreate()">
     <mat-icon>add</mat-icon>
-    Prendre rendez-vous
+    {{ 'portal.appointments.book' | transloco }}
   </button>
 </div>
 
@@ -15,7 +15,7 @@
     <mat-spinner diameter="32" />
   </div>
 } @else if (appointmentsResource.value().results.length === 0) {
-  <app-empty-state icon="event_busy" message="Vous n'avez aucun rendez-vous." [padded]="false" />
+  <app-empty-state icon="event_busy" [message]="'portal.appointments.empty' | transloco" [padded]="false" />
 } @else {
   <div class="appointment-cards">
     @for (appointment of appointmentsResource.value().results; track appointment.id) {
@@ -37,15 +37,15 @@
           @if (isCancellable(appointment)) {
             <div class="appointment-actions">
               @if (confirmingCancelId() === appointment.id) {
-                <span class="confirm-text">Confirmer l'annulation ?</span>
+                <span class="confirm-text">{{ 'portal.appointments.confirmCancel' | transloco }}</span>
                 @if (cancellingId() === appointment.id) {
                   <mat-spinner diameter="20" />
                 } @else {
-                  <button mat-button color="warn" (click)="confirmCancel(appointment)">Oui</button>
-                  <button mat-button (click)="dismissCancel()">Non</button>
+                  <button mat-button color="warn" (click)="confirmCancel(appointment)">{{ 'common.actions.yes' | transloco }}</button>
+                  <button mat-button (click)="dismissCancel()">{{ 'common.actions.no' | transloco }}</button>
                 }
               } @else {
-                <button mat-button color="warn" (click)="requestCancel(appointment)">Annuler</button>
+                <button mat-button color="warn" (click)="requestCancel(appointment)">{{ 'common.actions.cancel' | transloco }}</button>
               }
             </div>
           }

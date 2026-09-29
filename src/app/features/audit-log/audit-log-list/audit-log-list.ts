@@ -11,6 +11,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
@@ -35,6 +36,7 @@ const SEARCH_DEBOUNCE_MS = 300;
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    TranslocoPipe,
   ],
   templateUrl: './audit-log-list.html',
   styleUrl: './audit-log-list.css',

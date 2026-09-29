@@ -5,8 +5,17 @@
    since both screens need the identical shell. */
 
 .auth-page {
+  position: relative;
   display: flex;
   min-height: 100vh;
+}
+
+/* Sélecteur de langue en haut à droite des pages publiques (docs/i18n.md). */
+.page-language {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 1;
 }
 
 .auth-brand {

@@ -1,23 +1,23 @@
 <div class="page-header">
-  <h1>Journal d'audit</h1>
+  <h1>{{ 'auditLog.title' | transloco }}</h1>
 </div>
 
 <div class="filters">
   <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Rechercher</mat-label>
+    <mat-label>{{ 'common.search' | transloco }}</mat-label>
     <input
       matInput
       [value]="searchInput()"
       (input)="onSearchInput($any($event.target).value)"
-      placeholder="Type d'objet, identifiant..."
+      [placeholder]="'auditLog.searchPlaceholder' | transloco"
     />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="filter-field action-field">
-    <mat-label>Action</mat-label>
+    <mat-label>{{ 'auditLog.action' | transloco }}</mat-label>
     <mat-select [value]="action() ?? ''" (selectionChange)="onActionFilterChange($event.value)">
-      <mat-option value="">Toutes</mat-option>
+      <mat-option value="">{{ 'common.allFeminine' | transloco }}</mat-option>
       @for (option of actionOptions; track option[0]) {
         <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
       }
@@ -25,14 +25,14 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="filter-field date-field">
-    <mat-label>Du</mat-label>
+    <mat-label>{{ 'common.fields.from' | transloco }}</mat-label>
     <input matInput [matDatepicker]="fromPicker" (dateChange)="onDateFromChange($event)" />
     <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
     <mat-datepicker #fromPicker />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="filter-field date-field">
-    <mat-label>Au</mat-label>
+    <mat-label>{{ 'common.fields.to' | transloco }}</mat-label>
     <input matInput [matDatepicker]="toPicker" (dateChange)="onDateToChange($event)" />
     <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
     <mat-datepicker #toPicker />
@@ -44,34 +44,34 @@
     <mat-spinner diameter="32" />
   </div>
 } @else if (dataSource.data.length === 0) {
-  <app-empty-state icon="history" message="Aucune entrée pour ce filtre." />
+  <app-empty-state icon="history" [message]="'auditLog.empty' | transloco" />
 } @else {
   <div class="table-scroll">
   <table mat-table [dataSource]="dataSource" class="audit-table">
     <ng-container matColumnDef="created_at">
-      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
       <td mat-cell *matCellDef="let entry">{{ entry.created_at | date: 'short' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="user_display">
-      <th mat-header-cell *matHeaderCellDef>Utilisateur</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.user' | transloco }}</th>
       <td mat-cell *matCellDef="let entry">{{ entry.user_display }}</td>
     </ng-container>
 
     <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef>Action</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.action' | transloco }}</th>
       <td mat-cell *matCellDef="let entry">
         <mat-chip disableRipple>{{ actionLabel(entry) }}</mat-chip>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="model_name">
-      <th mat-header-cell *matHeaderCellDef>Type d'objet</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.objectType' | transloco }}</th>
       <td mat-cell *matCellDef="let entry">{{ entry.model_name }}</td>
     </ng-container>
 
     <ng-container matColumnDef="object_id">
-      <th mat-header-cell *matHeaderCellDef>Identifiant</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.objectId' | transloco }}</th>
       <td mat-cell *matCellDef="let entry">{{ entry.object_id }}</td>
     </ng-container>
 

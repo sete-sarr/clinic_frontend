@@ -1,6 +1,6 @@
 <div class="app-dialog-header">
-  <h2 mat-dialog-title>{{ isEditMode() ? 'Modifier le médecin' : 'Nouveau médecin' }}</h2>
-  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" aria-label="Fermer">
+  <h2 mat-dialog-title>{{ (isEditMode() ? 'doctors.edit' : 'doctors.new') | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(isEditMode())" [attr.aria-label]="'common.actions.close' | transloco">
     <mat-icon>close</mat-icon>
   </button>
 </div>
@@ -15,18 +15,18 @@
         @if (!isEditMode()) {
           <div class="field-row">
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Nom d'utilisateur</mat-label>
+              <mat-label>{{ 'common.fields.username' | transloco }}</mat-label>
               <input matInput [formField]="doctorForm.username" autocomplete="username" />
               @if (doctorForm.username().touched() && doctorForm.username().invalid()) {
-                <mat-error>{{ doctorForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+                <mat-error>{{ doctorForm.username().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Mot de passe</mat-label>
+              <mat-label>{{ 'common.fields.password' | transloco }}</mat-label>
               <input matInput type="password" [formField]="doctorForm.password" autocomplete="new-password" />
               @if (doctorForm.password().touched() && doctorForm.password().invalid()) {
-                <mat-error>{{ doctorForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+                <mat-error>{{ doctorForm.password().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
               }
             </mat-form-field>
           </div>
@@ -37,18 +37,18 @@
         } @else {
           <div class="field-row">
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Prénom</mat-label>
+              <mat-label>{{ 'common.fields.firstName' | transloco }}</mat-label>
               <input matInput [formField]="doctorForm.first_name" />
               @if (doctorForm.first_name().touched() && doctorForm.first_name().invalid()) {
-                <mat-error>{{ doctorForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+                <mat-error>{{ doctorForm.first_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Nom</mat-label>
+              <mat-label>{{ 'common.fields.lastName' | transloco }}</mat-label>
               <input matInput [formField]="doctorForm.last_name" />
               @if (doctorForm.last_name().touched() && doctorForm.last_name().invalid()) {
-                <mat-error>{{ doctorForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+                <mat-error>{{ doctorForm.last_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
               }
             </mat-form-field>
           </div>
@@ -57,10 +57,10 @@
         @if (!isEditMode()) {
           <div class="field-row">
             <mat-form-field appearance="outline" class="half-width">
-              <mat-label>E-mail</mat-label>
+              <mat-label>{{ 'common.fields.email' | transloco }}</mat-label>
               <input matInput type="email" [formField]="doctorForm.email" autocomplete="email" />
               @if (doctorForm.email().touched() && doctorForm.email().invalid()) {
-                <mat-error>{{ doctorForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+                <mat-error>{{ doctorForm.email().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
               }
             </mat-form-field>
           </div>
@@ -68,27 +68,27 @@
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Spécialité</mat-label>
+            <mat-label>{{ 'doctors.specialty' | transloco }}</mat-label>
             <input matInput [formField]="doctorForm.specialty" />
             @if (doctorForm.specialty().touched() && doctorForm.specialty().invalid()) {
-              <mat-error>{{ doctorForm.specialty().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ doctorForm.specialty().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>N° professionnel</mat-label>
+            <mat-label>{{ 'doctors.professionalNumber' | transloco }}</mat-label>
             <input matInput [formField]="doctorForm.professional_number" />
             @if (doctorForm.professional_number().touched() && doctorForm.professional_number().invalid()) {
-              <mat-error>{{ doctorForm.professional_number().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ doctorForm.professional_number().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Département (facultatif)</mat-label>
+            <mat-label>{{ 'doctors.departmentOptional' | transloco }}</mat-label>
             <mat-select [formField]="doctorForm.department">
-              <mat-option [value]="null">Aucun</mat-option>
+              <mat-option [value]="null">{{ 'common.none' | transloco }}</mat-option>
               @for (dept of departmentOptions(); track dept.id) {
                 <mat-option [value]="dept.id">{{ dept.name }}</mat-option>
               }
@@ -96,7 +96,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Téléphone (facultatif)</mat-label>
+            <mat-label>{{ 'common.fields.phoneOptional' | transloco }}</mat-label>
             <input matInput [formField]="doctorForm.phone" autocomplete="tel" />
           </mat-form-field>
         </div>
@@ -106,12 +106,12 @@
         }
 
         <div class="form-actions">
-          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">Annuler</button>
+          <button mat-button type="button" (click)="dialogRef.close(isEditMode())">{{ 'common.actions.cancel' | transloco }}</button>
           <button mat-flat-button color="primary" type="submit" [disabled]="doctorForm().submitting()">
             @if (doctorForm().submitting()) {
               <mat-spinner diameter="20" />
             } @else {
-              Enregistrer
+              {{ 'common.actions.save' | transloco }}
             }
           </button>
         </div>

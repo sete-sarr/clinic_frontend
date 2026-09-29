@@ -13,7 +13,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -73,11 +75,11 @@ function formatDoctor(doctor: DoctorSummary): string {
 }
 
 const lineSchema = schema<InvoiceLine>((line) => {
-  required(line.description, { message: 'Description requise' });
-  required(line.quantity, { message: 'Quantité requise' });
-  min(line.quantity, 1, { message: 'Quantité minimale : 1' });
-  required(line.unit_price, { message: 'Prix unitaire requis' });
-  min(line.unit_price, 0, { message: 'Le prix ne peut pas être négatif' });
+  required(line.description, { message: translate('common.validation.descriptionRequired') });
+  required(line.quantity, { message: translate('prescriptions.quantityRequired') });
+  min(line.quantity, 1, { message: translate('prescriptions.quantityMin') });
+  required(line.unit_price, { message: translate('billing.unitPriceRequired') });
+  min(line.unit_price, 0, { message: translate('billing.priceNotNegative') });
 });
 
 @Component({
@@ -97,6 +99,8 @@ const lineSchema = schema<InvoiceLine>((line) => {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
+    MatTooltipModule,
   ],
   templateUrl: './invoice-form.html',
   styleUrl: './invoice-form.css',
@@ -187,8 +191,8 @@ export class InvoiceForm {
 
   protected readonly invoiceForm = form(this.model, (path) => {
     disabled(path, () => !this.formEditable());
-    required(path.patient, { message: 'Patient requis' });
-    required(path.issue_date, { message: "Date d'émission requise" });
+    required(path.patient, { message: translate('common.validation.patientRequired') });
+    required(path.issue_date, { message: translate('billing.issueDateRequired') });
     applyEach(path.lines, lineSchema);
   });
 
@@ -214,10 +218,10 @@ export class InvoiceForm {
   protected readonly paymentEntry = signal<PaymentEntryModel>(emptyPaymentEntry());
 
   protected readonly paymentForm = form(this.paymentEntry, (path) => {
-    required(path.amount, { message: 'Montant requis' });
-    min(path.amount, 0.01, { message: 'Le montant doit être positif' });
-    required(path.method, { message: 'Méthode requise' });
-    required(path.date, { message: 'Date requise' });
+    required(path.amount, { message: translate('payments.amountRequired') });
+    min(path.amount, 0.01, { message: translate('payments.amountPositive') });
+    required(path.method, { message: translate('payments.methodRequired') });
+    required(path.date, { message: translate('common.validation.dateRequired') });
   });
 
   constructor() {
@@ -283,7 +287,7 @@ export class InvoiceForm {
       try {
         const value = this.model();
         if (!value.patient || !value.issue_date) {
-          return [{ kind: 'server', message: 'Patient et date requis.' }];
+          return [{ kind: 'server', message: translate('billing.patientAndDateRequired') }];
         }
         const payload: InvoicePayload = {
           patient: value.patient,
@@ -296,17 +300,17 @@ export class InvoiceForm {
         const id = this.currentId();
         if (id) {
           await firstValueFrom(this.invoiceService.update(Number(id), payload));
-          this.successNotifier.show('Facture mise à jour avec succès.');
+          this.successNotifier.show(translate('billing.updated'));
           this.dialogRef.close(true);
         } else {
           const created = await firstValueFrom(this.invoiceService.create(payload));
           this.currentId.set(String(created.id));
           this.invoiceResource.reload();
-          this.successNotifier.show('Facture créée avec succès.');
+          this.successNotifier.show(translate('billing.created'));
         }
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer la facture.");
+        const apiError = parseApiError(error, translate('billing.saveError'));
         const fieldsByName = {
           patient: this.invoiceForm.patient,
           doctor: this.invoiceForm.doctor,
@@ -330,7 +334,7 @@ export class InvoiceForm {
         this.invoiceResource.reload();
         this.medicationsResource.reload();
       },
-      error: (error) => this.actionError.set(parseApiError(error, "Impossible d'émettre la facture.").message),
+      error: (error) => this.actionError.set(parseApiError(error, translate('billing.issueError')).message),
     });
   }
 
@@ -339,7 +343,7 @@ export class InvoiceForm {
     if (!id) {
       return;
     }
-    const confirmed = confirm('Annuler cette facture ? Cette action est définitive.');
+    const confirmed = confirm(translate('billing.confirmCancel'));
     if (!confirmed) {
       return;
     }
@@ -349,7 +353,7 @@ export class InvoiceForm {
         this.invoiceResource.reload();
         this.medicationsResource.reload();
       },
-      error: (error) => this.actionError.set(parseApiError(error, "Impossible d'annuler la facture.").message),
+      error: (error) => this.actionError.set(parseApiError(error, translate('billing.cancelError')).message),
     });
   }
 
@@ -386,14 +390,14 @@ export class InvoiceForm {
         this.invoiceResource.reload();
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer le paiement.");
+        const apiError = parseApiError(error, translate('payments.saveError'));
         return [{ kind: 'server', message: apiError.message }];
       }
     });
   }
 
   protected refundPayment(payment: Payment): void {
-    const confirmed = confirm(`Rembourser le paiement de ${payment.amount} ?`);
+    const confirmed = confirm(translate('payments.confirmRefund', { amount: payment.amount }));
     if (!confirmed) {
       return;
     }

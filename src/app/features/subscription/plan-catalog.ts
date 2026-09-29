@@ -14,7 +14,7 @@ export interface PlanDefinition {
   monthlyPriceXof: number;
   maxDoctors: number | null;
   maxPatients: number | null;
-  highlights: string[];
+  highlights: string[]; // clés de traduction (i18n/*.json → subscription.plans.*)
 }
 
 export const PLAN_CATALOG: PlanDefinition[] = [
@@ -25,10 +25,10 @@ export const PLAN_CATALOG: PlanDefinition[] = [
     maxDoctors: 3,
     maxPatients: 500,
     highlights: [
-      'Jusqu’à 3 médecins',
-      'Jusqu’à 500 patients',
-      'Facturation et rendez-vous inclus',
-      'Notifications de rendez-vous par e-mail',
+      'subscription.plans.upTo3Doctors',
+      'subscription.plans.upTo500Patients',
+      'subscription.plans.billingAndAppointments',
+      'subscription.plans.emailNotifications',
     ],
   },
   {
@@ -39,11 +39,11 @@ export const PLAN_CATALOG: PlanDefinition[] = [
     maxPatients: 5000,
     // SMS et rappel de la veille : réservés à Professional (subscriptions/catalog.py PLAN_FEATURES).
     highlights: [
-      'Jusqu’à 10 médecins',
-      'Jusqu’à 5000 patients',
-      'Rapports et exports avancés',
-      'SMS de rendez-vous aux patients',
-      'Rappel automatique la veille du rendez-vous',
+      'subscription.plans.upTo10Doctors',
+      'subscription.plans.upTo5000Patients',
+      'subscription.plans.advancedReports',
+      'subscription.plans.smsNotifications',
+      'subscription.plans.dayBeforeReminder',
     ],
   },
 ];

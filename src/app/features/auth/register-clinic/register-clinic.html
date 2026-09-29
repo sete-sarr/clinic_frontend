@@ -1,28 +1,26 @@
 <div class="auth-page">
+  <app-language-switcher class="page-language" />
   <div class="auth-brand">
     <div class="auth-brand-content">
       <div class="auth-brand-logo">
         <mat-icon>local_hospital</mat-icon>
         <span>Clinic Management</span>
       </div>
-      <span class="auth-brand-badge">Premier mois gratuit</span>
-      <h1 class="auth-brand-title">Votre clinique, opérationnelle en quelques minutes.</h1>
-      <p class="auth-brand-text">
-        Créez votre espace, invitez votre équipe et commencez à gérer patients, rendez-vous et
-        facturation dès aujourd'hui — sans carte bancaire.
-      </p>
+      <span class="auth-brand-badge">{{ 'auth.brand.registerBadge' | transloco }}</span>
+      <h1 class="auth-brand-title">{{ 'auth.brand.registerTitle' | transloco }}</h1>
+      <p class="auth-brand-text">{{ 'auth.brand.registerText' | transloco }}</p>
       <ul class="auth-brand-list">
         <li>
           <mat-icon>check_circle</mat-icon>
-          <span>Aucun engagement, aucune carte requise</span>
+          <span>{{ 'auth.brand.registerPoint1' | transloco }}</span>
         </li>
         <li>
           <mat-icon>check_circle</mat-icon>
-          <span>Isolation stricte des données de votre clinique</span>
+          <span>{{ 'auth.brand.registerPoint2' | transloco }}</span>
         </li>
         <li>
           <mat-icon>check_circle</mat-icon>
-          <span>Support pour vos médecins, secrétaires et comptables</span>
+          <span>{{ 'auth.brand.registerPoint3' | transloco }}</span>
         </li>
       </ul>
     </div>
@@ -31,77 +29,77 @@
   <div class="auth-form-side">
     <mat-card class="auth-card register-card">
       <div class="auth-card-header">
-        <h2>Créer votre clinique</h2>
-        <p>Démarrez votre mois d'essai gratuit.</p>
+        <h2>{{ 'auth.register.title' | transloco }}</h2>
+        <p>{{ 'auth.register.subtitle' | transloco }}</p>
       </div>
 
       <form novalidate (submit)="$event.preventDefault(); onSubmit()">
         <div class="section-heading">
           <mat-icon>local_hospital</mat-icon>
-          <h3>Clinique</h3>
+          <h3>{{ 'auth.register.clinicSection' | transloco }}</h3>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nom de la clinique</mat-label>
+          <mat-label>{{ 'auth.register.clinicName' | transloco }}</mat-label>
           <input matInput [formField]="registerForm.clinic_name" autocomplete="organization" />
           @if (registerForm.clinic_name().touched() && registerForm.clinic_name().invalid()) {
-            <mat-error>{{ registerForm.clinic_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            <mat-error>{{ registerForm.clinic_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }
         </mat-form-field>
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>E-mail de la clinique (facultatif)</mat-label>
+            <mat-label>{{ 'auth.register.clinicEmail' | transloco }}</mat-label>
             <input matInput type="email" [formField]="registerForm.clinic_email" autocomplete="email" />
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Téléphone (facultatif)</mat-label>
+            <mat-label>{{ 'common.fields.phoneOptional' | transloco }}</mat-label>
             <input matInput [formField]="registerForm.clinic_phone" autocomplete="tel" />
           </mat-form-field>
         </div>
 
         <div class="section-heading">
           <mat-icon>person_outline</mat-icon>
-          <h3>Votre compte administrateur</h3>
+          <h3>{{ 'auth.register.adminSection' | transloco }}</h3>
         </div>
 
         <div class="field-row">
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Prénom</mat-label>
+            <mat-label>{{ 'common.fields.firstName' | transloco }}</mat-label>
             <input matInput [formField]="registerForm.first_name" autocomplete="given-name" />
             @if (registerForm.first_name().touched() && registerForm.first_name().invalid()) {
-              <mat-error>{{ registerForm.first_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ registerForm.first_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Nom</mat-label>
+            <mat-label>{{ 'common.fields.lastName' | transloco }}</mat-label>
             <input matInput [formField]="registerForm.last_name" autocomplete="family-name" />
             @if (registerForm.last_name().touched() && registerForm.last_name().invalid()) {
-              <mat-error>{{ registerForm.last_name().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+              <mat-error>{{ registerForm.last_name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>E-mail</mat-label>
+          <mat-label>{{ 'common.fields.email' | transloco }}</mat-label>
           <input matInput type="email" [formField]="registerForm.email" autocomplete="email" />
           @if (registerForm.email().touched() && registerForm.email().invalid()) {
-            <mat-error>{{ registerForm.email().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            <mat-error>{{ registerForm.email().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nom d'utilisateur</mat-label>
+          <mat-label>{{ 'common.fields.username' | transloco }}</mat-label>
           <input matInput [formField]="registerForm.username" autocomplete="username" />
           @if (registerForm.username().touched() && registerForm.username().invalid()) {
-            <mat-error>{{ registerForm.username().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            <mat-error>{{ registerForm.username().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Mot de passe</mat-label>
+          <mat-label>{{ 'common.fields.password' | transloco }}</mat-label>
           <input
             matInput
             [type]="hidePassword() ? 'password' : 'text'"
@@ -113,12 +111,12 @@
             matSuffix
             type="button"
             (click)="togglePasswordVisibility()"
-            [attr.aria-label]="hidePassword() ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+            [attr.aria-label]="(hidePassword() ? 'common.showPassword' : 'common.hidePassword') | transloco"
           >
             <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (registerForm.password().touched() && registerForm.password().invalid()) {
-            <mat-error>{{ registerForm.password().errors()[0]?.message ?? 'Champ invalide' }}</mat-error>
+            <mat-error>{{ registerForm.password().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }
         </mat-form-field>
 
@@ -139,14 +137,14 @@
           @if (registerForm().submitting()) {
             <mat-spinner diameter="20" />
           } @else {
-            Créer ma clinique
+            {{ 'auth.register.submit' | transloco }}
           }
         </button>
       </form>
 
       <p class="auth-link">
-        Déjà un compte ?
-        <a routerLink="/login">Se connecter</a>
+        {{ 'auth.register.alreadyAccount' | transloco }}
+        <a routerLink="/login">{{ 'auth.register.signIn' | transloco }}</a>
       </p>
     </mat-card>
   </div>

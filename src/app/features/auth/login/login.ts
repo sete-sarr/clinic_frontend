@@ -11,6 +11,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
+import { LanguageService } from '../../../core/i18n/language.service';
 import { LanguageSwitcher } from '../../../shared/components/language-switcher/language-switcher';
 
 interface LoginFormModel {
@@ -38,6 +39,7 @@ export class Login {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly language = inject(LanguageService);
 
   protected readonly hidePassword = signal(true);
 
@@ -56,9 +58,11 @@ export class Login {
   protected async onSubmit(): Promise<void> {
     await submit(this.loginForm, async () => {
       try {
-        await firstValueFrom(this.auth.login(this.model()));
+        const response = await firstValueFrom(this.auth.login(this.model()));
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
-        this.router.navigateByUrl(returnUrl);
+        if (!this.language.openInPreferredLanguage(response.user.language, returnUrl)) {
+          this.router.navigateByUrl(returnUrl);
+        }
         return undefined;
       } catch (error) {
         const { message } = parseApiError(error, 'Connexion impossible. Réessayez dans un instant.');

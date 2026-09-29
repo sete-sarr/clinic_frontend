@@ -11,6 +11,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
+import { LanguageSwitcher } from '../../../shared/components/language-switcher/language-switcher';
 
 interface RegisterClinicFormModel {
   clinic_name: string;
@@ -26,6 +27,7 @@ interface RegisterClinicFormModel {
 @Component({
   selector: 'app-register-clinic',
   imports: [
+    LanguageSwitcher,
     FormField,
     RouterLink,
     MatButtonModule,

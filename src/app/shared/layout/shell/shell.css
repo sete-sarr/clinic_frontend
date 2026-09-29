@@ -137,6 +137,10 @@
   z-index: 10;
   background-color: var(--sidebar-bg);
   color: var(--sidebar-text);
+  /* mat-toolbar impose aux boutons qu'il contient sa propre couleur (sombre par défaut) : sans ces
+     jetons, le sélecteur de langue et le bouton menu mobile (☰) sont illisibles sur le bandeau. */
+  --mat-toolbar-container-text-color: var(--sidebar-text);
+  --mat-icon-button-icon-color: var(--sidebar-text);
   border-bottom: 1px solid var(--sidebar-bg);
   padding: 0 var(--space-4);
 }

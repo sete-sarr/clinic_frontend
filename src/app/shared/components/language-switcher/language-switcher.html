@@ -1,0 +1,18 @@
+<button
+  mat-button
+  type="button"
+  class="language-trigger"
+  [matMenuTriggerFor]="languageMenu"
+  [attr.aria-label]="'language.choose' | transloco"
+>
+  <mat-icon>language</mat-icon>
+  <span class="language-code">{{ current().toUpperCase() }}</span>
+</button>
+<mat-menu #languageMenu="matMenu">
+  @for (language of languages; track language) {
+    <button mat-menu-item type="button" [attr.lang]="language" (click)="select(language)">
+      <mat-icon>{{ language === current() ? 'check' : '' }}</mat-icon>
+      <span>{{ labels[language] }}</span>
+    </button>
+  }
+</mat-menu>

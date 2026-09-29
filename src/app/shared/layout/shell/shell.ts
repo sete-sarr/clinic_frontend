@@ -18,24 +18,15 @@ import { Role } from '../../../core/models/user.model';
 import { ThemeService } from '../../../core/services/theme.service';
 import { UserGuideService } from '../../../core/services/user-guide.service';
 import { GlobalSearch } from '../../components/global-search/global-search';
+import { LanguageSwitcher } from '../../components/language-switcher/language-switcher';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 interface NavItem {
-  label: string;
+  labelKey: string; // clé de traduction (i18n/*.json → nav.*)
   icon: string;
   route: string;
   roles: Role[];
 }
-
-// Reflète backend/accounts/migrations/0002_seed_roles.py — aucun libellé d'affichage équivalent n'existait
-// nulle part dans le frontend avant cela.
-const ROLE_LABEL: Record<Role, string> = {
-  clinic_admin: 'Administrateur',
-  doctor: 'Médecin',
-  secretary: 'Secrétaire',
-  accountant: 'Comptable',
-  pharmacist: 'Pharmacien',
-  patient: 'Patient',
-};
 
 // Du plus privilégié au moins privilégié — un utilisateur avec plusieurs rôles n'affiche qu'un seul libellé dans la puce de l'en-tête.
 const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmacist', 'secretary', 'patient'];
@@ -44,13 +35,13 @@ const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmaci
 // selon business/access-policy.md) à chaque nouveau module de fonctionnalité livré.
 const NAV_ITEMS: NavItem[] = [
   {
-    label: 'Tableau de bord',
+    labelKey: 'nav.dashboard',
     icon: 'dashboard',
     route: '/dashboard',
     roles: ['doctor', 'secretary', 'accountant', 'clinic_admin'],
   },
   {
-    label: 'Rendez-vous',
+    labelKey: 'nav.appointments',
     icon: 'event',
     route: '/appointments',
     // CanManageAppointments (backend/appointments/permissions.py) : l'accès en lecture seule du patient est
@@ -58,14 +49,14 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['doctor', 'secretary', 'clinic_admin'],
   },
   {
-    label: 'Patients',
+    labelKey: 'nav.patients',
     icon: 'people',
     route: '/patients',
     // CanManagePatients (backend/patients/permissions.py) : accès en lecture pour tous les rôles du personnel de la clinique.
     roles: ['doctor', 'secretary', 'accountant', 'clinic_admin'],
   },
   {
-    label: 'Consultations',
+    labelKey: 'nav.consultations',
     icon: 'medical_information',
     route: '/consultations',
     // CanManageConsultations (backend/consultations/permissions.py) : données cliniques, doctor/clinic_admin
@@ -73,7 +64,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['doctor', 'clinic_admin'],
   },
   {
-    label: 'Dossiers médicaux',
+    labelKey: 'nav.medicalRecords',
     icon: 'folder_shared',
     route: '/medical-records',
     // CanAccessMedicalRecord (backend/medical_records/permissions.py) : doctor uniquement — même
@@ -81,14 +72,14 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['doctor'],
   },
   {
-    label: 'Prescriptions',
+    labelKey: 'nav.prescriptions',
     icon: 'description',
     route: '/prescriptions',
     // CanManagePrescriptions (backend/prescriptions/permissions.py) : doctor/clinic_admin uniquement.
     roles: ['doctor', 'clinic_admin'],
   },
   {
-    label: 'Facturation',
+    labelKey: 'nav.billing',
     icon: 'receipt_long',
     route: '/billing',
     // CanManageInvoices (backend/billing/permissions.py) : accès en lecture pour secretary/accountant/
@@ -96,35 +87,35 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['secretary', 'accountant', 'clinic_admin', 'doctor'],
   },
   {
-    label: 'Paiements',
+    labelKey: 'nav.payments',
     icon: 'payments',
     route: '/payments',
     // CanManagePayments (backend/payments/permissions.py) : même public en lecture que la facturation.
     roles: ['secretary', 'accountant', 'clinic_admin', 'doctor'],
   },
   {
-    label: "Journal d'audit",
+    labelKey: 'nav.auditLog',
     icon: 'history',
     route: '/audit-log',
     // AuditLogViewSet (backend/common/api/views.py) : clinic_admin uniquement.
     roles: ['clinic_admin'],
   },
   {
-    label: "Rapport d'activité",
+    labelKey: 'nav.activityReport',
     icon: 'summarize',
     route: '/reports',
     // ClinicActivityReportView (backend/reports/api/views.py) : clinic_admin uniquement.
     roles: ['clinic_admin'],
   },
   {
-    label: 'Médecins',
+    labelKey: 'nav.doctors',
     icon: 'medical_services',
     route: '/doctors',
     // CanManageDoctors (backend/doctors/permissions.py) : accès en lecture pour tous les rôles du personnel de la clinique.
     roles: ['doctor', 'secretary', 'accountant', 'clinic_admin'],
   },
   {
-    label: 'Personnel',
+    labelKey: 'nav.staff',
     icon: 'people',
     route: '/staff',
     // StaffViewSet (backend/accounts/api/views.py) : clinic_admin uniquement, business/permissions-matrix.md
@@ -132,7 +123,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['clinic_admin'],
   },
   {
-    label: 'Paramètres',
+    labelKey: 'nav.settings',
     icon: 'settings',
     route: '/settings',
     // ClinicViewSet.get_permissions() (backend/clinics/api/views.py) : clinic_admin uniquement, même
@@ -140,7 +131,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['clinic_admin'],
   },
   {
-    label: 'Départements',
+    labelKey: 'nav.departments',
     icon: 'apartment',
     route: '/departments',
     // CanManageDepartments (backend/departments/permissions.py) : lecture pour tout le personnel, écriture pour
@@ -149,7 +140,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['clinic_admin'],
   },
   {
-    label: 'Pharmacie',
+    labelKey: 'nav.pharmacy',
     icon: 'medication',
     route: '/pharmacy',
     // CanManageMedications/CanManageStock (backend/pharmacy/permissions.py) : lecture pour tout le
@@ -159,7 +150,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['pharmacist', 'clinic_admin'],
   },
   {
-    label: 'Abonnement',
+    labelKey: 'nav.subscription',
     icon: 'workspace_premium',
     route: '/subscription',
     // CheckoutSessionView/BillingPortalView (backend/subscriptions/api/views.py) : IsClinicAdmin
@@ -175,6 +166,8 @@ const NAV_ITEMS: NavItem[] = [
     RouterLinkActive,
     RouterOutlet,
     GlobalSearch,
+    LanguageSwitcher,
+    TranslocoPipe,
     MatButtonModule,
     MatIconModule,
     MatListModule,
@@ -229,10 +222,12 @@ export class Shell {
     return (isDark ? clinic.logo_dark || clinic.logo_light : clinic.logo_light || clinic.logo_dark) || null;
   });
 
-  protected readonly primaryRoleLabel = computed(() => {
+  // Clé de traduction du rôle principal (i18n/*.json → roles.*, mêmes valeurs que
+  // backend/accounts/migrations/0002_seed_roles.py).
+  protected readonly primaryRoleKey = computed(() => {
     const roles = this.auth.roles();
     const primary = ROLE_PRIORITY.find((role) => roles.includes(role));
-    return primary ? ROLE_LABEL[primary] : '';
+    return primary ? `roles.${primary}` : '';
   });
 
   protected readonly userInitials = computed(() => {

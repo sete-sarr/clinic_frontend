@@ -17,6 +17,7 @@ import { parseApiError } from '../../../core/api/api-error';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { toIsoDate } from '../../../core/utils/date';
 import { ActivationService, ClinicSummary } from './activation.service';
+import { LanguageSwitcher } from '../../../shared/components/language-switcher/language-switcher';
 
 interface IdentityFormModel {
   clinic: number | null;
@@ -34,6 +35,7 @@ interface CredentialsFormModel {
 @Component({
   selector: 'app-activation',
   imports: [
+    LanguageSwitcher,
     FormField,
     MatAutocompleteModule,
     MatButtonModule,

@@ -1,0 +1,47 @@
+{
+  "language": {
+    "label": "Language",
+    "choose": "Choose language"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "patients": "Patients",
+    "consultations": "Consultations",
+    "medicalRecords": "Medical records",
+    "prescriptions": "Prescriptions",
+    "billing": "Billing",
+    "payments": "Payments",
+    "auditLog": "Audit log",
+    "activityReport": "Activity report",
+    "doctors": "Doctors",
+    "staff": "Staff",
+    "settings": "Settings",
+    "departments": "Departments",
+    "pharmacy": "Pharmacy",
+    "subscription": "Subscription"
+  },
+  "roles": {
+    "clinic_admin": "Administrator",
+    "doctor": "Doctor",
+    "secretary": "Receptionist",
+    "accountant": "Accountant",
+    "pharmacist": "Pharmacist",
+    "patient": "Patient"
+  },
+  "shell": {
+    "brandSubtitle": "Clinic management",
+    "clinicLogoAlt": "Clinic logo",
+    "openMenu": "Open menu",
+    "complianceTitle": "Security & Compliance",
+    "complianceText": "Your data is protected in line with HIPAA and GDPR requirements."
+  },
+  "userMenu": {
+    "downloadGuide": "Download the user guide",
+    "logout": "Log out"
+  },
+  "userGuide": {
+    "downloadError": "Unable to download the user guide.",
+    "close": "Close"
+  }
+}

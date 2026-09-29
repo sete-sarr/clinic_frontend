@@ -14,6 +14,7 @@ import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { LanguageSwitcher } from '../../../shared/components/language-switcher/language-switcher';
+import { APP_NAME } from '../../../core/brand';
 
 interface LoginFormModel {
   email: string;
@@ -38,6 +39,7 @@ interface LoginFormModel {
   styleUrl: './login.css',
 })
 export class Login {
+  protected readonly appName = APP_NAME;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);

@@ -1,8 +1,9 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
-  // Publique, statique — peut être pré-rendue sans risque.
-  { path: 'login', renderMode: RenderMode.Prerender },
+  // Publique, mais affichée dans la langue du navigateur/du choix mémorisé (docs/i18n.md §2) : un
+  // pré-rendu figerait une seule langue au moment du build — rendu client comme les autres pages.
+  { path: 'login', renderMode: RenderMode.Client },
   // Publique, mais interroge l'API clinics en direct au chargement (autocomplétion clinique) — même
   // raisonnement que les routes authentifiées ci-dessous, simplement en rendu client plutôt qu'en
   // pré-rendu/SSR.

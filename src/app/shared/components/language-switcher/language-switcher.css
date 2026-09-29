@@ -1,0 +1,9 @@
+.language-trigger {
+  color: inherit;
+}
+
+.language-code {
+  margin-left: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+}

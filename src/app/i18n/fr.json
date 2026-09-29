@@ -1,0 +1,47 @@
+{
+  "language": {
+    "label": "Langue",
+    "choose": "Choisir la langue"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "appointments": "Rendez-vous",
+    "patients": "Patients",
+    "consultations": "Consultations",
+    "medicalRecords": "Dossiers médicaux",
+    "prescriptions": "Prescriptions",
+    "billing": "Facturation",
+    "payments": "Paiements",
+    "auditLog": "Journal d'audit",
+    "activityReport": "Rapport d'activité",
+    "doctors": "Médecins",
+    "staff": "Personnel",
+    "settings": "Paramètres",
+    "departments": "Départements",
+    "pharmacy": "Pharmacie",
+    "subscription": "Abonnement"
+  },
+  "roles": {
+    "clinic_admin": "Administrateur",
+    "doctor": "Médecin",
+    "secretary": "Secrétaire",
+    "accountant": "Comptable",
+    "pharmacist": "Pharmacien",
+    "patient": "Patient"
+  },
+  "shell": {
+    "brandSubtitle": "Gestion de clinique",
+    "clinicLogoAlt": "Logo de la clinique",
+    "openMenu": "Ouvrir le menu",
+    "complianceTitle": "Sécurité & Conformité",
+    "complianceText": "Vos données sont protégées conformément aux exigences HIPAA et RGPD."
+  },
+  "userMenu": {
+    "downloadGuide": "Télécharger le guide d'utilisation",
+    "logout": "Déconnexion"
+  },
+  "userGuide": {
+    "downloadError": "Impossible de télécharger le guide d'utilisation.",
+    "close": "Fermer"
+  }
+}

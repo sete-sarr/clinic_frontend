@@ -11,6 +11,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
+import { LanguageSwitcher } from '../../../shared/components/language-switcher/language-switcher';
 
 interface LoginFormModel {
   email: string;
@@ -20,6 +21,7 @@ interface LoginFormModel {
 @Component({
   selector: 'app-login',
   imports: [
+    LanguageSwitcher,
     FormField,
     RouterLink,
     MatButtonModule,

@@ -54,6 +54,19 @@ export class AuthService {
       .pipe(tap((response) => this.setSession(response)));
   }
 
+  // Enregistre la préférence de langue de l'utilisateur connecté (PATCH /accounts/me/) et met à
+  // jour l'utilisateur en session.
+  updateLanguage(language: 'fr' | 'en'): Observable<User> {
+    return this.http.patch<User>(`${environment.apiBaseUrl}/accounts/me/`, { language }).pipe(
+      tap((user) => {
+        this.user.set(user);
+        if (this.isBrowser) {
+          localStorage.setItem(USER_KEY, JSON.stringify(user));
+        }
+      }),
+    );
+  }
+
   refreshAccessToken(): Observable<AuthTokens> {
     const refresh = this.refreshTokenValue();
     return this.http

@@ -30,12 +30,16 @@ export class LanguageService {
     }
   }
 
-  // Aligne la langue sur une préférence venue du serveur (préférence utilisateur — phase 2) sans
-  // écraser un choix identique ; même comportement que setLanguage.
-  applyPreference(language: unknown): void {
-    if (isAppLanguage(language)) {
-      this.setLanguage(language);
+  // Après connexion : si l'utilisateur a enregistré une langue différente de l'écran courant, la
+  // mémorise et ouvre `url` directement dans cette langue (chargement complet). Renvoie true dans
+  // ce cas — l'appelant ne doit alors pas naviguer lui-même.
+  openInPreferredLanguage(preference: unknown, url: string): boolean {
+    if (!this.isBrowser || !isAppLanguage(preference) || preference === this.current()) {
+      return false;
     }
+    this.store(preference);
+    this.document.defaultView?.location.assign(url);
+    return true;
   }
 
   private resolveInitialLanguage(): AppLanguage {

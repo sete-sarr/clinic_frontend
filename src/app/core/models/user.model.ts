@@ -14,6 +14,9 @@ export interface User {
   clinic: number | null;
   roles: Role[];
   doctor_id: number | null;
+  // Préférence de langue ("" = suit la langue de la clinique) — docs/i18n.md §2. Absente des
+  // sessions enregistrées avant son introduction, d'où le champ optionnel.
+  language?: '' | 'fr' | 'en';
 }
 
 export interface AuthTokens {

@@ -38,6 +38,7 @@ import {
 import { InvoiceService } from '../invoice.service';
 import { PAYMENT_METHOD_LABELS, PAYMENT_STATUS_LABELS, Payment, PaymentMethod } from '../../payments/payment.model';
 import { PaymentService } from '../../payments/payment.service';
+import { DEFAULT_CURRENCY, MoneyPipe, currencySymbol } from '../../../core/utils/money';
 
 export interface InvoiceFormDialogData {
   id?: string;
@@ -85,6 +86,7 @@ const lineSchema = schema<InvoiceLine>((line) => {
 @Component({
   selector: 'app-invoice-form',
   imports: [
+    MoneyPipe,
     DatePipe,
     EmptyState,
     FormField,
@@ -116,6 +118,12 @@ export class InvoiceForm {
   protected readonly currentId = signal<string | undefined>(this.data?.id);
 
   protected readonly isEditMode = computed(() => this.currentId() !== undefined);
+  // Devise de la facture existante, sinon celle de la clinique pour une nouvelle facture
+  // (docs/i18n.md §8).
+  protected readonly currency = computed(
+    () => this.invoiceResource.value()?.currency ?? this.auth.user()?.clinic_currency ?? DEFAULT_CURRENCY,
+  );
+  protected readonly currencySymbol = computed(() => currencySymbol(this.currency()));
   protected readonly formatDoctor = formatDoctor;
   protected readonly statusLabels = INVOICE_STATUS_LABELS;
 

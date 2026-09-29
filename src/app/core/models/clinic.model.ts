@@ -1,4 +1,5 @@
 import { translatedLabels } from '../i18n/translated-labels';
+import { CurrencyCode } from '../utils/money';
 
 // Reflète clinics.api.serializers.ClinicSerializer (backend).
 export type SubscriptionStatus = 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled';
@@ -37,6 +38,7 @@ export interface Clinic {
   trial_ends_at: string | null;
   current_period_end: string | null;
   locale: Locale;
+  currency: CurrencyCode;
   logo_light: string | null;
   logo_dark: string | null;
   logo_print: string | null;

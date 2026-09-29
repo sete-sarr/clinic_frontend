@@ -88,6 +88,11 @@
   flex: 0 1 140px;
 }
 
+/* Plus large que la quantité : le symbole de devise en suffixe (« F CFA ») prend de la place. */
+.line-price {
+  flex: 0 1 200px;
+}
+
 .add-line-button {
   margin-bottom: var(--space-4);
 }

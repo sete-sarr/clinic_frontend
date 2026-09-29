@@ -38,6 +38,7 @@ export interface Invoice {
   vat_amount: string;
   total_amount: string;
   status: InvoiceStatus;
+  currency: string;
   amount_paid: string;
   balance_due: string;
   lines: InvoiceLine[];

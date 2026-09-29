@@ -27,6 +27,7 @@ import {
   PaymentStatus,
 } from '../payment.model';
 import { PaymentService } from '../payment.service';
+import { MoneyPipe } from '../../../core/utils/money';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -34,6 +35,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-payment-list',
   imports: [
+    MoneyPipe,
     DatePipe,
     EmptyState,
     RouterLink,

@@ -22,6 +22,7 @@ export interface Payment {
   invoice_number: string;
   patient_display: string;
   amount: string;
+  currency: string;
   method: PaymentMethod;
   status: PaymentStatus;
   date: string;

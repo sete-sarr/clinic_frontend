@@ -29,6 +29,7 @@
   <div class="auth-form-side">
     <mat-card class="auth-card register-card">
       <div class="auth-card-header">
+        <span class="auth-card-icon" aria-hidden="true"><mat-icon>add_business</mat-icon></span>
         <h2>{{ 'auth.register.title' | transloco }}</h2>
         <p>{{ 'auth.register.subtitle' | transloco }}</p>
       </div>
@@ -64,7 +65,7 @@
           <h3>{{ 'auth.register.adminSection' | transloco }}</h3>
         </div>
 
-        <div class="field-row">
+        <div class="field-row field-pair">
           <mat-form-field appearance="outline" class="half-width">
             <mat-label>{{ 'common.fields.firstName' | transloco }}</mat-label>
             <input matInput [formField]="registerForm.first_name" autocomplete="given-name" />

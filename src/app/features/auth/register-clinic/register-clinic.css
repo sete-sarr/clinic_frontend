@@ -4,6 +4,7 @@
   max-width: 520px;
 }
 
+
 .section-heading {
   display: flex;
   align-items: center;
@@ -37,4 +38,29 @@
 .half-width {
   flex: 1;
   min-width: 0;
+}
+
+/* Mobile : un champ par ligne — deux champs côte à côte y tronquent les libellés
+   (« E-mail de la … », « Téléphone (… »). */
+@media (max-width: 599px) {
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .half-width {
+    flex: none;
+    width: 100%;
+  }
+
+  /* Prénom / nom : champs liés, gardés côte à côte (voir styles.scss, .field-pair). */
+  .field-row.field-pair {
+    flex-direction: row;
+    gap: var(--space-2);
+  }
+
+  .field-pair > .half-width {
+    flex: 1 1 0;
+    width: auto;
+  }
 }

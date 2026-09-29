@@ -59,6 +59,17 @@
   .vat-field {
     width: 100%;
   }
+
+  /* Les champs d'une ligne passent l'un sous l'autre : le bouton de suppression se range à droite,
+     sous la ligne, au lieu d'occuper seul le début d'une rangée. */
+  .line-row > button[mat-icon-button] {
+    margin-left: auto;
+  }
+
+  .line-row {
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
 }
 
 .section-title {

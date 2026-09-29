@@ -1,92 +1,126 @@
-/* Shared visual shell for the pre-auth screens (login, register-clinic): a brand panel on the
-   left (platform identity only — no clinic logo exists yet at this point in the flow, consistent
-   with design-system/branding.md "never hardcode a clinic's identity") and the form card on the
-   right. Imported by each component's own .css via a relative @import rather than duplicated,
-   since both screens need the identical shell. */
+/* Habillage commun des écrans publics (connexion, création de clinique), importé par le .css de
+   chaque composant plutôt que dupliqué.
+   - Mobile : bandeau d'identité proCli (dégradé primaire → accent) en haut, la carte du formulaire
+     le chevauche ; seuls le logo, le titre et le sélecteur de langue y figurent.
+   - Ordinateur (≥ 900px) : panneau d'identité à gauche (texte et points forts), formulaire à droite.
+   Identité de la plateforme uniquement — aucune clinique n'existe encore à ce stade
+   (design-system/branding.md). Couleurs, espacements et typographie : tokens de styles.scss. */
 
 .auth-page {
   position: relative;
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--color-background);
 }
 
-/* Sélecteur de langue en haut à droite des pages publiques (docs/i18n.md). */
+/* Sélecteur de langue (docs/i18n.md) : en blanc sur le bandeau mobile, couleur primaire sur la
+   partie claire de l'écran d'ordinateur. */
 .page-language {
   position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  z-index: 1;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 2;
+  --mat-button-text-label-text-color: #ffffff;
+  --mat-button-text-state-layer-color: #ffffff;
 }
+
+/* ---------- Panneau / bandeau d'identité ---------- */
 
 .auth-brand {
-  display: none;
   position: relative;
-  flex: 1 1 45%;
-  background: linear-gradient(160deg, var(--color-primary), var(--color-accent));
-  padding: var(--space-12);
   overflow: hidden;
+  padding: var(--space-8) var(--space-6) var(--space-20);
+  background: linear-gradient(150deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  color: #ffffff;
 }
 
+/* Halos et anneau décoratifs, discrets (blanc translucide sur le dégradé). */
 .auth-brand::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12), transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.1), transparent 45%);
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.14), transparent 42%),
+    radial-gradient(circle at 88% 85%, rgba(255, 255, 255, 0.1), transparent 45%);
+}
+
+.auth-brand::after {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  right: -120px;
+  top: -140px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 0 48px rgba(255, 255, 255, 0.04);
 }
 
 .auth-brand-content {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
   max-width: 440px;
   margin: 0 auto;
-  color: #ffffff;
 }
 
 .auth-brand-logo {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  font-weight: var(--font-weight-semibold);
-  font-size: 1.125rem;
-  margin-bottom: var(--space-8);
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.01em;
+}
+
+.auth-brand-logo mat-icon {
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  padding: var(--space-2);
+  font-size: 24px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
 }
 
 .auth-brand-badge {
   display: inline-block;
-  align-self: flex-start;
+  margin-bottom: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
   background-color: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 999px;
-  padding: var(--space-1) var(--space-3);
   font-size: 0.75rem;
   font-weight: var(--font-weight-medium);
-  margin-bottom: var(--space-4);
 }
 
 .auth-brand-title {
-  font-size: 2rem;
+  margin: 0;
+  font-size: 1.5rem;
   font-weight: var(--font-weight-bold);
   line-height: 1.25;
-  margin: 0 0 var(--space-4);
+}
+
+/* Texte et points forts : réservés au panneau d'ordinateur. */
+.auth-brand-text,
+.auth-brand-list {
+  display: none;
 }
 
 .auth-brand-text {
+  margin: var(--space-4) 0 var(--space-8);
   font-size: 1rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0 0 var(--space-8);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .auth-brand-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
@@ -96,40 +130,61 @@
   align-items: center;
   gap: var(--space-3);
   font-size: 0.9375rem;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.94);
 }
 
 .auth-brand-list mat-icon {
   flex-shrink: 0;
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  padding: var(--space-2);
+  box-sizing: content-box;
   width: 20px;
   height: 20px;
-  box-sizing: content-box;
+  padding: var(--space-2);
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
+/* ---------- Formulaire ---------- */
+
 .auth-form-side {
-  flex: 1 1 55%;
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: var(--space-6);
-  background-color: var(--color-background);
-  overflow-y: auto;
+  align-items: flex-start;
+  margin-top: calc(-1 * var(--space-16));
+  padding: 0 var(--space-4) var(--space-8);
 }
 
 .auth-card {
+  --mat-card-elevated-container-color: var(--color-surface);
   width: 100%;
-  max-width: 420px;
-  padding: var(--space-8) var(--space-6);
+  max-width: 440px;
+  padding: var(--space-8) var(--space-6) var(--space-6);
   border-radius: 16px;
-  box-shadow: 0 4px 24px color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-neutral-900) 12%, transparent);
 }
 
 .auth-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: var(--space-6);
+}
+
+/* Pastille d'icône au-dessus du titre de la carte. */
+.auth-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-4);
+  border-radius: 12px;
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .auth-card-header h2 {
@@ -141,8 +196,8 @@
 
 .auth-card-header p {
   margin: 0;
-  color: var(--color-text-secondary);
   font-size: 0.9375rem;
+  color: var(--color-text-secondary);
 }
 
 .full-width {
@@ -150,8 +205,9 @@
 }
 
 .submit-button {
+  height: 48px;
   margin-top: var(--space-2);
-  height: 44px;
+  font-size: 1rem;
   font-weight: var(--font-weight-semibold);
 }
 
@@ -159,19 +215,19 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 8px;
+  font-size: 0.875rem;
   color: var(--color-error);
   background-color: color-mix(in srgb, var(--color-error) 8%, transparent);
-  border-radius: 8px;
-  padding: var(--space-2) var(--space-3);
-  font-size: 0.875rem;
-  margin: 0 0 var(--space-4);
 }
 
 .server-error mat-icon {
   flex-shrink: 0;
-  font-size: 20px;
   width: 20px;
   height: 20px;
+  font-size: 20px;
 }
 
 .auth-divider {
@@ -179,10 +235,10 @@
   align-items: center;
   gap: var(--space-3);
   margin: var(--space-6) 0 var(--space-4);
-  color: var(--color-text-disabled);
   font-size: 0.75rem;
-  text-transform: uppercase;
   letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-disabled);
 }
 
 .auth-divider::before,
@@ -193,25 +249,91 @@
   background-color: var(--color-border);
 }
 
+/* Liens secondaires : question puis lien sur deux lignes (lisible sur un écran étroit). */
 .auth-link {
-  text-align: center;
-  margin: var(--space-2) 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: var(--space-3) 0 0;
   font-size: 0.875rem;
+  text-align: center;
   color: var(--color-text-secondary);
 }
 
 .auth-link a {
+  font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
-  font-weight: var(--font-weight-medium);
   text-decoration: none;
 }
 
-.auth-link a:hover {
+.auth-link a:hover,
+.auth-link a:focus-visible {
   text-decoration: underline;
 }
 
+/* ---------- Ordinateur ---------- */
+
 @media (min-width: 900px) {
+  .auth-page {
+    flex-direction: row;
+  }
+
+  .page-language {
+    top: var(--space-4);
+    right: var(--space-4);
+    --mat-button-text-label-text-color: var(--color-primary);
+    --mat-button-text-state-layer-color: var(--color-primary);
+  }
+
   .auth-brand {
+    flex: 1 1 45%;
+    display: flex;
+    align-items: center;
+    padding: var(--space-12);
+  }
+
+  .auth-brand::after {
+    width: 520px;
+    height: 520px;
+    right: -220px;
+    top: auto;
+    bottom: -200px;
+  }
+
+  .auth-brand-logo {
+    margin-bottom: var(--space-10);
+  }
+
+  .auth-brand-title {
+    font-size: 2.25rem;
+  }
+
+  .auth-brand-text {
     display: block;
+  }
+
+  .auth-brand-list {
+    display: flex;
+  }
+
+  .auth-form-side {
+    flex: 1 1 55%;
+    align-items: center;
+    margin-top: 0;
+    padding: var(--space-10) var(--space-6);
+    overflow-y: auto;
+  }
+
+  .auth-card {
+    padding: var(--space-10) var(--space-8) var(--space-8);
+    box-shadow: 0 4px 24px color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
+  }
+
+  .auth-link {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-1);
   }
 }

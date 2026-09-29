@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -40,6 +41,7 @@ const SEARCH_DEBOUNCE_MS = 300;
     MatSelectModule,
     MatTableModule,
     MatTooltipModule,
+    TranslocoPipe,
   ],
   templateUrl: './consultation-list.html',
   styleUrl: './consultation-list.css',

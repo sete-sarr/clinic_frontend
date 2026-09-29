@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { map } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -51,6 +52,7 @@ const SEARCH_DEBOUNCE_MS = 300;
     MatSelectModule,
     MatTableModule,
     MatTooltipModule,
+    TranslocoPipe,
   ],
   templateUrl: './appointment-list.html',
   styleUrl: './appointment-list.css',
@@ -222,6 +224,6 @@ export class AppointmentList {
   }
 
   protected exportCsv(): void {
-    this.appointmentService.exportCsv().subscribe((blob) => triggerBlobDownload(blob, 'rendez-vous-export.csv'));
+    this.appointmentService.exportCsv().subscribe((blob) => triggerBlobDownload(blob, translate('exports.appointments')));
   }
 }

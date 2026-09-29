@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../../environments/environment';
 import { parseApiError } from '../../../../core/api/api-error';
@@ -44,6 +45,7 @@ function formatDoctor(doctor: DoctorSummary): string {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './portal-appointment-form.html',
   styleUrl: './portal-appointment-form.css',
@@ -69,10 +71,10 @@ export class PortalAppointmentForm {
   });
 
   protected readonly appointmentForm = form(this.model, (path) => {
-    required(path.doctor, { message: 'Médecin requis' });
-    required(path.date, { message: 'Date requise' });
-    required(path.time, { message: 'Heure requise' });
-    maxLength(path.reason, 255, { message: '255 caractères maximum' });
+    required(path.doctor, { message: translate('common.validation.doctorRequired') });
+    required(path.date, { message: translate('common.validation.dateRequired') });
+    required(path.time, { message: translate('common.validation.timeRequired') });
+    maxLength(path.reason, 255, { message: translate('common.validation.max255') });
   });
 
   protected async onSubmit(): Promise<void> {
@@ -87,11 +89,11 @@ export class PortalAppointmentForm {
 
       try {
         await firstValueFrom(this.portalAppointmentService.create(payload));
-        this.successNotifier.show('Rendez-vous demandé avec succès.');
+        this.successNotifier.show(translate('portal.appointments.requested'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, 'Impossible de prendre ce rendez-vous.');
+        const apiError = parseApiError(error, translate('portal.appointments.bookError'));
         const fieldsByName = {
           doctor: this.appointmentForm.doctor,
           date: this.appointmentForm.date,

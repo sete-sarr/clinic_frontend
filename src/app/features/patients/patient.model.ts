@@ -1,25 +1,17 @@
+import { translatedLabels } from '../../core/i18n/translated-labels';
+
 // Reflète patients.api.serializers.PatientSerializer et patients.models.Patient (backend).
 export type Gender = 'male' | 'female' | 'other';
 
-export const GENDER_LABELS: Record<Gender, string> = {
-  male: 'Homme',
-  female: 'Femme',
-  other: 'Autre',
-};
+export const GENDER_LABELS: Record<Gender, string> = translatedLabels<Gender>('labels.gender', [
+  'male', 'female', 'other',
+]);
 
 export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'unknown';
 
-export const BLOOD_TYPE_LABELS: Record<BloodType, string> = {
-  'A+': 'A+',
-  'A-': 'A-',
-  'B+': 'B+',
-  'B-': 'B-',
-  'AB+': 'AB+',
-  'AB-': 'AB-',
-  'O+': 'O+',
-  'O-': 'O-',
-  unknown: 'Inconnu',
-};
+export const BLOOD_TYPE_LABELS: Record<BloodType, string> = translatedLabels<BloodType>('labels.bloodType', [
+  'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'unknown',
+]);
 
 export interface Patient {
   id: number;

@@ -1,16 +1,14 @@
+import { translatedLabels } from '../../core/i18n/translated-labels';
+
 // Reflète appointments.api.serializers.AppointmentSerializer et appointments.models.Appointment.Status
 // (backend). Les transitions de statut sont imposées côté backend (appointments/services.py) ; le
 // frontend expose uniquement les actions autorisées pour le statut/rôle courant, jamais un champ de
 // statut libre.
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
 
-export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
-  pending: 'En attente',
-  confirmed: 'Confirmé',
-  completed: 'Terminé',
-  cancelled: 'Annulé',
-  no_show: 'Absence',
-};
+export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = translatedLabels<AppointmentStatus>('labels.appointmentStatus', [
+  'pending', 'confirmed', 'completed', 'cancelled', 'no_show',
+]);
 
 // business/validation-rules.md "Cancelled appointments remain archived" — aucune transition
 // ultérieure hors de ces statuts.

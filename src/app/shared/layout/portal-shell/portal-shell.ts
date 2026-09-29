@@ -9,11 +9,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { map } from 'rxjs';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AuthService } from '../../../core/auth/auth.service';
+import { LanguageSwitcher } from '../../components/language-switcher/language-switcher';
 
 interface NavItem {
-  label: string;
+  labelKey: string; // i18n/*.json → portal.nav.*
   icon: string;
   route: string;
 }
@@ -21,15 +23,16 @@ interface NavItem {
 // Toute la coquille (shell) est réservée aux patients (protégée par roleGuard('patient') dans app.routes.ts), donc — contrairement
 // au Shell du personnel — il n'y a pas de filtrage par rôle par élément ici.
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Mes rendez-vous', icon: 'event', route: '/portal/appointments' },
-  { label: 'Mes prescriptions', icon: 'description', route: '/portal/prescriptions' },
-  { label: 'Mes factures', icon: 'receipt_long', route: '/portal/invoices' },
-  { label: 'Mon dossier médical', icon: 'folder_shared', route: '/portal/medical-record' },
+  { labelKey: 'portal.nav.appointments', icon: 'event', route: '/portal/appointments' },
+  { labelKey: 'portal.nav.prescriptions', icon: 'description', route: '/portal/prescriptions' },
+  { labelKey: 'portal.nav.invoices', icon: 'receipt_long', route: '/portal/invoices' },
+  { labelKey: 'portal.nav.medicalRecord', icon: 'folder_shared', route: '/portal/medical-record' },
 ];
 
 @Component({
   selector: 'app-portal-shell',
   imports: [
+    LanguageSwitcher,
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
@@ -39,6 +42,7 @@ const NAV_ITEMS: NavItem[] = [
     MatMenuModule,
     MatSidenavModule,
     MatToolbarModule,
+    TranslocoPipe,
   ],
   templateUrl: './portal-shell.html',
   styleUrl: './portal-shell.css',

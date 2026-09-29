@@ -1,11 +1,11 @@
-<h1>Mes prescriptions</h1>
+<h1>{{ 'portal.nav.prescriptions' | transloco }}</h1>
 
 @if (prescriptionsResource.isLoading()) {
   <div class="loading">
     <mat-spinner diameter="32" />
   </div>
 } @else if (prescriptionsResource.value().results.length === 0) {
-  <app-empty-state icon="medication" message="Vous n'avez aucune prescription." />
+  <app-empty-state icon="medication" [message]="'portal.prescriptions.empty' | transloco" />
 } @else {
   <div class="prescription-cards">
     @for (prescription of prescriptionsResource.value().results; track prescription.id) {
@@ -15,13 +15,13 @@
             <div>
               <div class="date">{{ prescription.created_at | date: 'mediumDate' }}</div>
               <div class="doctor">{{ prescription.doctor_display }}</div>
-              <div class="items-count">{{ prescription.items.length }} médicament(s)</div>
+              <div class="items-count">{{ 'portal.prescriptions.itemsCount' | transloco: { count: prescription.items.length } }}</div>
             </div>
             <div class="actions">
               <mat-chip [class]="'status-chip status-' + prescription.status" disableRipple>
                 {{ statusLabel(prescription) }}
               </mat-chip>
-              <button mat-icon-button (click)="downloadPdf(prescription)" aria-label="Télécharger le PDF">
+              <button mat-icon-button (click)="downloadPdf(prescription)" [attr.aria-label]="'common.actions.downloadPdf' | transloco">
                 <mat-icon>picture_as_pdf</mat-icon>
               </button>
             </div>

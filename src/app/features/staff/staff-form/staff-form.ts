@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
@@ -40,6 +41,7 @@ interface StaffFormModel {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    TranslocoPipe,
   ],
   templateUrl: './staff-form.html',
   styleUrl: './staff-form.css',
@@ -73,13 +75,13 @@ export class StaffForm {
   protected readonly roleChangeError = signal<string | null>(null);
 
   protected readonly staffForm = form(this.model, (path) => {
-    required(path.first_name, { message: 'Prénom requis' });
-    required(path.last_name, { message: 'Nom requis' });
-    required(path.email, { message: 'Adresse e-mail requise' });
-    email(path.email, { message: 'Adresse e-mail invalide' });
+    required(path.first_name, { message: translate('common.validation.firstNameRequired') });
+    required(path.last_name, { message: translate('common.validation.lastNameRequired') });
+    required(path.email, { message: translate('common.validation.emailRequiredFem') });
+    email(path.email, { message: translate('common.validation.emailInvalid') });
     if (!this.isEditMode()) {
-      required(path.username, { message: "Nom d'utilisateur requis" });
-      required(path.password, { message: 'Mot de passe requis' });
+      required(path.username, { message: translate('common.validation.usernameRequired') });
+      required(path.password, { message: translate('common.validation.passwordRequired') });
     }
   });
 
@@ -124,11 +126,11 @@ export class StaffForm {
             }),
           );
         }
-        this.successNotifier.show('Membre du personnel enregistré avec succès.');
+        this.successNotifier.show(translate('staff.saved'));
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer ce membre du personnel.");
+        const apiError = parseApiError(error, translate('staff.saveError'));
         const fieldsByName = {
           username: this.staffForm.username,
           first_name: this.staffForm.first_name,
@@ -154,7 +156,7 @@ export class StaffForm {
       const updated = await firstValueFrom(this.staffService.changeRole(Number(id), newRole));
       this.model.update((current) => ({ ...current, role: updated.role }));
     } catch (error) {
-      const apiError = parseApiError(error, 'Impossible de changer le rôle.');
+      const apiError = parseApiError(error, translate('staff.roleChangeError'));
       this.roleChangeError.set(apiError.message);
     } finally {
       this.roleChangePending.set(false);

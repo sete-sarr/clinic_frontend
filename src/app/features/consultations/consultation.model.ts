@@ -1,12 +1,12 @@
+import { translatedLabels } from '../../core/i18n/translated-labels';
+
 // Reflète consultations.api.serializers.ConsultationSerializer et
 // consultations.models.Consultation.Status (backend).
 export type ConsultationStatus = 'draft' | 'completed' | 'validated';
 
-export const CONSULTATION_STATUS_LABELS: Record<ConsultationStatus, string> = {
-  draft: 'Brouillon',
-  completed: 'Terminée',
-  validated: 'Validée',
-};
+export const CONSULTATION_STATUS_LABELS: Record<ConsultationStatus, string> = translatedLabels<ConsultationStatus>('labels.consultationStatus', [
+  'draft', 'completed', 'validated',
+]);
 
 // business/validation-rules.md « Les consultations validées deviennent en lecture seule » —
 // consultations/services.py n'offre actuellement aucun moyen de rouvrir, ni pour l'admin ni pour quiconque.

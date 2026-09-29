@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -36,6 +37,7 @@ interface RegisterClinicFormModel {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './register-clinic.html',
   styleUrl: './register-clinic.css',
@@ -58,12 +60,12 @@ export class RegisterClinic {
   });
 
   protected readonly registerForm = form(this.model, (path) => {
-    required(path.clinic_name, { message: 'Nom de la clinique requis' });
-    required(path.username, { message: "Nom d'utilisateur requis" });
-    required(path.email, { message: 'E-mail requis' });
-    required(path.first_name, { message: 'Prénom requis' });
-    required(path.last_name, { message: 'Nom requis' });
-    required(path.password, { message: 'Mot de passe requis' });
+    required(path.clinic_name, { message: translate('auth.register.clinicNameRequired') });
+    required(path.username, { message: translate('common.validation.usernameRequired') });
+    required(path.email, { message: translate('common.validation.emailRequired') });
+    required(path.first_name, { message: translate('common.validation.firstNameRequired') });
+    required(path.last_name, { message: translate('common.validation.lastNameRequired') });
+    required(path.password, { message: translate('common.validation.passwordRequired') });
   });
 
   protected togglePasswordVisibility(): void {
@@ -77,7 +79,7 @@ export class RegisterClinic {
         this.router.navigateByUrl('/');
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible de créer la clinique. Réessayez dans un instant.");
+        const apiError = parseApiError(error, translate('auth.register.error'));
         const fieldsByName = {
           clinic_name: this.registerForm.clinic_name,
           clinic_email: this.registerForm.clinic_email,

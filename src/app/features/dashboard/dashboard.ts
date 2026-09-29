@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { APPOINTMENT_STATUS_LABELS, Appointment } from '../appointments/appointment.model';
@@ -30,6 +31,7 @@ import { SubscriptionService } from '../subscription/subscription.service';
     MatChipsModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
@@ -64,7 +66,7 @@ export class Dashboard {
       },
       error: (error) => {
         this.openingPortal.set(false);
-        this.portalError.set(parseApiError(error, "Impossible d'ouvrir la gestion de l'abonnement.").message);
+        this.portalError.set(parseApiError(error, translate('dashboard.portalError')).message);
       },
     });
   }

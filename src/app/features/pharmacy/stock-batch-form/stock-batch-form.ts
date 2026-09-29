@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { toIsoDate } from '../../../core/utils/date';
@@ -38,6 +39,7 @@ interface StockBatchFormModel {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    TranslocoPipe,
   ],
   templateUrl: './stock-batch-form.html',
   styleUrl: './stock-batch-form.css',
@@ -57,12 +59,12 @@ export class StockBatchForm {
   });
 
   protected readonly batchForm = form(this.model, (path) => {
-    required(path.batch_number, { message: 'Numéro de lot requis' });
-    required(path.expiry_date, { message: 'Date de péremption requise' });
-    required(path.received_date, { message: 'Date de réception requise' });
-    required(path.quantity_received, { message: 'Quantité requise' });
-    min(path.quantity_received, 1, { message: 'La quantité doit être au moins 1' });
-    min(path.unit_cost, 0, { message: 'Le coût ne peut pas être négatif' });
+    required(path.batch_number, { message: translate('pharmacy.batch.numberRequired') });
+    required(path.expiry_date, { message: translate('pharmacy.batch.expiryRequired') });
+    required(path.received_date, { message: translate('pharmacy.batch.receivedRequired') });
+    required(path.quantity_received, { message: translate('pharmacy.batch.quantityRequired') });
+    min(path.quantity_received, 1, { message: translate('pharmacy.batch.quantityMin') });
+    min(path.unit_cost, 0, { message: translate('pharmacy.batch.costNotNegative') });
   });
 
   protected async onSubmit(): Promise<void> {
@@ -86,7 +88,7 @@ export class StockBatchForm {
         this.dialogRef.close(true);
         return undefined;
       } catch (error) {
-        const apiError = parseApiError(error, "Impossible d'enregistrer cette réception de stock.");
+        const apiError = parseApiError(error, translate('pharmacy.batch.saveError'));
         const fieldsByName = {
           batch_number: this.batchForm.batch_number,
           expiry_date: this.batchForm.expiry_date,

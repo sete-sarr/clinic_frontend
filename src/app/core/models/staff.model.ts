@@ -1,4 +1,5 @@
 import { Role } from './user.model';
+import { translatedLabels } from '../i18n/translated-labels';
 
 // Reflète accounts.api.serializers.StaffListSerializer/StaffCreateSerializer (backend). Assignable
 // uniquement via l'écran staff — "doctor" (modèle de profil propre, géré sous /doctors) et
@@ -6,12 +7,9 @@ import { Role } from './user.model';
 // accounts.services.STAFF_ROLES_ASSIGNABLE.
 export type StaffRole = Extract<Role, 'secretary' | 'accountant' | 'clinic_admin' | 'pharmacist'>;
 
-export const STAFF_ROLE_LABELS: Record<StaffRole, string> = {
-  secretary: 'Secrétaire',
-  accountant: 'Comptable',
-  clinic_admin: 'Administrateur de clinique',
-  pharmacist: 'Pharmacien',
-};
+export const STAFF_ROLE_LABELS: Record<StaffRole, string> = translatedLabels<StaffRole>('labels.staffRole', [
+  'secretary', 'accountant', 'clinic_admin', 'pharmacist',
+]);
 
 export interface StaffMember {
   id: number;

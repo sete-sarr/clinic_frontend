@@ -2,11 +2,13 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { EnvironmentProviders, LOCALE_ID, Provider, inject, isDevMode, provideAppInitializer } from '@angular/core';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { TranslocoService, provideTransloco } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
 import { LanguageService } from './language.service';
 import { SUPPORTED_LANGUAGES } from './languages';
+import { TranslatedPaginatorIntl } from './paginator-intl';
 import { AppTranslocoLoader } from './transloco-loader';
 
 // Données de locale pour les pipes date/number/currency : fr à enregistrer, en (en-US) est intégré.
@@ -31,6 +33,7 @@ export function provideI18n(): (Provider | EnvironmentProviders)[] {
     }),
     { provide: LOCALE_ID, useFactory: () => inject(LanguageService).current() },
     { provide: MAT_DATE_LOCALE, useFactory: () => inject(LanguageService).current() },
+    { provide: MatPaginatorIntl, useClass: TranslatedPaginatorIntl },
     // Charge les traductions de la langue active avant le premier affichage (pas de clés brutes
     // visibles le temps du chargement).
     provideAppInitializer(() => {

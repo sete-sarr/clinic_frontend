@@ -1,14 +1,16 @@
 <div class="page-header">
   <div>
     <h1 class="greeting">
-      Bienvenue{{ auth.user()?.first_name ? ', ' + auth.user()?.first_name : '' }}
+      {{ auth.user()?.first_name
+        ? ('dashboard.welcomeName' | transloco: { name: auth.user()?.first_name })
+        : ('dashboard.welcome' | transloco) }}
     </h1>
-    <p class="subtitle">Voici ce qui se passe aujourd'hui dans votre clinique.</p>
+    <p class="subtitle">{{ 'dashboard.subtitle' | transloco }}</p>
   </div>
   @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
     <a mat-raised-button color="primary" routerLink="/appointments">
       <mat-icon>add</mat-icon>
-      Nouveau rendez-vous
+      {{ 'dashboard.newAppointment' | transloco }}
     </a>
   }
 </div>
@@ -25,7 +27,7 @@
         } @else {
           <span class="kpi-value">{{ todaysAppointments.value().count }}</span>
         }
-        <span class="kpi-label">Rendez-vous aujourd'hui</span>
+        <span class="kpi-label">{{ 'dashboard.todayAppointments' | transloco }}</span>
       </div>
     </mat-card>
   }
@@ -41,7 +43,7 @@
         } @else {
           <span class="kpi-value">{{ draftConsultations.value().count }}</span>
         }
-        <span class="kpi-label">Consultations en brouillon</span>
+        <span class="kpi-label">{{ 'dashboard.draftConsultations' | transloco }}</span>
       </div>
     </mat-card>
 
@@ -55,7 +57,7 @@
         } @else {
           <span class="kpi-value">{{ draftPrescriptions.value().count }}</span>
         }
-        <span class="kpi-label">Prescriptions en brouillon</span>
+        <span class="kpi-label">{{ 'dashboard.draftPrescriptions' | transloco }}</span>
       </div>
     </mat-card>
   }
@@ -71,7 +73,7 @@
         } @else {
           <span class="kpi-value">{{ unpaidInvoicesCount() }}</span>
         }
-        <span class="kpi-label">Factures en attente</span>
+        <span class="kpi-label">{{ 'dashboard.unpaidInvoices' | transloco }}</span>
       </div>
     </mat-card>
   }
@@ -81,7 +83,7 @@
   @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
     <mat-card class="dashboard-card schedule-card">
       <mat-card-header>
-        <mat-card-title>Rendez-vous du jour</mat-card-title>
+        <mat-card-title>{{ 'dashboard.todaySchedule' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         @if (todaysAppointments.isLoading()) {
@@ -89,7 +91,7 @@
             <mat-spinner diameter="28" />
           </div>
         } @else if (todaysAppointments.value().results.length === 0) {
-          <app-empty-state icon="event_busy" message="Aucun rendez-vous aujourd'hui." [padded]="false" />
+          <app-empty-state icon="event_busy" [message]="'dashboard.noAppointmentsToday' | transloco" [padded]="false" />
         } @else {
           <ul class="appointment-list">
             @for (appointment of todaysAppointments.value().results; track appointment.id) {
@@ -109,7 +111,7 @@
         }
       </mat-card-content>
       <mat-card-actions>
-        <a mat-button routerLink="/appointments">Voir tous les rendez-vous</a>
+        <a mat-button routerLink="/appointments">{{ 'dashboard.allAppointments' | transloco }}</a>
       </mat-card-actions>
     </mat-card>
   }
@@ -117,7 +119,7 @@
   @if (isClinicAdmin() && clinicResource.value(); as clinic) {
     <mat-card class="dashboard-card subscription-card">
       <mat-card-header>
-        <mat-card-title>Mon abonnement</mat-card-title>
+        <mat-card-title>{{ 'dashboard.mySubscription' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="subscription-row">
@@ -127,7 +129,7 @@
           </mat-chip>
         </div>
         @if (clinic.current_period_end) {
-          <p class="period-end">Prochain renouvellement : {{ clinic.current_period_end | date: 'longDate' }}</p>
+          <p class="period-end">{{ 'dashboard.nextRenewal' | transloco: { date: (clinic.current_period_end | date: 'longDate') } }}</p>
         }
         @if (portalError()) {
           <p class="server-error" role="alert">{{ portalError() }}</p>
@@ -138,7 +140,7 @@
           @if (openingPortal()) {
             <mat-spinner diameter="18" />
           } @else {
-            Gérer mon abonnement
+            {{ 'dashboard.manageSubscription' | transloco }}
           }
         </button>
       </mat-card-actions>
@@ -148,7 +150,7 @@
   @if (isClinicAdmin()) {
     <mat-card class="dashboard-card activity-card">
       <mat-card-header>
-        <mat-card-title>Activité récente</mat-card-title>
+        <mat-card-title>{{ 'dashboard.recentActivity' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         @if (recentActivity.isLoading()) {
@@ -156,7 +158,7 @@
             <mat-spinner diameter="28" />
           </div>
         } @else if (recentActivity.value().results.length === 0) {
-          <app-empty-state icon="history" message="Aucune activité récente." [padded]="false" />
+          <app-empty-state icon="history" [message]="'dashboard.noActivity' | transloco" [padded]="false" />
         } @else {
           <ul class="activity-list">
             @for (entry of recentActivity.value().results; track entry.id) {
@@ -175,7 +177,7 @@
         }
       </mat-card-content>
       <mat-card-actions>
-        <a mat-button routerLink="/audit-log">Voir tout le journal</a>
+        <a mat-button routerLink="/audit-log">{{ 'dashboard.fullLog' | transloco }}</a>
       </mat-card-actions>
     </mat-card>
   }

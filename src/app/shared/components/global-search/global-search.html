@@ -4,7 +4,7 @@
     <input
       matInput
       type="text"
-      placeholder="Rechercher un patient, un médecin, un rendez-vous…"
+      [placeholder]="'search.placeholder' | transloco"
       autocomplete="off"
       [value]="queryInput()"
       (input)="onInput($any($event.target).value)"
@@ -32,7 +32,7 @@
           }
         }
       } @else if (!resultsResource.isLoading()) {
-        <div class="no-results">Aucun résultat</div>
+        <div class="no-results">{{ 'search.noResults' | transloco }}</div>
       }
     </div>
   }

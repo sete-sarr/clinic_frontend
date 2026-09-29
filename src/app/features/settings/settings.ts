@@ -18,6 +18,7 @@ import { AccentColor, ThemePreference, ThemeService } from '../../core/services/
 import { UserGuideService } from '../../core/services/user-guide.service';
 import { SuccessNotifier } from '../../shared/notifications/success-notifier';
 import { ClinicService } from './clinic.service';
+import { CURRENCY_CODES, CurrencyCode, DEFAULT_CURRENCY, currencySymbol } from '../../core/utils/money';
 
 interface LogoField {
   key: 'logo_light' | 'logo_dark' | 'logo_print' | 'favicon';
@@ -56,6 +57,8 @@ export class Settings {
 
   protected readonly logoFields = LOGO_FIELDS;
   protected readonly localeOptions = Object.entries(LOCALE_LABELS) as [Locale, string][];
+  protected readonly currencyOptions = CURRENCY_CODES;
+  protected readonly currencySymbol = currencySymbol;
 
   private readonly clinicId = computed(() => this.auth.user()?.clinic ?? null);
 
@@ -68,6 +71,7 @@ export class Settings {
   );
 
   protected readonly locale = signal<Locale>('fr');
+  protected readonly currency = signal<CurrencyCode>(DEFAULT_CURRENCY);
   protected readonly saving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
@@ -81,6 +85,7 @@ export class Settings {
       const clinic = this.clinicResource.value();
       if (clinic) {
         this.locale.set(clinic.locale);
+        this.currency.set(clinic.currency);
       }
     });
   }
@@ -109,6 +114,7 @@ export class Settings {
 
     const formData = new FormData();
     formData.append('locale', this.locale());
+    formData.append('currency', this.currency());
     for (const [key, file] of Object.entries(this.pendingFiles())) {
       formData.append(key, file);
     }
@@ -118,6 +124,8 @@ export class Settings {
       this.pendingFiles.set({});
       this.successNotifier.show(translate('settings.saved'));
       this.clinicResource.reload();
+      // Devise en session (estimation des nouvelles factures, saisie des prix) — docs/i18n.md §8.
+      this.auth.refreshUser();
     } catch (error) {
       const apiError = parseApiError(error, translate('settings.saveError'));
       this.errorMessage.set(apiError.message);

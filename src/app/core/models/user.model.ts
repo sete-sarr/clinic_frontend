@@ -17,6 +17,8 @@ export interface User {
   // Préférence de langue ("" = suit la langue de la clinique) — docs/i18n.md §2. Absente des
   // sessions enregistrées avant son introduction, d'où le champ optionnel.
   language?: '' | 'fr' | 'en';
+  // Devise de la clinique (docs/i18n.md §8) ; absente des sessions antérieures.
+  clinic_currency?: string | null;
 }
 
 export interface AuthTokens {

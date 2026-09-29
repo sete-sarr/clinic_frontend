@@ -23,6 +23,7 @@ import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-
 import { INVOICE_STATUS_LABELS, Invoice, InvoiceStatus } from '../invoice.model';
 import { InvoiceForm } from '../invoice-form/invoice-form';
 import { InvoiceService } from '../invoice.service';
+import { MoneyPipe } from '../../../core/utils/money';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -30,6 +31,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-invoice-list',
   imports: [
+    MoneyPipe,
     DatePipe,
     EmptyState,
     MatButtonModule,

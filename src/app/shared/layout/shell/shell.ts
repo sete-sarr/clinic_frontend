@@ -191,6 +191,11 @@ export class Shell {
 
   protected readonly user = this.auth.user;
 
+  constructor() {
+    // Réglages de la clinique modifiés depuis la connexion (devise…) : docs/i18n.md §8.
+    this.auth.refreshUser();
+  }
+
   protected readonly navItems = computed(() =>
     NAV_ITEMS.filter((item) => this.auth.hasRole(...item.roles)),
   );

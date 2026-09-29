@@ -15,9 +15,9 @@
             <div>
               <div class="number">{{ invoice.number || ('portal.invoices.draft' | transloco) }}</div>
               <div class="issue-date">{{ invoice.issue_date | date: 'mediumDate' }}</div>
-              <div class="total">{{ 'portal.invoices.total' | transloco: { amount: invoice.total_amount } }}</div>
+              <div class="total">{{ 'portal.invoices.total' | transloco: { amount: (invoice.total_amount | money: invoice.currency) } }}</div>
               @if (invoice.balance_due !== '0.00') {
-                <div class="balance-due">{{ 'portal.invoices.balance' | transloco: { amount: invoice.balance_due } }}</div>
+                <div class="balance-due">{{ 'portal.invoices.balance' | transloco: { amount: (invoice.balance_due | money: invoice.currency) } }}</div>
               }
             </div>
             <div class="actions">

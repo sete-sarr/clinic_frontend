@@ -38,6 +38,7 @@
         <mat-form-field appearance="outline" class="half-width">
           <mat-label>{{ 'pharmacy.unitPrice' | transloco }}</mat-label>
           <input matInput type="number" step="0.01" [formField]="medicationForm.unit_price" />
+          <span matTextSuffix class="currency-suffix">{{ currencySymbol }}</span>
           @if (medicationForm.unit_price().touched() && medicationForm.unit_price().invalid()) {
             <mat-error>{{ medicationForm.unit_price().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }

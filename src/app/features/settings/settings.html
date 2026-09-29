@@ -64,6 +64,23 @@
 
     <mat-card class="settings-card">
       <mat-card-header>
+        <mat-card-title>{{ 'settings.currency' | transloco }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="locale-field">
+          <mat-label>{{ 'settings.clinicCurrency' | transloco }}</mat-label>
+          <mat-select [value]="currency()" (selectionChange)="currency.set($event.value)">
+            @for (code of currencyOptions; track code) {
+              <mat-option [value]="code">{{ 'currencies.' + code | transloco }} ({{ currencySymbol(code) }})</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <p class="hint">{{ 'settings.clinicCurrencyHint' | transloco }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="settings-card">
+      <mat-card-header>
         <mat-card-title>{{ 'settings.theme' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>

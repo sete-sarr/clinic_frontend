@@ -296,6 +296,22 @@
       "patients": "Patients",
       "doctors": "Médecins",
       "appointments": "Rendez-vous"
+    },
+    "auditModel": {
+      "Appointment": "Rendez-vous",
+      "Clinic": "Clinique",
+      "Consultation": "Consultation",
+      "Department": "Département",
+      "Doctor": "Médecin",
+      "Invoice": "Facture",
+      "MedicalRecord": "Dossier médical",
+      "Medication": "Médicament",
+      "Patient": "Patient",
+      "Payment": "Paiement",
+      "Prescription": "Prescription",
+      "StockBatch": "Lot",
+      "StockMovement": "Mouvement de stock",
+      "User": "Utilisateur"
     }
   },
   "portal": {

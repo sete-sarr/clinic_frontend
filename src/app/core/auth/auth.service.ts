@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable, tap } from 'rxjs';
+import { Observable, finalize, shareReplay, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
@@ -27,7 +27,26 @@ export class AuthService {
   readonly user = signal<User | null>(this.readUserStorage());
 
   readonly isAuthenticated = computed(() => this.accessToken() !== null);
+  // Renouvellement en cours, partagé par toutes les requêtes qui reçoivent un 401 en même temps.
+  private refreshInFlight: Observable<AuthTokens> | null = null;
   readonly roles = computed<Role[]>(() => this.user()?.roles ?? []);
+
+  constructor() {
+    // Plusieurs onglets partagent la même session (localStorage) : un renouvellement ou une
+    // déconnexion dans un onglet est répercuté dans les autres, qui sinon garderaient un jeton de
+    // rafraîchissement déjà révoqué par la rotation.
+    if (this.isBrowser) {
+      window.addEventListener('storage', (event) => {
+        if (event.key === ACCESS_TOKEN_KEY) {
+          this.accessToken.set(event.newValue);
+        } else if (event.key === REFRESH_TOKEN_KEY) {
+          this.refreshTokenValue.set(event.newValue);
+        } else if (event.key === USER_KEY) {
+          this.user.set(event.newValue ? (JSON.parse(event.newValue) as User) : null);
+        }
+      });
+    }
+  }
 
   hasRole(...allowed: Role[]): boolean {
     const roles = this.roles();
@@ -74,11 +93,24 @@ export class AuthService {
     });
   }
 
+  // Renouvelle le jeton d'accès expiré (appelé par authInterceptor sur un 401).
+  // - Rotation (SIMPLE_JWT ROTATE_REFRESH_TOKENS + BLACKLIST_AFTER_ROTATION) : la réponse contient
+  //   un NOUVEAU jeton de rafraîchissement et l'ancien est révoqué — il faut donc le conserver,
+  //   sinon le renouvellement suivant échoue et déconnecte l'utilisateur.
+  // - Un seul appel à la fois : les requêtes parallèles qui reçoivent un 401 attendent le même
+  //   renouvellement au lieu de présenter chacune l'ancien jeton (révoqué dès le premier succès).
   refreshAccessToken(): Observable<AuthTokens> {
-    const refresh = this.refreshTokenValue();
-    return this.http
-      .post<AuthTokens>(`${environment.apiBaseUrl}/auth/token/refresh/`, { refresh })
-      .pipe(tap((tokens) => this.setAccessToken(tokens.access)));
+    if (!this.refreshInFlight) {
+      const refresh = this.readStorage(REFRESH_TOKEN_KEY) ?? this.refreshTokenValue();
+      this.refreshInFlight = this.http
+        .post<AuthTokens>(`${environment.apiBaseUrl}/auth/token/refresh/`, { refresh })
+        .pipe(
+          tap((tokens) => this.storeTokens(tokens)),
+          finalize(() => (this.refreshInFlight = null)),
+          shareReplay(1),
+        );
+    }
+    return this.refreshInFlight;
   }
 
   logout(): void {
@@ -115,10 +147,16 @@ export class AuthService {
     }
   }
 
-  private setAccessToken(access: string): void {
-    this.accessToken.set(access);
+  private storeTokens(tokens: AuthTokens): void {
+    this.accessToken.set(tokens.access);
+    if (tokens.refresh) {
+      this.refreshTokenValue.set(tokens.refresh);
+    }
     if (this.isBrowser) {
-      localStorage.setItem(ACCESS_TOKEN_KEY, access);
+      localStorage.setItem(ACCESS_TOKEN_KEY, tokens.access);
+      if (tokens.refresh) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refresh);
+      }
     }
   }
 

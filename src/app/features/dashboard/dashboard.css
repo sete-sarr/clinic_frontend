@@ -107,11 +107,79 @@
   font-size: 0.875rem;
 }
 
-.dashboard-row {
+/* Mise en page : colonne principale (agenda, abonnement, graphiques) et, pour l'administrateur,
+   colonne latérale « Activité récente » sur toute la hauteur — plus de vide sous les cartes. */
+.dashboard-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: var(--space-4);
   align-items: start;
+}
+
+@media (min-width: 1200px) {
+  .dashboard-layout.has-aside {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.dashboard-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* Graphiques (design-system/charts.md) : rendez-vous sur toute la largeur, puis encaissements et
+   factures côte à côte ; une seule colonne sur écran étroit. */
+.charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+@media (min-width: 900px) {
+  .charts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.chart-card {
+  border-top-color: var(--chart-blue);
+}
+
+.chart-card mat-card-subtitle {
+  margin-top: var(--space-1);
+}
+
+/* Chiffre clé du graphique des encaissements (même police, pas de chiffres tabulaires). */
+.chart-figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.figure-value {
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.figure-caption {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
 }
 
 .dashboard-card {

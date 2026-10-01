@@ -369,7 +369,23 @@
     "portalError": "Unable to open subscription management.",
     "recentActivity": "Recent activity",
     "noActivity": "No recent activity.",
-    "fullLog": "View the full log"
+    "fullLog": "View the full log",
+    "charts": {
+      "appointmentsTitle": "Appointments — last 30 days",
+      "attended": "{{count}} appointments attended",
+      "noShowRate": "no-show rate {{rate}}",
+      "completed": "Attended",
+      "noShow": "No-shows",
+      "cancelled": "Cancelled",
+      "revenueTitle": "Payments received — last 6 months",
+      "revenueSeries": "Payments received",
+      "revenueThisMonth": "of which this month: {{amount}}",
+      "invoicesTitle": "Invoices — last 6 months",
+      "invoicesPaid": "Paid",
+      "invoicesPartial": "Partially paid",
+      "invoicesIssued": "Issued, unpaid",
+      "balanceDue": "Balance due"
+    }
   },
   "search": {
     "placeholder": "Search for a patient, doctor or appointment…",
@@ -748,5 +764,16 @@
     "GBP": "British pound",
     "CAD": "Canadian dollar",
     "CHF": "Swiss franc"
+  },
+  "charts": {
+    "showTable": "Table",
+    "showChart": "Chart",
+    "empty": "No data for this period.",
+    "period": "Period",
+    "total": "Total",
+    "category": "Category",
+    "value": "Count",
+    "share": "Share",
+    "detail": "Amount"
   }
 }

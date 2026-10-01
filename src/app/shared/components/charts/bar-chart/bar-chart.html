@@ -38,14 +38,14 @@
         </tr>
       </thead>
       <tbody>
-        @for (category of categories(); track $index) {
+        @for (category of categories(); track $index; let row = $index) {
           <tr>
-            <th scope="row">{{ titleFor($index) }}</th>
+            <th scope="row">{{ titleFor(row) }}</th>
             @for (serie of series(); track serie.key) {
-              <td>{{ format()(serie.values[$index] ?? 0) }}</td>
+              <td>{{ format()(serie.values[row] ?? 0) }}</td>
             }
             @if (series().length > 1) {
-              <td class="total">{{ format()(totalFor($index)) }}</td>
+              <td class="total">{{ format()(totalFor(row)) }}</td>
             }
           </tr>
         }

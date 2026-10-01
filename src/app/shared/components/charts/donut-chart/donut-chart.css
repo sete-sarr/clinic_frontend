@@ -1,0 +1,136 @@
+@import '../chart-common.css';
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.donut-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.donut {
+  position: relative;
+  flex-shrink: 0;
+}
+
+svg {
+  display: block;
+  overflow: visible;
+}
+
+.track {
+  fill: none;
+  stroke: var(--color-surface-secondary);
+}
+
+.arc {
+  fill: none;
+  stroke-linecap: butt;
+  cursor: pointer;
+  transition: stroke-width 120ms ease, opacity 120ms ease;
+}
+
+.arc.dimmed {
+  opacity: 0.45;
+}
+
+/* Lecture au centre : valeur forte, libellé discret. */
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-8);
+  text-align: center;
+  pointer-events: none;
+}
+
+.center-value {
+  font-size: 1.0625rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  color: var(--color-text-primary);
+}
+
+.center-label {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--color-text-secondary);
+}
+
+.donut-legend {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: 8px;
+  cursor: default;
+  outline: none;
+}
+
+.donut-legend li.active,
+.donut-legend li:focus-visible {
+  background-color: var(--color-surface-secondary);
+}
+
+.donut-legend li:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.legend-text {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.legend-label {
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+}
+
+.legend-detail {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.legend-figures {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.legend-value {
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.legend-share {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.table-note {
+  margin: var(--space-2) 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}

@@ -9,6 +9,8 @@ const MARGIN = { top: 12, right: 8, bottom: 26, left: 48 };
 const MAX_BAR_WIDTH = 24;
 const SEGMENT_GAP = 2; // espace couleur de surface entre segments empilés
 const CORNER = 4; // bout de barre arrondi (base carrée)
+const LABEL_CHAR_WIDTH = 6.5; // px par caractère des libellés de l'axe X (11px)
+const LABEL_PADDING = 12; // px d'air entre deux libellés
 
 interface Segment {
   key: string;
@@ -99,10 +101,14 @@ export class BarChart {
     });
   });
 
+  // Graduations de l'axe X : comptées depuis la dernière catégorie (aujourd'hui, le mois en cours),
+  // jamais plus serrées que la largeur du plus long libellé — sinon ils se chevauchent sur mobile.
   protected readonly xLabels = computed(() => {
-    const every = Math.max(this.labelEvery(), 1);
+    const longest = Math.max(...this.categories().map((label) => label.length), 1);
+    const spacingEvery = Math.ceil((longest * LABEL_CHAR_WIDTH + LABEL_PADDING) / Math.max(this.band(), 1));
+    const every = Math.max(this.labelEvery(), spacingEvery, 1);
     const last = this.categories().length - 1;
-    return this.columns().filter((column) => column.index % every === 0 || column.index === last);
+    return this.columns().filter((column) => (last - column.index) % every === 0);
   });
 
   protected axisLabel(value: number): string {

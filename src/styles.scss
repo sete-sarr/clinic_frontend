@@ -24,6 +24,15 @@
   --color-error: #dc2626;
   --color-info: #0284c7;
 
+  // Graphiques (design-system/charts.md, colors.md § Palette des graphiques). Palette validée par
+  // calcul (séparation daltonisme ≥ seuil, contraste ≥ 3:1 sur surface claire ET sombre) — ne pas
+  // ajouter de couleur sans la revalider. --chart-teal : Professional Teal palier 600, l'accent
+  // #0f766e étant trop peu saturé pour se distinguer dans un graphique.
+  --chart-blue: var(--color-primary);
+  --chart-teal: #0d9488;
+  --chart-amber: var(--color-warning);
+  --chart-muted: var(--color-neutral-500);
+
   // Neutral scale
   --color-neutral-50: #f8fafc;
   --color-neutral-100: #f1f5f9;

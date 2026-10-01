@@ -1,0 +1,105 @@
+<div class="chart-header">
+  <span></span>
+  @if (!isEmpty()) {
+    <button mat-button type="button" class="view-toggle" (click)="showTable.set(!showTable())">
+      <mat-icon>{{ showTable() ? 'donut_large' : 'table_rows' }}</mat-icon>
+      {{ (showTable() ? 'charts.showChart' : 'charts.showTable') | transloco }}
+    </button>
+  }
+</div>
+
+@if (isEmpty()) {
+  <p class="chart-empty">{{ 'charts.empty' | transloco }}</p>
+} @else if (showTable()) {
+  <div class="table-wrapper">
+    <table class="chart-table">
+      <caption class="visually-hidden">{{ caption() }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'charts.category' | transloco }}</th>
+          <th scope="col">{{ 'charts.value' | transloco }}</th>
+          <th scope="col">{{ 'charts.share' | transloco }}</th>
+          <th scope="col">{{ 'charts.detail' | transloco }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (segment of segments(); track segment.key) {
+          <tr>
+            <th scope="row">{{ segment.label }}</th>
+            <td>{{ format()(segment.value) }}</td>
+            <td>{{ share(segment) }}</td>
+            <td>{{ segment.detail ?? '' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (centerLabel()) {
+      <p class="table-note">{{ centerLabel() }} : <strong>{{ centerValue() }}</strong></p>
+    }
+  </div>
+} @else {
+  <div class="donut-layout">
+    <div class="donut" (pointerleave)="active.set(null)">
+      <svg [attr.width]="size" [attr.height]="size" [attr.viewBox]="'0 0 ' + size + ' ' + size" role="img" [attr.aria-label]="caption()">
+        <circle class="track" [attr.cx]="center" [attr.cy]="center" [attr.r]="radius" [attr.stroke-width]="stroke" />
+        @for (arc of arcs(); track arc.segment.key) {
+          @if (arc.path) {
+            <path
+              class="arc"
+              [class.dimmed]="active() !== null && active() !== arc.segment.key"
+              [attr.d]="arc.path"
+              [style.stroke]="arc.segment.color"
+              [attr.stroke-width]="active() === arc.segment.key ? stroke + 6 : stroke"
+              (pointerenter)="active.set(arc.segment.key)"
+              (pointerdown)="active.set(arc.segment.key)"
+            />
+          } @else {
+            <circle
+              class="arc"
+              [attr.cx]="center"
+              [attr.cy]="center"
+              [attr.r]="radius"
+              [style.stroke]="arc.segment.color"
+              [attr.stroke-width]="active() === arc.segment.key ? stroke + 6 : stroke"
+              (pointerenter)="active.set(arc.segment.key)"
+            />
+          }
+        }
+      </svg>
+      <div class="donut-center" aria-live="polite">
+        @if (activeSegment(); as segment) {
+          <span class="center-value">{{ format()(segment.value) }}</span>
+          <span class="center-label">{{ segment.label }} · {{ share(segment) }}</span>
+        } @else {
+          <span class="center-value">{{ centerValue() }}</span>
+          <span class="center-label">{{ centerLabel() }}</span>
+        }
+      </div>
+    </div>
+
+    <ul class="donut-legend">
+      @for (segment of segments(); track segment.key) {
+        <li
+          tabindex="0"
+          [class.active]="active() === segment.key"
+          (mouseenter)="active.set(segment.key)"
+          (mouseleave)="active.set(null)"
+          (focus)="active.set(segment.key)"
+          (blur)="active.set(null)"
+        >
+          <span class="legend-swatch" [style.background]="segment.color"></span>
+          <span class="legend-text">
+            <span class="legend-label">{{ segment.label }}</span>
+            @if (segment.detail) {
+              <span class="legend-detail">{{ segment.detail }}</span>
+            }
+          </span>
+          <span class="legend-figures">
+            <span class="legend-value">{{ format()(segment.value) }}</span>
+            <span class="legend-share">{{ share(segment) }}</span>
+          </span>
+        </li>
+      }
+    </ul>
+  </div>
+}

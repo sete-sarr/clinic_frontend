@@ -369,7 +369,23 @@
     "portalError": "Impossible d'ouvrir la gestion de l'abonnement.",
     "recentActivity": "Activité récente",
     "noActivity": "Aucune activité récente.",
-    "fullLog": "Voir tout le journal"
+    "fullLog": "Voir tout le journal",
+    "charts": {
+      "appointmentsTitle": "Rendez-vous — 30 derniers jours",
+      "attended": "{{count}} rendez-vous honorés",
+      "noShowRate": "taux d'absence {{rate}}",
+      "completed": "Honorés",
+      "noShow": "Absences",
+      "cancelled": "Annulés",
+      "revenueTitle": "Encaissements — 6 derniers mois",
+      "revenueSeries": "Encaissements",
+      "revenueThisMonth": "dont ce mois-ci : {{amount}}",
+      "invoicesTitle": "Factures — 6 derniers mois",
+      "invoicesPaid": "Payées",
+      "invoicesPartial": "Partiellement payées",
+      "invoicesIssued": "Émises, non payées",
+      "balanceDue": "Reste à encaisser"
+    }
   },
   "search": {
     "placeholder": "Rechercher un patient, un médecin, un rendez-vous…",
@@ -748,5 +764,16 @@
     "GBP": "Livre sterling",
     "CAD": "Dollar canadien",
     "CHF": "Franc suisse"
+  },
+  "charts": {
+    "showTable": "Tableau",
+    "showChart": "Graphique",
+    "empty": "Aucune donnée sur cette période.",
+    "period": "Période",
+    "total": "Total",
+    "category": "Catégorie",
+    "value": "Nombre",
+    "share": "Part",
+    "detail": "Montant"
   }
 }

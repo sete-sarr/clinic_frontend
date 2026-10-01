@@ -1,5 +1,5 @@
 import { httpResource } from '@angular/common/http';
-import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
+import { Component, booleanAttribute, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -71,13 +71,17 @@ export class AppointmentList {
     { initialValue: false },
   );
 
-  // Entrées liées au routeur (withComponentInputBinding) : les query params absents sont mis à
-  // `undefined`, donc `page` retombe via sa transformation plutôt que via la valeur par défaut
-  // déclarée.
+  // Entrées liées au routeur (withComponentInputBinding) : chaque query param alimente l'entrée de
+  // MÊME NOM — d'où `patientNumber` / `checkedIn` dans l'URL (et non patient_number / checked_in,
+  // noms des paramètres de l'API). Les query params absents sont mis à `undefined`, donc `page`
+  // retombe via sa transformation plutôt que via la valeur par défaut déclarée.
   readonly status = input<AppointmentStatus | undefined>();
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
   readonly patientNumber = input<string | undefined>();
-  readonly checkedIn = input<boolean | undefined>();
+  // Query param texte ('true') : converti en booléen, absent = pas de filtre.
+  readonly checkedIn = input<boolean | undefined, unknown>(undefined, {
+    transform: (value: unknown) => (value === undefined || value === null || value === '' ? undefined : booleanAttribute(value)),
+  });
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly today = toIsoDate(new Date());
@@ -134,7 +138,7 @@ export class AppointmentList {
     clearTimeout(this.patientNumberDebounceHandle);
     this.patientNumberDebounceHandle = setTimeout(() => {
       this.router.navigate([], {
-        queryParams: { patient_number: value || null, page: null },
+        queryParams: { patientNumber: value || null, page: null },
         queryParamsHandling: 'merge',
       });
     }, SEARCH_DEBOUNCE_MS);
@@ -142,7 +146,7 @@ export class AppointmentList {
 
   protected onCheckedInFilterChange(checked: boolean): void {
     this.router.navigate([], {
-      queryParams: { checked_in: checked ? 'true' : null, page: null },
+      queryParams: { checkedIn: checked ? 'true' : null, page: null },
       queryParamsHandling: 'merge',
     });
   }

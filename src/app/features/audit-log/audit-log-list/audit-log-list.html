@@ -67,7 +67,7 @@
 
     <ng-container matColumnDef="model_name">
       <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.objectType' | transloco }}</th>
-      <td mat-cell *matCellDef="let entry">{{ entry.model_name }}</td>
+      <td mat-cell *matCellDef="let entry">{{ modelLabel(entry.model_name) }}</td>
     </ng-container>
 
     <ng-container matColumnDef="object_id">

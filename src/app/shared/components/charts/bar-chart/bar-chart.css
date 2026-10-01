@@ -1,0 +1,52 @@
+@import '../chart-common.css';
+
+:host {
+  display: block;
+  position: relative;
+  min-width: 0;
+}
+
+.plot {
+  position: relative;
+}
+
+svg {
+  display: block;
+  overflow: visible;
+}
+
+svg:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.grid-line {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.baseline {
+  stroke: var(--color-neutral-400);
+  stroke-width: 1;
+}
+
+.tick-label {
+  fill: var(--color-text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.active-band {
+  fill: var(--color-surface-secondary);
+}
+
+.hit-area {
+  fill: transparent;
+  cursor: pointer;
+}
+
+/* Infobulle centrée au-dessus de la colonne survolée. */
+.chart-tooltip {
+  transform: translate(-50%, -100%);
+}

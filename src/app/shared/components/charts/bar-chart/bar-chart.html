@@ -1,0 +1,131 @@
+<div class="chart-header">
+  @if (series().length > 1 && !isEmpty() && !showTable()) {
+    <ul class="chart-legend">
+      @for (serie of series(); track serie.key) {
+        <li>
+          <span class="legend-swatch" [style.background]="serie.color"></span>
+          <span class="legend-label">{{ serie.label }}</span>
+          <span class="legend-value">{{ format()(seriesTotal(serie)) }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <span></span>
+  }
+  @if (!isEmpty()) {
+    <button mat-button type="button" class="view-toggle" (click)="showTable.set(!showTable())">
+      <mat-icon>{{ showTable() ? 'bar_chart' : 'table_rows' }}</mat-icon>
+      {{ (showTable() ? 'charts.showChart' : 'charts.showTable') | transloco }}
+    </button>
+  }
+</div>
+
+@if (isEmpty()) {
+  <p class="chart-empty">{{ 'charts.empty' | transloco }}</p>
+} @else if (showTable()) {
+  <div class="table-wrapper">
+    <table class="chart-table">
+      <caption class="visually-hidden">{{ caption() }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'charts.period' | transloco }}</th>
+          @for (serie of series(); track serie.key) {
+            <th scope="col">{{ serie.label }}</th>
+          }
+          @if (series().length > 1) {
+            <th scope="col">{{ 'charts.total' | transloco }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (category of categories(); track $index) {
+          <tr>
+            <th scope="row">{{ titleFor($index) }}</th>
+            @for (serie of series(); track serie.key) {
+              <td>{{ format()(serie.values[$index] ?? 0) }}</td>
+            }
+            @if (series().length > 1) {
+              <td class="total">{{ format()(totalFor($index)) }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="plot" (pointerleave)="active.set(null)">
+    <svg
+      [attr.width]="width()"
+      [attr.height]="height()"
+      role="img"
+      [attr.aria-label]="caption()"
+      tabindex="0"
+      (keydown)="onKeydown($event)"
+      (focus)="onFocus()"
+      (blur)="active.set(null)"
+    >
+      @for (tick of ticks(); track tick) {
+        <line class="grid-line" [attr.x1]="margin.left" [attr.x2]="width() - margin.right" [attr.y1]="y(tick)" [attr.y2]="y(tick)" />
+        <text class="tick-label" [attr.x]="margin.left - 8" [attr.y]="y(tick)" text-anchor="end" dominant-baseline="middle">
+          {{ axisLabel(tick) }}
+        </text>
+      }
+
+      @if (active() !== null) {
+        <rect
+          class="active-band"
+          [attr.x]="columns()[active()!].bandX"
+          [attr.y]="margin.top"
+          [attr.width]="bandWidth()"
+          [attr.height]="plotHeight()"
+          rx="4"
+        />
+      }
+
+      @for (column of columns(); track column.index) {
+        @for (segment of column.segments; track segment.key) {
+          <path [attr.d]="segment.path" [style.fill]="segment.color" />
+        }
+      }
+
+      <line class="baseline" [attr.x1]="margin.left" [attr.x2]="width() - margin.right" [attr.y1]="y(0)" [attr.y2]="y(0)" />
+
+      @for (column of xLabels(); track column.index) {
+        <text class="tick-label" [attr.x]="column.x" [attr.y]="height() - 6" text-anchor="middle">
+          {{ categories()[column.index] }}
+        </text>
+      }
+
+      @for (column of columns(); track column.index) {
+        <rect
+          class="hit-area"
+          [attr.x]="column.bandX"
+          [attr.y]="margin.top"
+          [attr.width]="bandWidth()"
+          [attr.height]="plotHeight()"
+          (pointerenter)="active.set(column.index)"
+          (pointerdown)="active.set(column.index)"
+        />
+      }
+    </svg>
+
+    @if (active() !== null) {
+      <div class="chart-tooltip" role="status" [style.left.px]="tooltipLeft()" [style.top.px]="columns()[active()!].topY - 8">
+        <div class="tooltip-title">{{ titleFor(active()!) }}</div>
+        @for (serie of series(); track serie.key) {
+          <div class="tooltip-row">
+            <span class="tooltip-key" [style.background]="serie.color"></span>
+            <strong>{{ format()(serie.values[active()!] ?? 0) }}</strong>
+            <span class="tooltip-label">{{ serie.label }}</span>
+          </div>
+        }
+        @if (series().length > 1) {
+          <div class="tooltip-row tooltip-total">
+            <strong>{{ format()(totalFor(active()!)) }}</strong>
+            <span class="tooltip-label">{{ 'charts.total' | transloco }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

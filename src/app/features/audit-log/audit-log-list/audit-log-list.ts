@@ -17,7 +17,7 @@ import { environment } from '../../../../environments/environment';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { toIsoDate } from '../../../core/utils/date';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
-import { AUDIT_ACTION_LABELS, AuditAction, AuditLogEntry } from '../audit-log.model';
+import { AUDIT_ACTION_LABELS, AuditAction, AuditLogEntry, auditModelLabel } from '../audit-log.model';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -52,6 +52,7 @@ export class AuditLogList {
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly actionOptions = Object.entries(AUDIT_ACTION_LABELS) as [AuditAction, string][];
+  protected readonly modelLabel = auditModelLabel;
   protected readonly displayedColumns = ['created_at', 'user_display', 'action', 'model_name', 'object_id'];
 
   protected readonly searchInput = signal('');

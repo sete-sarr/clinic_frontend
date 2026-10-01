@@ -16,7 +16,7 @@ import { parseApiError } from '../../core/api/api-error';
 import { Clinic, PLAN_TIER_LABELS, SUBSCRIPTION_STATUS_LABELS } from '../../core/models/clinic.model';
 import { Paginated, emptyPage } from '../../core/models/pagination.model';
 import { toIsoDate } from '../../core/utils/date';
-import { AUDIT_ACTION_LABELS, AuditLogEntry } from '../audit-log/audit-log.model';
+import { AUDIT_ACTION_LABELS, AuditLogEntry, auditModelLabel } from '../audit-log/audit-log.model';
 import { EmptyState } from '../../shared/components/empty-state/empty-state';
 import { SubscriptionService } from '../subscription/subscription.service';
 
@@ -131,6 +131,7 @@ export class Dashboard {
   // features/audit-log/audit-log-list/audit-log-list.ts. AuditLogViewSet (backend/common/api/views.py)
   // est réservé à clinic_admin selon business/access-policy.md, donc ceci doit rester derrière isClinicAdmin().
   protected readonly actionLabels = AUDIT_ACTION_LABELS;
+  protected readonly modelLabel = auditModelLabel;
 
   protected readonly recentActivity = httpResource<Paginated<AuditLogEntry>>(
     () =>

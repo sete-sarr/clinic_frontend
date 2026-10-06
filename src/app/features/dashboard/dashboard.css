@@ -107,32 +107,20 @@
   font-size: 0.875rem;
 }
 
-/* Mise en page : colonne principale (agenda, abonnement, graphiques) et, pour l'administrateur,
-   colonne latérale « Activité récente » sur toute la hauteur — plus de vide sous les cartes. */
-.dashboard-layout {
-  display: grid;
-  gap: var(--space-4);
-  align-items: start;
-}
-
-@media (min-width: 1200px) {
-  .dashboard-layout.has-aside {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  }
-}
-
-.dashboard-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-width: 0;
-}
-
+/* Ordre de lecture, du plus urgent au moins urgent : agenda (+ abonnement), graphiques, puis
+   activité récente sur toute la largeur. */
 .dashboard-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-4);
   align-items: start;
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 900px) {
+  .dashboard-row.with-subscription {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
 }
 
 /* Graphiques (design-system/charts.md) : rendez-vous sur toute la largeur, puis encaissements et
@@ -141,6 +129,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 @media (min-width: 900px) {
@@ -270,6 +259,19 @@
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+/* Activité récente en pleine largeur : deux colonnes sur grand écran. */
+@media (min-width: 900px) {
+  .activity-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-8);
+  }
+
+  .activity-list li:nth-last-child(2):nth-child(odd) {
+    border-bottom: none;
+  }
 }
 
 .appointment-list li,

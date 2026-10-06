@@ -79,180 +79,175 @@
   }
 </div>
 
-<div class="dashboard-layout" [class.has-aside]="isClinicAdmin()">
-  <div class="dashboard-main">
-    <div class="dashboard-row">
-      @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
-        <mat-card class="dashboard-card schedule-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'dashboard.todaySchedule' | transloco }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            @if (todaysAppointments.isLoading()) {
-              <div class="loading">
-                <mat-spinner diameter="28" />
-              </div>
-            } @else if (todaysAppointments.value().results.length === 0) {
-              <app-empty-state icon="event_busy" [message]="'dashboard.noAppointmentsToday' | transloco" [padded]="false" />
-            } @else {
-              <ul class="appointment-list">
-                @for (appointment of todaysAppointments.value().results; track appointment.id) {
-                  <li>
-                    <span class="appointment-avatar">{{ patientInitials(appointment) }}</span>
-                    <div class="appointment-details">
-                      <span class="patient">{{ appointment.patient_display }}</span>
-                      <span class="doctor">{{ appointment.doctor_display }}</span>
-                    </div>
-                    <span class="time">{{ appointment.time }}</span>
-                    <mat-chip [class]="'status-chip status-' + appointment.status" disableRipple>
-                      {{ statusLabels[appointment.status] }}
-                    </mat-chip>
-                  </li>
-                }
-              </ul>
+<div class="dashboard-row" [class.with-subscription]="isClinicAdmin()">
+  @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
+    <mat-card class="dashboard-card schedule-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'dashboard.todaySchedule' | transloco }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (todaysAppointments.isLoading()) {
+          <div class="loading">
+            <mat-spinner diameter="28" />
+          </div>
+        } @else if (todaysAppointments.value().results.length === 0) {
+          <app-empty-state icon="event_busy" [message]="'dashboard.noAppointmentsToday' | transloco" [padded]="false" />
+        } @else {
+          <ul class="appointment-list">
+            @for (appointment of todaysAppointments.value().results; track appointment.id) {
+              <li>
+                <span class="appointment-avatar">{{ patientInitials(appointment) }}</span>
+                <div class="appointment-details">
+                  <span class="patient">{{ appointment.patient_display }}</span>
+                  <span class="doctor">{{ appointment.doctor_display }}</span>
+                </div>
+                <span class="time">{{ appointment.time }}</span>
+                <mat-chip [class]="'status-chip status-' + appointment.status" disableRipple>
+                  {{ statusLabels[appointment.status] }}
+                </mat-chip>
+              </li>
             }
-          </mat-card-content>
-          <mat-card-actions>
-            <a mat-button routerLink="/appointments">{{ 'dashboard.allAppointments' | transloco }}</a>
-          </mat-card-actions>
-        </mat-card>
-      }
-
-      @if (isClinicAdmin() && clinicResource.value(); as clinic) {
-        <mat-card class="dashboard-card subscription-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'dashboard.mySubscription' | transloco }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="subscription-row">
-              <span class="plan-name">{{ planTierLabels[clinic.plan_tier] }}</span>
-              <mat-chip [class]="'status-chip status-' + clinic.subscription_status" disableRipple>
-                {{ subscriptionStatusLabels[clinic.subscription_status] }}
-              </mat-chip>
-            </div>
-            @if (clinic.current_period_end) {
-              <p class="period-end">{{ 'dashboard.nextRenewal' | transloco: { date: (clinic.current_period_end | date: 'longDate') } }}</p>
-            }
-            @if (portalError()) {
-              <p class="server-error" role="alert">{{ portalError() }}</p>
-            }
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button (click)="openBillingPortal()" [disabled]="openingPortal()">
-              @if (openingPortal()) {
-                <mat-spinner diameter="18" />
-              } @else {
-                {{ 'dashboard.manageSubscription' | transloco }}
-              }
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      }
-    </div>
-
-    @if (stats.value() || stats.isLoading()) {
-      <div class="charts-grid">
-        @if (appointmentsChart(); as chart) {
-          <mat-card class="dashboard-card chart-card chart-wide">
-            <mat-card-header>
-              <mat-card-title>{{ 'dashboard.charts.appointmentsTitle' | transloco }}</mat-card-title>
-              <mat-card-subtitle>
-                {{ 'dashboard.charts.attended' | transloco: { count: chart.completed } }}
-                @if (chart.noShowRate) {
-                  · {{ 'dashboard.charts.noShowRate' | transloco: { rate: chart.noShowRate } }}
-                }
-              </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <app-bar-chart
-                [categories]="chart.categories"
-                [categoryTitles]="chart.titles"
-                [series]="chart.series"
-                [format]="countFormat"
-                [labelEvery]="7"
-                [caption]="'dashboard.charts.appointmentsTitle' | transloco"
-              />
-            </mat-card-content>
-          </mat-card>
+          </ul>
         }
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/appointments">{{ 'dashboard.allAppointments' | transloco }}</a>
+      </mat-card-actions>
+    </mat-card>
+  }
 
-        @if (revenueChart(); as chart) {
-          <mat-card class="dashboard-card chart-card">
-            <mat-card-header>
-              <mat-card-title>{{ 'dashboard.charts.revenueTitle' | transloco }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="chart-figure">
-                <span class="figure-value">{{ chart.total }}</span>
-                <span class="figure-caption">{{ 'dashboard.charts.revenueThisMonth' | transloco: { amount: chart.thisMonth } }}</span>
-              </div>
-              <app-bar-chart
-                [categories]="chart.categories"
-                [categoryTitles]="chart.titles"
-                [series]="chart.series"
-                [format]="moneyFormat"
-                [axisFormat]="compactFormat"
-                [plotHeight]="150"
-                [caption]="'dashboard.charts.revenueTitle' | transloco"
-              />
-            </mat-card-content>
-          </mat-card>
+  @if (isClinicAdmin() && clinicResource.value(); as clinic) {
+    <mat-card class="dashboard-card subscription-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'dashboard.mySubscription' | transloco }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="subscription-row">
+          <span class="plan-name">{{ planTierLabels[clinic.plan_tier] }}</span>
+          <mat-chip [class]="'status-chip status-' + clinic.subscription_status" disableRipple>
+            {{ subscriptionStatusLabels[clinic.subscription_status] }}
+          </mat-chip>
+        </div>
+        @if (clinic.current_period_end) {
+          <p class="period-end">{{ 'dashboard.nextRenewal' | transloco: { date: (clinic.current_period_end | date: 'longDate') } }}</p>
         }
-
-        @if (invoicesChart(); as chart) {
-          <mat-card class="dashboard-card chart-card">
-            <mat-card-header>
-              <mat-card-title>{{ 'dashboard.charts.invoicesTitle' | transloco }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <app-donut-chart
-                [segments]="chart.segments"
-                [format]="countFormat"
-                [centerLabel]="'dashboard.charts.balanceDue' | transloco"
-                [centerValue]="chart.balanceDue"
-                [caption]="'dashboard.charts.invoicesTitle' | transloco"
-              />
-            </mat-card-content>
-          </mat-card>
+        @if (portalError()) {
+          <p class="server-error" role="alert">{{ portalError() }}</p>
         }
-      </div>
-    }
-  </div>
-
-  @if (isClinicAdmin()) {
-    <div class="dashboard-aside">
-      <mat-card class="dashboard-card activity-card">
-        <mat-card-header>
-          <mat-card-title>{{ 'dashboard.recentActivity' | transloco }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          @if (recentActivity.isLoading()) {
-            <div class="loading">
-              <mat-spinner diameter="28" />
-            </div>
-          } @else if (recentActivity.value().results.length === 0) {
-            <app-empty-state icon="history" [message]="'dashboard.noActivity' | transloco" [padded]="false" />
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="openBillingPortal()" [disabled]="openingPortal()">
+          @if (openingPortal()) {
+            <mat-spinner diameter="18" />
           } @else {
-            <ul class="activity-list">
-              @for (entry of recentActivity.value().results; track entry.id) {
-                <li>
-                  <mat-icon class="activity-icon">history</mat-icon>
-                  <div class="activity-details">
-                    <span class="activity-text">
-                      {{ actionLabels[entry.action] }} — {{ modelLabel(entry.model_name) }}
-                    </span>
-                    <span class="activity-user">{{ entry.user_display }}</span>
-                  </div>
-                  <span class="activity-time">{{ entry.created_at | date: 'short' }}</span>
-                </li>
-              }
-            </ul>
+            {{ 'dashboard.manageSubscription' | transloco }}
           }
-        </mat-card-content>
-        <mat-card-actions>
-          <a mat-button routerLink="/audit-log">{{ 'dashboard.fullLog' | transloco }}</a>
-        </mat-card-actions>
-      </mat-card>
-    </div>
+        </button>
+      </mat-card-actions>
+    </mat-card>
   }
 </div>
+
+@if (stats.value() || stats.isLoading()) {
+  <div class="charts-grid">
+    @if (appointmentsChart(); as chart) {
+      <mat-card class="dashboard-card chart-card chart-wide">
+        <mat-card-header>
+          <mat-card-title>{{ 'dashboard.charts.appointmentsTitle' | transloco }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ 'dashboard.charts.attended' | transloco: { count: chart.completed } }}
+            @if (chart.noShowRate) {
+              · {{ 'dashboard.charts.noShowRate' | transloco: { rate: chart.noShowRate } }}
+            }
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <app-bar-chart
+            [categories]="chart.categories"
+            [categoryTitles]="chart.titles"
+            [series]="chart.series"
+            [format]="countFormat"
+            [labelEvery]="7"
+            [caption]="'dashboard.charts.appointmentsTitle' | transloco"
+          />
+        </mat-card-content>
+      </mat-card>
+    }
+
+    @if (revenueChart(); as chart) {
+      <mat-card class="dashboard-card chart-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'dashboard.charts.revenueTitle' | transloco }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-figure">
+            <span class="figure-value">{{ chart.total }}</span>
+            <span class="figure-caption">{{ 'dashboard.charts.revenueThisMonth' | transloco: { amount: chart.thisMonth } }}</span>
+          </div>
+          <app-bar-chart
+            [categories]="chart.categories"
+            [categoryTitles]="chart.titles"
+            [series]="chart.series"
+            [format]="moneyFormat"
+            [axisFormat]="compactFormat"
+            [plotHeight]="150"
+            [caption]="'dashboard.charts.revenueTitle' | transloco"
+          />
+        </mat-card-content>
+      </mat-card>
+    }
+
+    @if (invoicesChart(); as chart) {
+      <mat-card class="dashboard-card chart-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'dashboard.charts.invoicesTitle' | transloco }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <app-donut-chart
+            [segments]="chart.segments"
+            [format]="countFormat"
+            [centerLabel]="'dashboard.charts.balanceDue' | transloco"
+            [centerValue]="chart.balanceDue"
+            [caption]="'dashboard.charts.invoicesTitle' | transloco"
+          />
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+}
+
+<!-- Journal en dernier : le moins urgent (design-system/dashboard.md, « Activité récente »). -->
+@if (isClinicAdmin()) {
+  <mat-card class="dashboard-card activity-card">
+    <mat-card-header>
+      <mat-card-title>{{ 'dashboard.recentActivity' | transloco }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (recentActivity.isLoading()) {
+        <div class="loading">
+          <mat-spinner diameter="28" />
+        </div>
+      } @else if (recentActivity.value().results.length === 0) {
+        <app-empty-state icon="history" [message]="'dashboard.noActivity' | transloco" [padded]="false" />
+      } @else {
+        <ul class="activity-list">
+          @for (entry of recentActivity.value().results.slice(0, 8); track entry.id) {
+            <li>
+              <mat-icon class="activity-icon">history</mat-icon>
+              <div class="activity-details">
+                <span class="activity-text">
+                  {{ actionLabels[entry.action] }} — {{ modelLabel(entry.model_name) }}
+                </span>
+                <span class="activity-user">{{ entry.user_display }}</span>
+              </div>
+              <span class="activity-time">{{ entry.created_at | date: 'short' }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-button routerLink="/audit-log">{{ 'dashboard.fullLog' | transloco }}</a>
+    </mat-card-actions>
+  </mat-card>
+}

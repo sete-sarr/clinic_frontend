@@ -222,7 +222,7 @@ export class Dashboard {
   protected readonly recentActivity = httpResource<Paginated<AuditLogEntry>>(
     () =>
       this.isClinicAdmin()
-        ? { url: `${environment.apiBaseUrl}/audit-log/`, params: { page_size: 5 } }
+        ? { url: `${environment.apiBaseUrl}/audit-log/`, params: { page_size: 8 } }
         : undefined,
     { defaultValue: emptyPage<AuditLogEntry>() },
   );

@@ -84,6 +84,11 @@
   color: var(--sidebar-text) !important;
 }
 
+.nav-divider {
+  margin: var(--space-2) var(--space-4);
+  border-top-color: color-mix(in srgb, var(--sidebar-text) 18%, transparent);
+}
+
 .active-link {
   background-color: var(--sidebar-active) !important;
   color: var(--sidebar-text) !important;

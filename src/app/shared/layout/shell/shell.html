@@ -19,16 +19,21 @@
     </div>
 
     <mat-nav-list class="nav-list">
-      @for (item of navItems(); track item.route) {
-        <a
-          mat-list-item
-          [routerLink]="item.route"
-          routerLinkActive="active-link"
-          (click)="isHandset() && drawer.close()"
-        >
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.labelKey | transloco }}</span>
-        </a>
+      @for (group of navGroups(); track $index; let lastGroup = $last) {
+        @for (item of group; track item.route) {
+          <a
+            mat-list-item
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            (click)="isHandset() && drawer.close()"
+          >
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.labelKey | transloco }}</span>
+          </a>
+        }
+        @if (!lastGroup) {
+          <mat-divider class="nav-divider" />
+        }
       }
     </mat-nav-list>
 

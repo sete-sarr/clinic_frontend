@@ -5,6 +5,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -34,6 +35,18 @@ const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmaci
 
 // Ne liste que les routes qui existent réellement. Ajouter une entrée ici (avec les rôles autorisés à la voir,
 // selon business/access-policy.md) à chaque nouveau module de fonctionnalité livré.
+// Ordre du menu : groupes de fonctionnalités liées, séparés par un trait dans la barre latérale.
+// Un groupe sans entrée visible pour le rôle connecté est masqué avec son séparateur.
+const NAV_GROUPS: string[][] = [
+  ['/dashboard'],
+  ['/appointments', '/patients'], // accueil
+  ['/consultations', '/medical-records', '/prescriptions', '/pharmacy'], // soins
+  ['/billing', '/payments'], // finances
+  ['/reports', '/audit-log'], // pilotage
+  ['/doctors', '/staff', '/departments'], // organisation de la clinique
+  ['/settings', '/subscription'], // compte de la clinique
+];
+
 const NAV_ITEMS: NavItem[] = [
   {
     labelKey: 'nav.dashboard',
@@ -171,6 +184,7 @@ const NAV_ITEMS: NavItem[] = [
     TranslocoPipe,
     MatButtonModule,
     MatIconModule,
+    MatDividerModule,
     MatListModule,
     MatMenuModule,
     MatSidenavModule,
@@ -198,8 +212,12 @@ export class Shell {
     this.auth.refreshUser();
   }
 
-  protected readonly navItems = computed(() =>
-    NAV_ITEMS.filter((item) => this.auth.hasRole(...item.roles)),
+  protected readonly navGroups = computed(() =>
+    NAV_GROUPS.map((routes) =>
+      routes
+        .map((route) => NAV_ITEMS.find((item) => item.route === route))
+        .filter((item): item is NavItem => !!item && this.auth.hasRole(...item.roles)),
+    ).filter((group) => group.length > 0),
   );
 
   // Reflète les contrôles de rôle de GlobalSearchView (backend/common/api/search.py) — chaque groupe y

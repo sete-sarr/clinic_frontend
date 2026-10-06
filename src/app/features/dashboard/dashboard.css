@@ -16,16 +16,34 @@
   color: var(--color-text-secondary);
 }
 
-.kpi-grid {
+/* Six cartes de même largeur, trois par ligne (indicateurs, agenda du jour, graphique des
+   rendez-vous) ; les cartes d'une même ligne ont la même hauteur. Deux colonnes sur tablette, une
+   sur mobile. */
+.dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  align-items: stretch;
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 700px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .kpi-card {
   display: flex;
   align-items: center;
+  /* Contenu centré verticalement quand la carte s'étire à la hauteur de sa ligne. */
+  justify-content: center;
   gap: var(--space-3);
   padding: var(--space-4);
   border-left: 4px solid transparent;
@@ -107,24 +125,8 @@
   font-size: 0.875rem;
 }
 
-/* Ordre de lecture, du plus urgent au moins urgent : agenda (+ abonnement), graphiques, puis
-   activité récente sur toute la largeur. */
-.dashboard-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-4);
-  align-items: start;
-  margin-bottom: var(--space-4);
-}
-
-@media (min-width: 900px) {
-  .dashboard-row.with-subscription {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  }
-}
-
-/* Graphiques (design-system/charts.md) : rendez-vous sur toute la largeur, puis encaissements et
-   factures côte à côte ; une seule colonne sur écran étroit. */
+/* Graphiques financiers (design-system/charts.md) : encaissements et factures côte à côte sur toute
+   la largeur ; une seule colonne sur écran étroit. */
 .charts-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -135,10 +137,6 @@
 @media (min-width: 900px) {
   .charts-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .chart-wide {
-    grid-column: 1 / -1;
   }
 }
 
@@ -177,42 +175,15 @@
 }
 
 /* Same per-content color logic as the KPI cards above: schedule = primary (appointments),
-   subscription = accent (billing/platform), activity = secondary (audit trail) — a colored top
+   activity = secondary (audit trail) — a colored top
    edge rather than a tinted background, since these cards hold longer lists/text that need to
    stay on the plain --color-surface for readability. */
 .schedule-card {
   border-top-color: var(--color-primary);
 }
 
-.subscription-card {
-  border-top-color: var(--color-accent);
-}
-
 .activity-card {
   border-top-color: var(--color-secondary);
-}
-
-.subscription-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.plan-name {
-  font-weight: var(--font-weight-medium);
-}
-
-.period-end {
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  margin: var(--space-2) 0 0;
-}
-
-.server-error {
-  color: var(--color-error);
-  font-size: 0.875rem;
-  margin: var(--space-2) 0 0;
 }
 
 .status-chip {

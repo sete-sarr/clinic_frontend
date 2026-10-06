@@ -15,7 +15,9 @@
   }
 </div>
 
-<div class="kpi-grid">
+<!-- Six cartes de même taille, trois par ligne : indicateurs, agenda du jour et graphique des
+     rendez-vous ; puis les graphiques financiers sur toute la largeur, puis l'activité récente. -->
+<div class="dashboard-grid">
   @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
     <mat-card class="kpi-card">
       <div class="kpi-icon-badge kpi-icon-primary">
@@ -77,9 +79,7 @@
       </div>
     </mat-card>
   }
-</div>
 
-<div class="dashboard-row" [class.with-subscription]="isClinicAdmin()">
   @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
     <mat-card class="dashboard-card schedule-card">
       <mat-card-header>
@@ -116,64 +116,33 @@
     </mat-card>
   }
 
-  @if (isClinicAdmin() && clinicResource.value(); as clinic) {
-    <mat-card class="dashboard-card subscription-card">
+  @if (appointmentsChart(); as chart) {
+    <mat-card class="dashboard-card chart-card">
       <mat-card-header>
-        <mat-card-title>{{ 'dashboard.mySubscription' | transloco }}</mat-card-title>
+        <mat-card-title>{{ 'dashboard.charts.appointmentsTitle' | transloco }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ 'dashboard.charts.attended' | transloco: { count: chart.completed } }}
+          @if (chart.noShowRate) {
+            · {{ 'dashboard.charts.noShowRate' | transloco: { rate: chart.noShowRate } }}
+          }
+        </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <div class="subscription-row">
-          <span class="plan-name">{{ planTierLabels[clinic.plan_tier] }}</span>
-          <mat-chip [class]="'status-chip status-' + clinic.subscription_status" disableRipple>
-            {{ subscriptionStatusLabels[clinic.subscription_status] }}
-          </mat-chip>
-        </div>
-        @if (clinic.current_period_end) {
-          <p class="period-end">{{ 'dashboard.nextRenewal' | transloco: { date: (clinic.current_period_end | date: 'longDate') } }}</p>
-        }
-        @if (portalError()) {
-          <p class="server-error" role="alert">{{ portalError() }}</p>
-        }
+        <app-bar-chart
+          [categories]="chart.categories"
+          [categoryTitles]="chart.titles"
+          [series]="chart.series"
+          [format]="countFormat"
+          [labelEvery]="7"
+          [caption]="'dashboard.charts.appointmentsTitle' | transloco"
+        />
       </mat-card-content>
-      <mat-card-actions>
-        <button mat-button (click)="openBillingPortal()" [disabled]="openingPortal()">
-          @if (openingPortal()) {
-            <mat-spinner diameter="18" />
-          } @else {
-            {{ 'dashboard.manageSubscription' | transloco }}
-          }
-        </button>
-      </mat-card-actions>
     </mat-card>
   }
 </div>
 
-@if (stats.value() || stats.isLoading()) {
+@if (revenueChart() || invoicesChart()) {
   <div class="charts-grid">
-    @if (appointmentsChart(); as chart) {
-      <mat-card class="dashboard-card chart-card chart-wide">
-        <mat-card-header>
-          <mat-card-title>{{ 'dashboard.charts.appointmentsTitle' | transloco }}</mat-card-title>
-          <mat-card-subtitle>
-            {{ 'dashboard.charts.attended' | transloco: { count: chart.completed } }}
-            @if (chart.noShowRate) {
-              · {{ 'dashboard.charts.noShowRate' | transloco: { rate: chart.noShowRate } }}
-            }
-          </mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <app-bar-chart
-            [categories]="chart.categories"
-            [categoryTitles]="chart.titles"
-            [series]="chart.series"
-            [format]="countFormat"
-            [labelEvery]="7"
-            [caption]="'dashboard.charts.appointmentsTitle' | transloco"
-          />
-        </mat-card-content>
-      </mat-card>
-    }
-
     @if (revenueChart(); as chart) {
       <mat-card class="dashboard-card chart-card">
         <mat-card-header>

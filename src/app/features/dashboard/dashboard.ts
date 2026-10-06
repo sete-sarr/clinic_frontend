@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,8 +12,6 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { environment } from '../../../environments/environment';
 import { APPOINTMENT_STATUS_LABELS, Appointment } from '../appointments/appointment.model';
 import { AuthService } from '../../core/auth/auth.service';
-import { parseApiError } from '../../core/api/api-error';
-import { Clinic, PLAN_TIER_LABELS, SUBSCRIPTION_STATUS_LABELS } from '../../core/models/clinic.model';
 import { Paginated, emptyPage } from '../../core/models/pagination.model';
 import { parseIsoDate, toIsoDate } from '../../core/utils/date';
 import { AUDIT_ACTION_LABELS, AuditLogEntry, auditModelLabel } from '../audit-log/audit-log.model';
@@ -24,7 +22,6 @@ import { ChartSeries, DonutSegment } from '../../shared/components/charts/chart.
 import { DonutChart } from '../../shared/components/charts/donut-chart/donut-chart';
 import { EmptyState } from '../../shared/components/empty-state/empty-state';
 import { DashboardStats } from './dashboard-stats.model';
-import { SubscriptionService } from '../subscription/subscription.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,38 +43,11 @@ import { SubscriptionService } from '../subscription/subscription.service';
 })
 export class Dashboard {
   protected readonly auth = inject(AuthService);
-  private readonly subscriptionService = inject(SubscriptionService);
 
   private readonly today = toIsoDate(new Date());
 
-  protected readonly planTierLabels = PLAN_TIER_LABELS;
-  protected readonly subscriptionStatusLabels = SUBSCRIPTION_STATUS_LABELS;
   protected readonly statusLabels = APPOINTMENT_STATUS_LABELS;
   protected readonly isClinicAdmin = computed(() => this.auth.hasRole('clinic_admin'));
-  protected readonly openingPortal = signal(false);
-  protected readonly portalError = signal<string | null>(null);
-
-  protected readonly clinicResource = httpResource<Clinic | null>(
-    () =>
-      this.isClinicAdmin() && this.auth.user()?.clinic
-        ? { url: `${environment.apiBaseUrl}/clinics/${this.auth.user()?.clinic}/` }
-        : undefined,
-    { defaultValue: null },
-  );
-
-  protected openBillingPortal(): void {
-    this.portalError.set(null);
-    this.openingPortal.set(true);
-    this.subscriptionService.openBillingPortal().subscribe({
-      next: (result) => {
-        window.location.href = result.portal_url;
-      },
-      error: (error) => {
-        this.openingPortal.set(false);
-        this.portalError.set(parseApiError(error, translate('dashboard.portalError')).message);
-      },
-    });
-  }
 
   // design-system/dashboard.md : « éviter les requêtes API inutiles » — chaque statistique ci-dessous ne se déclenche
   // que pour les rôles qui voient réellement ce KPI, et ne lit page_size:1 que lorsque seul le compte importe.

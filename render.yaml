@@ -1,0 +1,60 @@
+# Déploiement du frontend proCli sur Render (Blueprint) — exemple_prod.md § 3.
+#
+# Static Site : toutes les pages sont rendues dans le navigateur (src/app/app.routes.server.ts,
+# RenderMode.Client) et la compilation de production est statique (angular.json, outputMode
+# "static"). Aucun serveur Node n'est nécessaire.
+services:
+  # Application : https://app.procli.org
+  - type: web
+    name: procli-app
+    runtime: static
+    buildCommand: npm ci && npx ng build --configuration production
+    staticPublishPath: dist/frontend/browser
+    pullRequestPreviewsEnabled: false
+    domains:
+      - app.procli.org
+    routes:
+      # Routes Angular (/dashboard, /hospitalization/stays/12…) : servies par la page d'application.
+      - type: rewrite
+        source: /*
+        destination: /index.csr.html
+    headers:
+      # Fichiers compilés : leur nom contient une empreinte, ils peuvent être mis en cache longtemps.
+      - path: /*.js
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*.css
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      # Page d'application : toujours revalidée, pour qu'un déploiement soit pris en compte aussitôt.
+      - path: /index.csr.html
+        name: Cache-Control
+        value: no-cache
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000; includeSubDomains
+
+  # Redirection : https://procli.org et https://www.procli.org → https://app.procli.org
+  # (le domaine nu reste disponible pour un futur site vitrine).
+  - type: web
+    name: procli-redirect
+    runtime: static
+    buildCommand: mkdir -p redirect && echo "proCli" > redirect/index.html
+    staticPublishPath: redirect
+    pullRequestPreviewsEnabled: false
+    domains:
+      - procli.org
+      - www.procli.org
+    routes:
+      - type: redirect
+        source: /*
+        destination: https://app.procli.org

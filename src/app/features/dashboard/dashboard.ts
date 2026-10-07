@@ -3,6 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { KpiCard } from '../../shared/components/kpi-card/kpi-card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -32,6 +33,7 @@ import { apiResource } from '../../core/api/api-resource';
     EmptyState,
     RouterLink,
     MatButtonModule,
+    KpiCard,
     MatCardModule,
     MatChipsModule,
     MatIconModule,

@@ -1094,7 +1094,8 @@
       "respiratory_rate": "Fréquence respiratoire",
       "weight": "Poids",
       "pain": "Douleur"
-    }
+    },
+    "occupancy": "{{ occupied }}/{{ total }} occupé(s)"
   },
   "visitors": {
     "title": "Registre des visiteurs",

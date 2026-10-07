@@ -9,32 +9,12 @@
   margin-right: var(--space-1);
 }
 
+/* Indicateurs d'occupation : mêmes cartes que le tableau de bord (app-kpi-card). */
 .summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin-bottom: var(--space-6);
-}
-
-.summary-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border);
-  border-left: 4px solid var(--tone);
-  border-radius: 12px;
-  background-color: var(--color-surface);
-}
-
-.summary-count {
-  font-size: 1.5rem;
-  font-weight: var(--font-weight-semibold);
-}
-
-.summary-label {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
 }
 
 .department {
@@ -48,25 +28,52 @@
 
 .room-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
 }
 
+/* Carte de chambre : même langage que les cartes du tableau de bord (pastille ronde, ombre légère). */
 .room {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3);
+  padding: var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: 12px;
   background-color: var(--color-surface);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
 }
 
 .room-header {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2);
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.room-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.room-badge mat-icon {
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+}
+
+.room-title {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .room-number {
@@ -76,6 +83,16 @@
 .room-type {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
+}
+
+.room-occupancy {
+  flex-shrink: 0;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface-secondary);
 }
 
 .bed {
@@ -106,13 +123,17 @@
   width: 18px;
   height: 18px;
   font-size: 18px;
-  color: var(--color-text-secondary);
+  color: var(--tone);
 }
 
+/* Statut : pastille au libellé en couleur de texte (la couleur est portée par le liseré et l'icône). */
 .bed-status {
-  font-size: 0.8125rem;
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: var(--font-weight-semibold);
-  color: var(--tone);
+  color: var(--color-text-primary);
+  background-color: color-mix(in srgb, var(--tone) 18%, transparent);
 }
 
 .bed-patient {
@@ -130,7 +151,7 @@
   display: none;
 }
 
-@media (max-width: 599.98px) {
+@media (max-width: 899.98px) {
   .summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

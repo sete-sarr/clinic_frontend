@@ -1,0 +1,64 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.kpi-card {
+  --tone: var(--color-primary);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* Contenu centré verticalement quand la carte s'étire à la hauteur de sa ligne. */
+  justify-content: center;
+  gap: var(--space-3);
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--space-4);
+  border-left: 4px solid var(--tone);
+  background-color: color-mix(in srgb, var(--tone) 6%, var(--color-surface));
+}
+
+.tone-primary { --tone: var(--color-primary); }
+.tone-accent { --tone: var(--color-accent); }
+.tone-secondary { --tone: var(--color-secondary); }
+.tone-warning { --tone: var(--color-warning); }
+.tone-success { --tone: var(--color-success); }
+.tone-info { --tone: var(--color-info); }
+.tone-error { --tone: var(--color-error); }
+.tone-neutral { --tone: var(--color-neutral-500); }
+
+.kpi-icon-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--tone);
+  background-color: color-mix(in srgb, var(--tone) 15%, transparent);
+}
+
+.kpi-icon-badge mat-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.kpi-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}

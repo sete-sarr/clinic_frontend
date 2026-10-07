@@ -19,65 +19,21 @@
      rendez-vous ; puis les graphiques financiers sur toute la largeur, puis l'activité récente. -->
 <div class="dashboard-grid">
   @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {
-    <mat-card class="kpi-card">
-      <div class="kpi-icon-badge kpi-icon-primary">
-        <mat-icon>event</mat-icon>
-      </div>
-      <div class="kpi-body">
-        @if (todaysAppointments.isLoading()) {
-          <mat-spinner diameter="20" />
-        } @else {
-          <span class="kpi-value">{{ todaysAppointments.value().count }}</span>
-        }
-        <span class="kpi-label">{{ 'dashboard.todayAppointments' | transloco }}</span>
-      </div>
-    </mat-card>
+    <app-kpi-card icon="event" tone="primary" [value]="todaysAppointments.value().count" [loading]="todaysAppointments.isLoading()"
+      [label]="'dashboard.todayAppointments' | transloco" />
   }
 
   @if (auth.hasRole('doctor', 'clinic_admin')) {
-    <mat-card class="kpi-card">
-      <div class="kpi-icon-badge kpi-icon-accent">
-        <mat-icon>medical_information</mat-icon>
-      </div>
-      <div class="kpi-body">
-        @if (draftConsultations.isLoading()) {
-          <mat-spinner diameter="20" />
-        } @else {
-          <span class="kpi-value">{{ draftConsultations.value().count }}</span>
-        }
-        <span class="kpi-label">{{ 'dashboard.draftConsultations' | transloco }}</span>
-      </div>
-    </mat-card>
+    <app-kpi-card icon="medical_information" tone="accent" [value]="draftConsultations.value().count" [loading]="draftConsultations.isLoading()"
+      [label]="'dashboard.draftConsultations' | transloco" />
 
-    <mat-card class="kpi-card">
-      <div class="kpi-icon-badge kpi-icon-secondary">
-        <mat-icon>description</mat-icon>
-      </div>
-      <div class="kpi-body">
-        @if (draftPrescriptions.isLoading()) {
-          <mat-spinner diameter="20" />
-        } @else {
-          <span class="kpi-value">{{ draftPrescriptions.value().count }}</span>
-        }
-        <span class="kpi-label">{{ 'dashboard.draftPrescriptions' | transloco }}</span>
-      </div>
-    </mat-card>
+    <app-kpi-card icon="description" tone="secondary" [value]="draftPrescriptions.value().count" [loading]="draftPrescriptions.isLoading()"
+      [label]="'dashboard.draftPrescriptions' | transloco" />
   }
 
   @if (auth.hasRole('secretary', 'accountant', 'clinic_admin', 'doctor')) {
-    <mat-card class="kpi-card">
-      <div class="kpi-icon-badge kpi-icon-warning">
-        <mat-icon>receipt_long</mat-icon>
-      </div>
-      <div class="kpi-body">
-        @if (unpaidLoading()) {
-          <mat-spinner diameter="20" />
-        } @else {
-          <span class="kpi-value">{{ unpaidInvoicesCount() }}</span>
-        }
-        <span class="kpi-label">{{ 'dashboard.unpaidInvoices' | transloco }}</span>
-      </div>
-    </mat-card>
+    <app-kpi-card icon="receipt_long" tone="warning" [value]="unpaidInvoicesCount()" [loading]="unpaidLoading()"
+      [label]="'dashboard.unpaidInvoices' | transloco" />
   }
 
   @if (auth.hasRole('doctor', 'secretary', 'clinic_admin')) {

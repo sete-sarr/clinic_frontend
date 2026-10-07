@@ -12,6 +12,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
+import { KpiCard } from '../../../shared/components/kpi-card/kpi-card';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { AdmissionForm } from '../admission-form/admission-form';
 import { Admission, BED_STATUSES, BED_STATUS_LABELS, BED_STATUS_TONES, Bed, BedStatus } from '../hospitalization.model';
@@ -36,6 +37,7 @@ interface DepartmentGroup {
   selector: 'app-ward-board',
   imports: [
     EmptyState,
+    KpiCard,
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
@@ -58,6 +60,12 @@ export class WardBoard {
   protected readonly statuses = BED_STATUSES;
   protected readonly statusLabels = BED_STATUS_LABELS;
   protected readonly statusTones = BED_STATUS_TONES;
+  protected readonly statusIcons: Record<BedStatus, string> = {
+    free: 'check_circle',
+    occupied: 'bed',
+    cleaning: 'cleaning_services',
+    out_of_service: 'build',
+  };
 
   protected readonly canAdmit = computed(() => this.auth.hasRole('doctor') && this.auth.user()?.doctor_id != null);
   protected readonly canOpenStay = computed(() => this.auth.hasRole('doctor', 'nurse', 'clinic_admin'));
@@ -101,6 +109,10 @@ export class WardBoard {
     }
     return [...departments.entries()].map(([name, rooms]) => ({ name, rooms: [...rooms.values()] }));
   });
+
+  protected occupiedCount(room: RoomGroup): number {
+    return room.beds.filter((bed) => bed.status === 'occupied').length;
+  }
 
   protected openAdmission(): void {
     const ref = this.dialog.open(AdmissionForm, { width: '640px', maxWidth: '95vw', autoFocus: 'first-tabbable' });

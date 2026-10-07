@@ -1,0 +1,13 @@
+<mat-card class="kpi-card tone-{{ tone() }}">
+  <div class="kpi-icon-badge" aria-hidden="true">
+    <mat-icon>{{ icon() }}</mat-icon>
+  </div>
+  <div class="kpi-body">
+    @if (loading()) {
+      <mat-spinner diameter="20" />
+    } @else {
+      <span class="kpi-value">{{ value() }}</span>
+    }
+    <span class="kpi-label">{{ label() }}</span>
+  </div>
+</mat-card>

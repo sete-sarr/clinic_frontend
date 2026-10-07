@@ -43,7 +43,7 @@ describe('WardBoard', () => {
     const element: HTMLElement = fixture.nativeElement;
     const departments = [...element.querySelectorAll('.department-title')].map((node) => node.textContent?.trim());
     expect(departments).toEqual(['Médecine', 'Chirurgie']);
-    const counts = [...element.querySelectorAll('.summary-count')].map((node) => node.textContent?.trim());
+    const counts = [...element.querySelectorAll('.kpi-value')].map((node) => node.textContent?.trim());
     expect(counts).toEqual(['1', '1', '1', '0']);
     expect(element.textContent).toContain('Grace Hopper (PAT-1)');
     expect(element.textContent).toContain('En nettoyage');

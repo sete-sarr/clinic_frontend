@@ -26,12 +26,10 @@
   </mat-form-field>
 </div>
 
-<div class="summary" role="list">
+<div class="summary">
   @for (status of statuses; track status) {
-    <div class="summary-item tone-{{ statusTones[status] }}" role="listitem">
-      <span class="summary-count">{{ counts()[status] }}</span>
-      <span class="summary-label">{{ statusLabels[status] }}</span>
-    </div>
+    <app-kpi-card [icon]="statusIcons[status]" [tone]="statusTones[status]" [value]="counts()[status]"
+      [label]="statusLabels[status]" [loading]="bedsResource.isLoading() && bedsResource.value().length === 0" />
   }
 </div>
 
@@ -51,8 +49,14 @@
         @for (room of group.rooms; track room.number) {
           <div class="room">
             <div class="room-header">
-              <span class="room-number">{{ 'hospitalization.room' | transloco }} {{ room.number }}</span>
-              <span class="room-type">{{ room.typeName }}</span>
+              <span class="room-badge" aria-hidden="true"><mat-icon>meeting_room</mat-icon></span>
+              <div class="room-title">
+                <span class="room-number">{{ 'hospitalization.room' | transloco }} {{ room.number }}</span>
+                <span class="room-type">{{ room.typeName }}</span>
+              </div>
+              <span class="room-occupancy">
+                {{ 'hospitalization.occupancy' | transloco: { occupied: occupiedCount(room), total: room.beds.length } }}
+              </span>
             </div>
             @for (bed of room.beds; track bed.id) {
               <div class="bed tone-{{ statusTones[bed.status] }}">

@@ -141,6 +141,9 @@
     @if (vitalsResource.value().length === 0) {
       <p class="muted">{{ 'hospitalization.noVitals' | transloco }}</p>
     } @else {
+      @if (vitalsResource.value().length > 1) {
+        <app-vital-trends [vitals]="vitalsResource.value()" />
+      }
       <div class="table-scroll">
         <table class="vitals-table">
           <thead>

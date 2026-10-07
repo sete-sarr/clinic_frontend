@@ -1,0 +1,27 @@
+<div class="trend-grid">
+  @for (chart of charts(); track chart.id) {
+    <figure class="trend-card">
+      <figcaption>
+        <span class="trend-title">{{ 'hospitalization.trends.' + chart.id | transloco }}</span>
+        <span class="trend-unit">{{ chart.unit }}</span>
+        @if (chart.series.length > 1) {
+          <span class="trend-legend">
+            @for (serie of chart.series; track serie.key) {
+              <span class="legend-item">
+                <span class="legend-swatch" [class.square]="serie.shape === 'square'" [style.background]="serie.color"></span>
+                {{ serie.label }}
+              </span>
+            }
+          </span>
+        }
+      </figcaption>
+      <app-line-chart
+        [times]="times()"
+        [series]="chart.series"
+        [format]="formatValue"
+        [timeFormat]="formatTime"
+        [caption]="('hospitalization.trends.' + chart.id | transloco) + ' (' + chart.unit + ')'"
+      />
+    </figure>
+  }
+</div>

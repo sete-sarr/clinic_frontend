@@ -1085,6 +1085,15 @@
       "noPrescriptions": "No validated prescriptions.",
       "labResults": "Lab results",
       "noLabResults": "No validated results."
+    },
+    "trends": {
+      "temperature": "Temperature",
+      "pulse": "Pulse",
+      "bloodPressure": "Blood pressure",
+      "oxygen_saturation": "Oxygen saturation",
+      "respiratory_rate": "Respiratory rate",
+      "weight": "Weight",
+      "pain": "Pain"
     }
   },
   "visitors": {

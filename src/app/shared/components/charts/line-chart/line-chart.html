@@ -1,0 +1,64 @@
+@if (!isEmpty()) {
+  <div class="plot" (pointerleave)="active.set(null)">
+    <svg
+      [attr.width]="width()"
+      [attr.height]="height()"
+      role="img"
+      [attr.aria-label]="caption()"
+      tabindex="0"
+      (pointermove)="onPointerMove($event)"
+      (pointerdown)="onPointerMove($event)"
+      (keydown)="onKeydown($event)"
+      (focus)="onFocus()"
+      (blur)="active.set(null)"
+    >
+      @for (tick of ticks(); track tick) {
+        <line class="grid-line" [attr.x1]="margin.left" [attr.x2]="width() - margin.right" [attr.y1]="y(tick)" [attr.y2]="y(tick)" />
+        <text class="tick-label" [attr.x]="margin.left - 8" [attr.y]="y(tick)" text-anchor="end" dominant-baseline="middle">
+          {{ format()(tick) }}
+        </text>
+      }
+
+      @for (tick of timeTicks(); track tick.index) {
+        <text class="tick-label" [attr.x]="tick.x" [attr.y]="height() - 6" [attr.text-anchor]="tick.anchor">
+          {{ timeFormat()(times()[tick.index]) }}
+        </text>
+      }
+
+      @if (active() !== null) {
+        <line class="crosshair" [attr.x1]="xs()[active()!]" [attr.x2]="xs()[active()!]" [attr.y1]="margin.top" [attr.y2]="margin.top + plotHeight()" />
+      }
+
+      @for (line of plotted(); track line.serie.key) {
+        <path class="series-line" [attr.d]="line.path" [style.stroke]="line.serie.color" />
+        @for (point of line.points; track point.index) {
+          @if (line.serie.shape === 'square') {
+            <rect class="marker" [class.active]="point.index === active()"
+              [attr.x]="point.x - 4" [attr.y]="point.y - 4" width="8" height="8" rx="1.5" [style.fill]="line.serie.color" />
+          } @else {
+            <circle class="marker" [class.active]="point.index === active()"
+              [attr.cx]="point.x" [attr.cy]="point.y" r="4" [style.fill]="line.serie.color" />
+          }
+        }
+        @if (directLabels() && line.last) {
+          <text class="direct-label" [attr.x]="line.last.x + 8" [attr.y]="line.last.y" dominant-baseline="middle">
+            {{ line.serie.shortLabel ?? line.serie.label }}
+          </text>
+        }
+      }
+    </svg>
+
+    @if (active() !== null) {
+      <div class="chart-tooltip" role="status" [style.left.px]="tooltipLeft()">
+        <div class="tooltip-title">{{ timeFormat()(times()[active()!]) }}</div>
+        @for (serie of series(); track serie.key) {
+          <div class="tooltip-row">
+            <span class="tooltip-key" [style.background]="serie.color"></span>
+            <strong>{{ valueAt(serie, active()!) }}</strong>
+            <span class="tooltip-label">{{ serie.label }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

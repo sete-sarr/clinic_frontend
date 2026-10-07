@@ -1,0 +1,65 @@
+.trend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.trend-card {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+  min-width: 0;
+}
+
+figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.trend-title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.trend-unit {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+/* Légende des graphiques à deux séries : textes en couleur de texte, la pastille porte la couleur. */
+.trend-legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-left: auto;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.legend-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-swatch.square {
+  border-radius: 1.5px;
+}
+
+/* Téléphone : une colonne. */
+@media (max-width: 599.98px) {
+  .trend-grid {
+    grid-template-columns: 1fr;
+  }
+}

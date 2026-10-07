@@ -24,6 +24,7 @@ import {
 } from '../hospitalization.model';
 import { HospitalizationService } from '../hospitalization.service';
 import { InpatientSummary } from '../inpatient-summary/inpatient-summary';
+import { VitalTrends } from '../vital-trends/vital-trends';
 import { BedChoiceDialog } from '../stay-dialogs/bed-choice-dialog';
 import { DischargeDialog } from '../stay-dialogs/discharge-dialog';
 import { VITAL_FIELDS, VitalSignDialog } from '../stay-dialogs/vital-sign-dialog';
@@ -44,6 +45,7 @@ import { VITAL_FIELDS, VitalSignDialog } from '../stay-dialogs/vital-sign-dialog
     MatInputModule,
     MatProgressSpinnerModule,
     TranslocoPipe,
+    VitalTrends,
   ],
   templateUrl: './stay-detail.html',
   styleUrls: ['../../../shared/styles/list-page.css', '../../../shared/styles/detail-page.css', './stay-detail.css'],

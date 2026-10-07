@@ -20,6 +20,29 @@ export interface DonutSegment {
 
 export type ValueFormatter = (value: number) => string;
 
+// Pas « rond » (1, 2, 2,5, 5 × 10ⁿ) le plus proche de `rough` par excès.
+function niceStep(rough: number): number {
+  const magnitude = 10 ** Math.floor(Math.log10(rough));
+  return [1, 2, 2.5, 5, 10].map((m) => m * magnitude).find((candidate) => candidate >= rough) ?? 10 * magnitude;
+}
+
+// Graduations « rondes » couvrant [min, max] SANS partir de zéro : pour des valeurs qui varient
+// dans une plage étroite (constantes : 36,5–39 °C), où une échelle depuis zéro écraserait la courbe.
+export function niceRangeTicks(min: number, max: number, targetCount = 4): number[] {
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    return [0, 1];
+  }
+  const span = max - min || Math.max(Math.abs(max) * 0.1, 1);
+  const step = niceStep(span / targetCount);
+  const start = Math.floor((min - (max === min ? span / 2 : 0)) / step) * step;
+  const end = Math.ceil((max + (max === min ? span / 2 : 0)) / step) * step;
+  const ticks: number[] = [];
+  for (let tick = start; tick <= end + step / 2; tick += step) {
+    ticks.push(Math.round(tick * 1e6) / 1e6);
+  }
+  return ticks.length > 1 ? ticks : [start, start + step];
+}
+
 // Graduations « rondes » (0, 5, 10, 15… / 0, 50 000, 100 000…) couvrant `max`.
 export function niceTicks(max: number, targetCount = 4): number[] {
   if (max <= 0) {

@@ -1,0 +1,78 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'hospitalization.setup.' + data.kind + '.' + (data.item ? 'edit' : 'new') | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(false)" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form novalidate (submit)="$event.preventDefault(); save()">
+    @switch (data.kind) {
+      @case ('room-types') {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.setup.name' | transloco }}</mat-label>
+          <input matInput maxlength="100" [value]="value('name') ?? ''" (input)="set('name', $any($event.target).value)" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.setup.nightlyRate' | transloco }}</mat-label>
+          <input matInput type="number" min="0" step="0.01" [value]="value('nightly_rate') ?? ''"
+            (input)="set('nightly_rate', $any($event.target).value)" />
+          <span matTextSuffix>{{ currencySymbol }}</span>
+        </mat-form-field>
+        <p class="hint">{{ 'hospitalization.setup.nightlyRateHint' | transloco }}</p>
+      }
+      @case ('rooms') {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.setup.roomNumber' | transloco }}</mat-label>
+          <input matInput maxlength="30" [value]="value('number') ?? ''" (input)="set('number', $any($event.target).value)" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.department' | transloco }}</mat-label>
+          <mat-select [value]="value('department')" (selectionChange)="set('department', $event.value)">
+            @for (department of departmentsResource.value().results; track department.id) {
+              <mat-option [value]="department.id">{{ department.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.setup.roomType' | transloco }}</mat-label>
+          <mat-select [value]="value('room_type')" (selectionChange)="set('room_type', $event.value)">
+            @for (type of roomTypesResource.value().results; track type.id) {
+              <mat-option [value]="type.id">{{ type.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      @default {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.room' | transloco }}</mat-label>
+          <mat-select [value]="value('room')" (selectionChange)="set('room', $event.value)">
+            @for (room of roomsResource.value().results; track room.id) {
+              <mat-option [value]="room.id">{{ room.number }} · {{ room.department_name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.setup.bedLabel' | transloco }}</mat-label>
+          <input matInput maxlength="30" [value]="value('label') ?? ''" (input)="set('label', $any($event.target).value)"
+            [placeholder]="'hospitalization.setup.bedLabelPlaceholder' | transloco" />
+        </mat-form-field>
+      }
+    }
+
+    @if (error()) {
+      <p class="server-error" role="alert">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close(false)">{{ 'common.actions.cancel' | transloco }}</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="pending()">
+        @if (pending()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ 'common.actions.save' | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

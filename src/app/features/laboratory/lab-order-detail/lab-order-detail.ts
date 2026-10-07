@@ -45,7 +45,7 @@ import { LabOrderTransition, LaboratoryService } from '../laboratory.service';
     TranslocoPipe,
   ],
   templateUrl: './lab-order-detail.html',
-  styleUrls: ['../laboratory-list.css', './lab-order-detail.css'],
+  styleUrls: ['../../../shared/styles/list-page.css', '../../../shared/styles/detail-page.css', './lab-order-detail.css'],
 })
 export class LabOrderDetail {
   private readonly auth = inject(AuthService);

@@ -1,4 +1,4 @@
-/* Pages de liste du laboratoire (demandes, catalogue). */
+/* Pages de liste (laboratoire, hospitalisation…) : en-tête, filtres, tableau, statuts. */
 
 .page-header {
   display: flex;
@@ -41,16 +41,16 @@
   overflow-x: auto;
 }
 
-.lab-table {
+.list-table {
   min-width: 100%;
   background-color: var(--color-surface);
 }
 
-.lab-table tr.clickable {
+.list-table tr.clickable {
   cursor: pointer;
 }
 
-.lab-table tr.clickable:hover {
+.list-table tr.clickable:hover {
   background-color: var(--color-surface-secondary);
 }
 

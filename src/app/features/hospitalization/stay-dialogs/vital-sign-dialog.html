@@ -1,0 +1,42 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'hospitalization.actions.recordVitals' | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <p class="hint">{{ 'hospitalization.vitalsHint' | transloco }}</p>
+  <div class="vitals-grid">
+    @for (field of fields; track field.key) {
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'hospitalization.vitals.' + field.key | transloco }}</mat-label>
+        <input
+          matInput
+          type="number"
+          [min]="field.min"
+          [max]="field.max"
+          [step]="field.step"
+          [value]="values()[field.key] ?? ''"
+          (input)="setValue(field.key, $any($event.target).value)"
+        />
+        <span matTextSuffix>{{ field.unit }}</span>
+      </mat-form-field>
+    }
+  </div>
+
+  @if (error()) {
+    <p class="server-error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="form-actions">
+    <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+    <button mat-flat-button color="primary" [disabled]="pending()" (click)="confirm()">
+      @if (pending()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        {{ 'common.actions.save' | transloco }}
+      }
+    </button>
+  </div>
+</mat-dialog-content>

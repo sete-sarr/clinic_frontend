@@ -1,0 +1,96 @@
+<div class="page-header">
+  <h1>{{ 'hospitalization.title' | transloco }}</h1>
+  <div class="header-actions">
+    <a mat-stroked-button routerLink="/hospitalization/stays">
+      <mat-icon>list_alt</mat-icon>
+      {{ 'hospitalization.stays' | transloco }}
+    </a>
+    @if (canAdmit()) {
+      <button mat-flat-button color="primary" (click)="openAdmission()">
+        <mat-icon>add</mat-icon>
+        {{ 'hospitalization.newAdmission' | transloco }}
+      </button>
+    }
+  </div>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>{{ 'hospitalization.department' | transloco }}</mat-label>
+    <mat-select [value]="department()" (selectionChange)="department.set($event.value)">
+      <mat-option [value]="null">{{ 'common.all' | transloco }}</mat-option>
+      @for (option of departments(); track option.id) {
+        <mat-option [value]="option.id">{{ option.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="summary" role="list">
+  @for (status of statuses; track status) {
+    <div class="summary-item tone-{{ statusTones[status] }}" role="listitem">
+      <span class="summary-count">{{ counts()[status] }}</span>
+      <span class="summary-label">{{ statusLabels[status] }}</span>
+    </div>
+  }
+</div>
+
+@if (error()) {
+  <p class="server-error" role="alert">{{ error() }}</p>
+}
+
+@if (bedsResource.isLoading() && bedsResource.value().length === 0) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (groups().length === 0) {
+  <app-empty-state icon="bed" [message]="'hospitalization.boardEmpty' | transloco" />
+} @else {
+  @for (group of groups(); track group.name) {
+    <section class="department">
+      <h2 class="department-title">{{ group.name }}</h2>
+      <div class="room-grid">
+        @for (room of group.rooms; track room.number) {
+          <div class="room">
+            <div class="room-header">
+              <span class="room-number">{{ 'hospitalization.room' | transloco }} {{ room.number }}</span>
+              <span class="room-type">{{ room.typeName }}</span>
+            </div>
+            @for (bed of room.beds; track bed.id) {
+              <div class="bed tone-{{ statusTones[bed.status] }}">
+                <div class="bed-line">
+                  <span class="bed-label"><mat-icon>bed</mat-icon>{{ bed.label }}</span>
+                  <span class="bed-status">{{ statusLabels[bed.status] }}</span>
+                </div>
+                @if (bed.current_stay; as stay) {
+                  @if (canOpenStay()) {
+                    <a class="bed-patient" [routerLink]="['/hospitalization/stays', stay.id]">{{ stay.patient_display }}</a>
+                  } @else {
+                    <span class="bed-patient">{{ stay.patient_display }}</span>
+                  }
+                }
+                <div class="bed-actions">
+                  @if (bed.status === 'cleaning' && canClean()) {
+                    <button mat-button [disabled]="pending() === bed.id" (click)="bedAction(bed, 'clean')">
+                      <mat-icon>cleaning_services</mat-icon>{{ 'hospitalization.actions.markClean' | transloco }}
+                    </button>
+                  }
+                  @if (isAdmin() && (bed.status === 'free' || bed.status === 'cleaning')) {
+                    <button mat-icon-button [disabled]="pending() === bed.id" (click)="bedAction(bed, 'out-of-service')"
+                      [matTooltip]="'hospitalization.actions.outOfService' | transloco"
+                      [attr.aria-label]="'hospitalization.actions.outOfService' | transloco">
+                      <mat-icon>build</mat-icon>
+                    </button>
+                  }
+                  @if (isAdmin() && bed.status === 'out_of_service') {
+                    <button mat-button [disabled]="pending() === bed.id" (click)="bedAction(bed, 'back-in-service')">
+                      <mat-icon>check_circle</mat-icon>{{ 'hospitalization.actions.backInService' | transloco }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
+}

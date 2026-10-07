@@ -5,15 +5,17 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../environments/environment';
 import { parseApiError } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
-import { Clinic, LOCALE_LABELS, Locale } from '../../core/models/clinic.model';
+import { Clinic, InpatientBillingMode, LOCALE_LABELS, Locale } from '../../core/models/clinic.model';
 import { AccentColor, ThemePreference, ThemeService } from '../../core/services/theme.service';
 import { UserGuideService } from '../../core/services/user-guide.service';
 import { SuccessNotifier } from '../../shared/notifications/success-notifier';
@@ -40,8 +42,10 @@ const LOGO_FIELDS: LogoField[] = [
     MatCardModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    RouterLink,
     TranslocoPipe,
   ],
   templateUrl: './settings.html',
@@ -72,6 +76,8 @@ export class Settings {
 
   protected readonly locale = signal<Locale>('fr');
   protected readonly currency = signal<CurrencyCode>(DEFAULT_CURRENCY);
+  protected readonly billingMode = signal<InpatientBillingMode>('flat');
+  protected readonly nightlyRate = signal('');
   protected readonly saving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
@@ -86,6 +92,8 @@ export class Settings {
       if (clinic) {
         this.locale.set(clinic.locale);
         this.currency.set(clinic.currency);
+        this.billingMode.set(clinic.inpatient_billing_mode);
+        this.nightlyRate.set(clinic.inpatient_nightly_rate ?? '');
       }
     });
   }
@@ -115,6 +123,10 @@ export class Settings {
     const formData = new FormData();
     formData.append('locale', this.locale());
     formData.append('currency', this.currency());
+    formData.append('inpatient_billing_mode', this.billingMode());
+    if (this.nightlyRate().trim()) {
+      formData.append('inpatient_nightly_rate', this.nightlyRate().trim());
+    }
     for (const [key, file] of Object.entries(this.pendingFiles())) {
       formData.append(key, file);
     }

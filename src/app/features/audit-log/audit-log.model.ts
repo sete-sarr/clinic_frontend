@@ -19,7 +19,7 @@ export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = translatedLabels
 
 // Types d'objets journalisés : nom de classe du modèle backend (common.audit.record_audit, AuditLog.model_name).
 const AUDITED_MODELS = [
-  'Appointment', 'Clinic', 'Consultation', 'Department', 'Doctor', 'Invoice', 'LabOrder', 'LabTest', 'MedicalRecord', 'Medication',
+  'Appointment', 'Clinic', 'Consultation', 'Department', 'Doctor', 'Invoice', 'LabOrder', 'LabTest', 'MedicalRecord', 'Medication', 'Admission', 'Bed', 'Room', 'RoomType', 'VitalSign', 'NursingNote',
   'Patient', 'Payment', 'Prescription', 'StockBatch', 'StockMovement', 'User',
 ] as const;
 const AUDIT_MODEL_LABELS = translatedLabels('labels.auditModel', AUDITED_MODELS);

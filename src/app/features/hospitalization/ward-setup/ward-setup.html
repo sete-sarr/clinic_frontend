@@ -1,0 +1,104 @@
+<div class="page-header">
+  <h1>{{ 'hospitalization.setup.title' | transloco }}</h1>
+</div>
+
+<p class="intro">{{ 'hospitalization.setup.intro' | transloco }}</p>
+
+@if (error()) {
+  <p class="server-error" role="alert">{{ error() }}</p>
+}
+
+<ng-template #toggleButton let-kind="kind" let-item="item">
+  <button
+    mat-icon-button
+    [disabled]="pending() === kind + '-' + item.id"
+    (click)="toggle(kind, item)"
+    [matTooltip]="(item.is_active ? 'common.actions.archive' : 'common.actions.restore') | transloco"
+    [attr.aria-label]="(item.is_active ? 'common.actions.archive' : 'common.actions.restore') | transloco"
+  >
+    <mat-icon>{{ item.is_active ? 'archive' : 'unarchive' }}</mat-icon>
+  </button>
+</ng-template>
+
+<mat-tab-group mat-stretch-tabs="false" animationDuration="0ms">
+  <mat-tab [label]="'hospitalization.setup.roomTypesTab' | transloco">
+    <div class="tab-actions">
+      <button mat-flat-button color="primary" (click)="open('room-types')">
+        <mat-icon>add</mat-icon>{{ 'hospitalization.setup.room-types.new' | transloco }}
+      </button>
+    </div>
+    @if (roomTypes.value().results.length === 0) {
+      <app-empty-state icon="king_bed" [message]="'hospitalization.setup.emptyRoomTypes' | transloco" />
+    } @else {
+      <ul class="setup-list">
+        @for (type of roomTypes.value().results; track type.id) {
+          <li class="setup-row" [class.muted-row]="!type.is_active">
+            <span class="row-main">{{ type.name }}</span>
+            <span class="row-detail">{{ type.nightly_rate | money: currency }} / {{ 'hospitalization.setup.perNight' | transloco }}</span>
+            <span class="row-actions">
+              <button mat-icon-button [disabled]="!type.is_active" (click)="open('room-types', type)"
+                [matTooltip]="'common.actions.edit' | transloco" [attr.aria-label]="'common.actions.edit' | transloco">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <ng-container *ngTemplateOutlet="toggleButton; context: { kind: 'room-types', item: type }" />
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </mat-tab>
+
+  <mat-tab [label]="'hospitalization.setup.roomsTab' | transloco">
+    <div class="tab-actions">
+      <button mat-flat-button color="primary" (click)="open('rooms')">
+        <mat-icon>add</mat-icon>{{ 'hospitalization.setup.rooms.new' | transloco }}
+      </button>
+    </div>
+    @if (rooms.value().results.length === 0) {
+      <app-empty-state icon="meeting_room" [message]="'hospitalization.setup.emptyRooms' | transloco" />
+    } @else {
+      <ul class="setup-list">
+        @for (room of rooms.value().results; track room.id) {
+          <li class="setup-row" [class.muted-row]="!room.is_active">
+            <span class="row-main">{{ 'hospitalization.room' | transloco }} {{ room.number }}</span>
+            <span class="row-detail">{{ room.department_name }} · {{ room.room_type_name }}</span>
+            <span class="row-actions">
+              <button mat-icon-button [disabled]="!room.is_active" (click)="open('rooms', room)"
+                [matTooltip]="'common.actions.edit' | transloco" [attr.aria-label]="'common.actions.edit' | transloco">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <ng-container *ngTemplateOutlet="toggleButton; context: { kind: 'rooms', item: room }" />
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </mat-tab>
+
+  <mat-tab [label]="'hospitalization.setup.bedsTab' | transloco">
+    <div class="tab-actions">
+      <button mat-flat-button color="primary" (click)="open('beds')">
+        <mat-icon>add</mat-icon>{{ 'hospitalization.setup.beds.new' | transloco }}
+      </button>
+    </div>
+    @if (beds.value().results.length === 0) {
+      <app-empty-state icon="bed" [message]="'hospitalization.setup.emptyBeds' | transloco" />
+    } @else {
+      <ul class="setup-list">
+        @for (bed of beds.value().results; track bed.id) {
+          <li class="setup-row" [class.muted-row]="!bed.is_active">
+            <span class="row-main">{{ bed.room_number }} — {{ bed.label }}</span>
+            <span class="row-detail">{{ bed.department_name }} · {{ bedStatusLabels[bed.status] }}</span>
+            <span class="row-actions">
+              <button mat-icon-button [disabled]="!bed.is_active" (click)="open('beds', bed)"
+                [matTooltip]="'common.actions.edit' | transloco" [attr.aria-label]="'common.actions.edit' | transloco">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <ng-container *ngTemplateOutlet="toggleButton; context: { kind: 'beds', item: bed }" />
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </mat-tab>
+</mat-tab-group>

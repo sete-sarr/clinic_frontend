@@ -43,4 +43,10 @@ export interface Clinic {
   logo_dark: string | null;
   logo_print: string | null;
   favicon: string | null;
+  // Tarification des nuitées (docs/hospitalization.md §3). Le forfait n'est envoyé qu'à
+  // l'administrateur et à la comptabilité.
+  inpatient_billing_mode: InpatientBillingMode;
+  inpatient_nightly_rate?: string | null;
 }
+
+export type InpatientBillingMode = 'flat' | 'per_room_type';

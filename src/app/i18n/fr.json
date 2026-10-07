@@ -20,7 +20,10 @@
     "pharmacy": "Pharmacie",
     "laboratory": "Laboratoire",
     "labCatalog": "Catalogue d'examens",
-    "subscription": "Abonnement"
+    "subscription": "Abonnement",
+    "hospitalization": "Hospitalisation",
+    "stays": "Séjours",
+    "wards": "Chambres et lits"
   },
   "roles": {
     "clinic_admin": "Administrateur",
@@ -29,7 +32,8 @@
     "accountant": "Comptable",
     "pharmacist": "Pharmacien",
     "lab_technician": "Technicien de laboratoire",
-    "patient": "Patient"
+    "patient": "Patient",
+    "nurse": "Infirmier"
   },
   "shell": {
     "brandSubtitle": "Gestion de clinique",
@@ -233,7 +237,8 @@
       "accountant": "Comptable",
       "clinic_admin": "Administrateur de clinique",
       "pharmacist": "Pharmacien",
-      "lab_technician": "Technicien de laboratoire"
+      "lab_technician": "Technicien de laboratoire",
+      "nurse": "Infirmier"
     },
     "appointmentStatus": {
       "pending": "En attente",
@@ -318,7 +323,13 @@
       "Prescription": "Prescription",
       "StockBatch": "Lot",
       "StockMovement": "Mouvement de stock",
-      "User": "Utilisateur"
+      "User": "Utilisateur",
+      "Admission": "Séjour",
+      "Bed": "Lit",
+      "Room": "Chambre",
+      "RoomType": "Type de chambre",
+      "VitalSign": "Constantes",
+      "NursingNote": "Note de soins"
     },
     "notificationCategory": {
       "appointment": "Rendez-vous",
@@ -340,6 +351,18 @@
       "in_progress": "En traitement",
       "completed": "Terminé",
       "validated": "Validé",
+      "cancelled": "Annulé"
+    },
+    "bedStatus": {
+      "free": "Libre",
+      "occupied": "Occupé",
+      "cleaning": "En nettoyage",
+      "out_of_service": "Hors service"
+    },
+    "admissionStatus": {
+      "planned": "Planifié",
+      "admitted": "Admis",
+      "discharged": "Sorti",
       "cancelled": "Annulé"
     }
   },
@@ -708,7 +731,14 @@
     "saveError": "Impossible d'enregistrer les paramètres.",
     "currency": "Devise",
     "clinicCurrency": "Devise de facturation",
-    "clinicCurrencyHint": "Devise des factures, paiements et prix de la pharmacie. Elle s'applique aux nouvelles factures : les factures existantes gardent leur devise d'origine. Aucune conversion n'est faite."
+    "clinicCurrencyHint": "Devise des factures, paiements et prix de la pharmacie. Elle s'applique aux nouvelles factures : les factures existantes gardent leur devise d'origine. Aucune conversion n'est faite.",
+    "hospitalization": "Hospitalisation",
+    "billingMode": "Tarification des nuitées",
+    "billingFlat": "Forfait unique",
+    "billingPerRoomType": "Tarif par type de chambre",
+    "nightlyRate": "Forfait par nuitée",
+    "billingFlatHint": "Un même tarif pour toutes les chambres. Une nuitée est comptée à chaque passage de minuit ; un changement de tarif ne s'applique qu'aux sorties suivantes.",
+    "billingPerRoomTypeHint": "Chaque nuit est facturée au tarif du type de la chambre occupée à minuit. Les tarifs se règlent dans"
   },
   "subscription": {
     "title": "Abonnement",
@@ -911,6 +941,129 @@
       "active": "Toutes",
       "unread": "Non lues",
       "archived": "Archivées"
+    }
+  },
+  "hospitalization": {
+    "title": "Hospitalisation",
+    "stays": "Séjours",
+    "board": "Occupation des lits",
+    "newAdmission": "Nouvelle hospitalisation",
+    "department": "Service",
+    "departmentRequired": "Service requis",
+    "reason": "Motif d'hospitalisation",
+    "reasonRequired": "Motif requis",
+    "bed": "Lit",
+    "bedRequired": "Choisissez un lit libre",
+    "when": "Admission",
+    "admitNow": "Admettre maintenant",
+    "planLater": "Planifier",
+    "noFreeBed": "Aucun lit libre dans ce service.",
+    "plannedFor": "Date prévue",
+    "saveError": "L'opération n'a pas pu être enregistrée.",
+    "transferReason": "Motif du transfert (facultatif)",
+    "dischargeHint": "le lit passera « En nettoyage » et les nuitées seront ajoutées à une facture brouillon.",
+    "dischargeSummary": "Synthèse de sortie",
+    "vitalsRequired": "Saisissez au moins une constante.",
+    "vitalsHint": "Ne remplissez que les constantes mesurées. Les valeurs hors des bornes plausibles sont refusées.",
+    "boardEmpty": "Aucun lit n'est encore configuré.",
+    "room": "Chambre",
+    "staySearch": "N° de séjour, nom ou n° du patient",
+    "staysEmpty": "Aucun séjour.",
+    "number": "N° de séjour",
+    "location": "Emplacement",
+    "admittedAt": "Admis le",
+    "dischargedAt": "Sorti le",
+    "backToStays": "Retour aux séjours",
+    "notFound": "Séjour introuvable ou inaccessible.",
+    "attendingDoctor": "Médecin référent",
+    "nights": "Nuitées",
+    "invoice": "Facture",
+    "bedHistory": "Historique des lits",
+    "vitalSigns": "Constantes",
+    "recordedBy": "Saisie par",
+    "noVitals": "Aucune constante enregistrée.",
+    "nursingNotes": "Notes de soins",
+    "newNote": "Nouvelle note de soins",
+    "noNotes": "Aucune note de soins.",
+    "confirmCancel": "Annuler ce séjour planifié ?",
+    "actions": {
+      "admit": "Admettre",
+      "plan": "Planifier",
+      "transfer": "Changer de lit",
+      "discharge": "Prononcer la sortie",
+      "cancel": "Annuler le séjour",
+      "recordVitals": "Saisir des constantes",
+      "addNote": "Ajouter la note",
+      "markClean": "Marquer nettoyé",
+      "outOfService": "Mettre hors service",
+      "backInService": "Remettre en service"
+    },
+    "done": {
+      "admit": "Patient admis.",
+      "planned": "Séjour planifié.",
+      "transfer": "Changement de lit enregistré.",
+      "discharge": "Sortie enregistrée ; nuitées facturées.",
+      "cancel": "Séjour annulé.",
+      "vitals": "Constantes enregistrées.",
+      "note": "Note de soins ajoutée.",
+      "bed": {
+        "clean": "Lit libéré.",
+        "out-of-service": "Lit mis hors service.",
+        "back-in-service": "Lit remis en service."
+      }
+    },
+    "setup": {
+      "title": "Chambres et lits",
+      "intro": "Types de chambre (avec leur tarif de nuitée), chambres par service, puis lits de chaque chambre.",
+      "rooms": {
+        "new": "Nouvelle chambre",
+        "edit": "Modifier la chambre"
+      },
+      "beds": {
+        "new": "Nouveau lit",
+        "edit": "Modifier le lit"
+      },
+      "room-types": {
+        "new": "Nouveau type de chambre",
+        "edit": "Modifier le type de chambre"
+      },
+      "name": "Nom",
+      "nightlyRate": "Tarif par nuitée",
+      "nightlyRateHint": "Utilisé quand la tarification « par type de chambre » est choisie dans Paramètres.",
+      "roomNumber": "Numéro de chambre",
+      "roomType": "Type de chambre",
+      "bedLabel": "Repère du lit",
+      "bedLabelPlaceholder": "Ex. A, B, Fenêtre",
+      "saved": "Enregistré.",
+      "archived": "Archivé.",
+      "restored": "Restauré.",
+      "perNight": "nuit",
+      "emptyRoomTypes": "Aucun type de chambre.",
+      "emptyRooms": "Aucune chambre.",
+      "emptyBeds": "Aucun lit.",
+      "roomTypesTab": "Types de chambre",
+      "roomsTab": "Chambres",
+      "bedsTab": "Lits"
+    },
+    "vitals": {
+      "temperature": "Température",
+      "systolic": "Tension systolique",
+      "diastolic": "Tension diastolique",
+      "pulse": "Pouls",
+      "respiratory_rate": "Fréquence respiratoire",
+      "oxygen_saturation": "Saturation en oxygène",
+      "weight": "Poids",
+      "pain": "Douleur"
+    },
+    "vitalsShort": {
+      "temperature": "Temp.",
+      "systolic": "Syst.",
+      "diastolic": "Diast.",
+      "pulse": "Pouls",
+      "respiratory_rate": "FR",
+      "oxygen_saturation": "SpO₂",
+      "weight": "Poids",
+      "pain": "Douleur"
     }
   }
 }

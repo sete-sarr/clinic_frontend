@@ -1,0 +1,91 @@
+<div class="page-header">
+  <h1>{{ 'hospitalization.stays' | transloco }}</h1>
+  <div class="header-actions">
+    <a mat-stroked-button routerLink="/hospitalization">
+      <mat-icon>grid_view</mat-icon>
+      {{ 'hospitalization.board' | transloco }}
+    </a>
+  </div>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>{{ 'common.search' | transloco }}</mat-label>
+    <input
+      matInput
+      [value]="searchInput()"
+      (input)="onSearchInput($any($event.target).value)"
+      [placeholder]="'hospitalization.staySearch' | transloco"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>{{ 'common.columns.status' | transloco }}</mat-label>
+    <mat-select [value]="status() ?? ''" (selectionChange)="onStatusChange($event.value)">
+      <mat-option value="">{{ 'common.all' | transloco }}</mat-option>
+      @for (option of statuses; track option) {
+        <mat-option [value]="option">{{ statusLabels[option] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (staysResource.isLoading()) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (stays().length === 0) {
+  <app-empty-state icon="bed" [message]="'hospitalization.staysEmpty' | transloco" />
+} @else {
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (stay of stays(); track stay.id) {
+        <app-record-card [card]="cardFor(stay)">
+          <button mat-stroked-button (click)="open(stay)">{{ 'common.actions.open' | transloco }}</button>
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table mat-table [dataSource]="stays()" class="list-table">
+        <ng-container matColumnDef="number">
+          <th mat-header-cell *matHeaderCellDef>{{ 'hospitalization.number' | transloco }}</th>
+          <td mat-cell *matCellDef="let stay">{{ stay.number }}</td>
+        </ng-container>
+        <ng-container matColumnDef="patient">
+          <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
+          <td mat-cell *matCellDef="let stay">{{ stay.patient_display }}</td>
+        </ng-container>
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef>{{ 'hospitalization.location' | transloco }}</th>
+          <td mat-cell *matCellDef="let stay">{{ location(stay) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
+          <td mat-cell *matCellDef="let stay">
+            <mat-chip disableRipple [class]="'status-chip-' + statusTone(stay)">{{ statusLabel(stay) }}</mat-chip>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="admitted_at">
+          <th mat-header-cell *matHeaderCellDef>{{ 'hospitalization.admittedAt' | transloco }}</th>
+          <td mat-cell *matCellDef="let stay">{{ (stay.admitted_at | date: 'short') ?? '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="discharged_at">
+          <th mat-header-cell *matHeaderCellDef>{{ 'hospitalization.dischargedAt' | transloco }}</th>
+          <td mat-cell *matCellDef="let stay">{{ (stay.discharged_at | date: 'short') ?? '—' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="clickable" tabindex="0"
+          (click)="open(row)" (keydown.enter)="open(row)"></tr>
+      </table>
+    </div>
+  }
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

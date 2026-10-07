@@ -48,7 +48,7 @@
     </div>
   } @else {
     <div class="table-scroll">
-      <table mat-table [dataSource]="orders()" class="lab-table">
+      <table mat-table [dataSource]="orders()" class="list-table">
         <ng-container matColumnDef="number">
           <th mat-header-cell *matHeaderCellDef>{{ 'laboratory.number' | transloco }}</th>
           <td mat-cell *matCellDef="let order">{{ order.number }}</td>

@@ -32,7 +32,7 @@ interface NavItem {
 }
 
 // Du plus privilégié au moins privilégié — un utilisateur avec plusieurs rôles n'affiche qu'un seul libellé dans la puce de l'en-tête.
-const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmacist', 'lab_technician', 'secretary', 'patient'];
+const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmacist', 'lab_technician', 'nurse', 'secretary', 'patient'];
 
 // Ne liste que les routes qui existent réellement. Ajouter une entrée ici (avec les rôles autorisés à la voir,
 // selon business/access-policy.md) à chaque nouveau module de fonctionnalité livré.
@@ -41,10 +41,10 @@ const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmaci
 const NAV_GROUPS: string[][] = [
   ['/dashboard'],
   ['/appointments', '/patients'], // accueil
-  ['/consultations', '/medical-records', '/prescriptions', '/laboratory', '/pharmacy'], // soins
-  ['/billing', '/payments'], // finances
+  ['/hospitalization', '/consultations', '/medical-records', '/prescriptions', '/laboratory', '/pharmacy'], // soins
+  ['/billing', '/payments', '/hospitalization/stays'], // finances
   ['/reports', '/audit-log'], // pilotage
-  ['/doctors', '/staff', '/departments', '/lab-tests'], // organisation de la clinique
+  ['/doctors', '/staff', '/departments', '/wards', '/lab-tests'], // organisation de la clinique
   ['/settings', '/subscription'], // compte de la clinique
 ];
 
@@ -163,6 +163,28 @@ const NAV_ITEMS: NavItem[] = [
     // route réservée à ces deux rôles (app.routes.ts canAccessPharmacy), même schéma que
     // Départements (écran de gestion, pas un simple sélecteur en lecture).
     roles: ['pharmacist', 'clinic_admin'],
+  },
+  {
+    labelKey: 'nav.hospitalization',
+    icon: 'bed',
+    route: '/hospitalization',
+    // CanManageWardStructure (backend/hospitalization/permissions.py) : tableau d'occupation pour le
+    // médecin, l'infirmier, la réception (emplacement uniquement) et l'administrateur.
+    roles: ['doctor', 'nurse', 'secretary', 'clinic_admin'],
+  },
+  {
+    // La comptabilité n'a pas accès au tableau d'occupation, seulement aux séjours (dates, nuitées).
+    labelKey: 'nav.stays',
+    icon: 'list_alt',
+    route: '/hospitalization/stays',
+    roles: ['accountant'],
+  },
+  {
+    labelKey: 'nav.wards',
+    icon: 'meeting_room',
+    route: '/wards',
+    // CanManageWardStructure : paramétrage des chambres et lits réservé à l'administrateur.
+    roles: ['clinic_admin'],
   },
   {
     labelKey: 'nav.laboratory',

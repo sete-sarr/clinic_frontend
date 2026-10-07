@@ -50,7 +50,7 @@ const PAGE_SIZE = 20;
     TranslocoPipe,
   ],
   templateUrl: './lab-test-list.html',
-  styleUrl: '../laboratory-list.css',
+  styleUrl: '../../../shared/styles/list-page.css',
 })
 export class LabTestList {
   protected readonly isHandset = injectIsHandset();

@@ -1,0 +1,44 @@
+/* Fenêtres de saisie de l'hospitalisation (admission, lit, sortie, constantes, paramétrage). */
+
+.full-width {
+  width: 100%;
+}
+
+.field-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.half-width {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0 var(--space-4);
+}
+
+.hint {
+  margin: 0 0 var(--space-4);
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.when-field {
+  margin-top: var(--space-4);
+}

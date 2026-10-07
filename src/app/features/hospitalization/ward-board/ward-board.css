@@ -1,0 +1,137 @@
+/* Couleur d'un statut de lit : toujours accompagnée de son libellé (design-system/colors.md). */
+.tone-success { --tone: var(--color-success); }
+.tone-warning { --tone: var(--color-warning); }
+.tone-info { --tone: var(--color-info); }
+.tone-neutral { --tone: var(--color-neutral-400); }
+
+.header-actions mat-icon,
+.bed-actions mat-icon {
+  margin-right: var(--space-1);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--tone);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.summary-count {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.summary-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.department {
+  margin-bottom: var(--space-6);
+}
+
+.department-title {
+  margin: 0 0 var(--space-3);
+  font-size: 1.125rem;
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+
+.room {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.room-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.room-number {
+  font-weight: var(--font-weight-semibold);
+}
+
+.room-type {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.bed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-left: 4px solid var(--tone);
+  border-radius: 8px;
+  background-color: color-mix(in srgb, var(--tone) 8%, var(--color-surface));
+}
+
+.bed-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.bed-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+}
+
+.bed-label mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  color: var(--color-text-secondary);
+}
+
+.bed-status {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--tone);
+}
+
+.bed-patient {
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.bed-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.bed-actions:empty {
+  display: none;
+}
+
+@media (max-width: 599.98px) {
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -5,10 +5,10 @@ import { translatedLabels } from '../i18n/translated-labels';
 // uniquement via l'écran staff — "doctor" (modèle de profil propre, géré sous /doctors) et
 // "patient" (flux d'activation OTP propre) sont exclus, conformément à
 // accounts.services.STAFF_ROLES_ASSIGNABLE.
-export type StaffRole = Extract<Role, 'secretary' | 'accountant' | 'clinic_admin' | 'pharmacist' | 'lab_technician'>;
+export type StaffRole = Extract<Role, 'secretary' | 'accountant' | 'clinic_admin' | 'pharmacist' | 'lab_technician' | 'nurse'>;
 
 export const STAFF_ROLE_LABELS: Record<StaffRole, string> = translatedLabels<StaffRole>('labels.staffRole', [
-  'secretary', 'accountant', 'clinic_admin', 'pharmacist', 'lab_technician',
+  'secretary', 'accountant', 'clinic_admin', 'pharmacist', 'lab_technician', 'nurse',
 ]);
 
 export interface StaffMember {

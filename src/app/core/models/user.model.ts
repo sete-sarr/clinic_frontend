@@ -3,8 +3,8 @@
 // 0004_seed_pharmacist_role.py — voir la note sur le vocabulaire des rôles de CLAUDE.md
 // (secretary ≈ receptionist, accountant ≈ cashier jusqu'à unification ; pharmacist reprend le nom
 // déjà utilisé par business/access-policy.md et permissions-matrix.md, aucune ambiguïté ici ;
-// lab_technician : 0006_seed_lab_technician_role.py, Phase 5.1).
-export type Role = 'doctor' | 'secretary' | 'accountant' | 'clinic_admin' | 'pharmacist' | 'lab_technician' | 'patient';
+// lab_technician : 0006_seed_lab_technician_role.py, Phase 5.1 ; nurse : 0007_seed_nurse_role.py, Phase 5.2).
+export type Role = 'doctor' | 'secretary' | 'accountant' | 'clinic_admin' | 'pharmacist' | 'lab_technician' | 'nurse' | 'patient';
 
 export interface User {
   id: number;

@@ -81,6 +81,36 @@
 
     <mat-card class="settings-card">
       <mat-card-header>
+        <mat-card-title>{{ 'settings.hospitalization' | transloco }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-button-toggle-group
+          [value]="billingMode()"
+          (change)="billingMode.set($event.value)"
+          [attr.aria-label]="'settings.billingMode' | transloco"
+        >
+          <mat-button-toggle value="flat">{{ 'settings.billingFlat' | transloco }}</mat-button-toggle>
+          <mat-button-toggle value="per_room_type">{{ 'settings.billingPerRoomType' | transloco }}</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        @if (billingMode() === 'flat') {
+          <mat-form-field appearance="outline" class="locale-field rate-field">
+            <mat-label>{{ 'settings.nightlyRate' | transloco }}</mat-label>
+            <input matInput type="number" min="0" step="0.01" [value]="nightlyRate()" (input)="nightlyRate.set($any($event.target).value)" />
+            <span matTextSuffix>{{ currencySymbol(currency()) }}</span>
+          </mat-form-field>
+          <p class="hint">{{ 'settings.billingFlatHint' | transloco }}</p>
+        } @else {
+          <p class="hint">
+            {{ 'settings.billingPerRoomTypeHint' | transloco }}
+            <a routerLink="/wards">{{ 'nav.wards' | transloco }}</a>
+          </p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="settings-card">
+      <mat-card-header>
         <mat-card-title>{{ 'settings.theme' | transloco }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>

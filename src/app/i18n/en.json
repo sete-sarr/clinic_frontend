@@ -20,7 +20,10 @@
     "pharmacy": "Pharmacy",
     "laboratory": "Laboratory",
     "labCatalog": "Lab test catalog",
-    "subscription": "Subscription"
+    "subscription": "Subscription",
+    "hospitalization": "Hospitalization",
+    "stays": "Hospital stays",
+    "wards": "Rooms and beds"
   },
   "roles": {
     "clinic_admin": "Administrator",
@@ -29,7 +32,8 @@
     "accountant": "Accountant",
     "pharmacist": "Pharmacist",
     "lab_technician": "Lab technician",
-    "patient": "Patient"
+    "patient": "Patient",
+    "nurse": "Nurse"
   },
   "shell": {
     "brandSubtitle": "Clinic management",
@@ -233,7 +237,8 @@
       "accountant": "Accountant",
       "clinic_admin": "Clinic administrator",
       "pharmacist": "Pharmacist",
-      "lab_technician": "Lab technician"
+      "lab_technician": "Lab technician",
+      "nurse": "Nurse"
     },
     "appointmentStatus": {
       "pending": "Pending",
@@ -318,7 +323,13 @@
       "Prescription": "Prescription",
       "StockBatch": "Batch",
       "StockMovement": "Stock movement",
-      "User": "User"
+      "User": "User",
+      "Admission": "Hospital stay",
+      "Bed": "Bed",
+      "Room": "Room",
+      "RoomType": "Room type",
+      "VitalSign": "Vital signs",
+      "NursingNote": "Nursing note"
     },
     "notificationCategory": {
       "appointment": "Appointments",
@@ -340,6 +351,18 @@
       "in_progress": "In progress",
       "completed": "Completed",
       "validated": "Validated",
+      "cancelled": "Cancelled"
+    },
+    "bedStatus": {
+      "free": "Free",
+      "occupied": "Occupied",
+      "cleaning": "Being cleaned",
+      "out_of_service": "Out of service"
+    },
+    "admissionStatus": {
+      "planned": "Planned",
+      "admitted": "Admitted",
+      "discharged": "Discharged",
       "cancelled": "Cancelled"
     }
   },
@@ -708,7 +731,14 @@
     "saveError": "Unable to save the settings.",
     "currency": "Currency",
     "clinicCurrency": "Billing currency",
-    "clinicCurrencyHint": "Currency used for invoices, payments and pharmacy prices. It applies to new invoices: existing invoices keep their original currency. No conversion is made."
+    "clinicCurrencyHint": "Currency used for invoices, payments and pharmacy prices. It applies to new invoices: existing invoices keep their original currency. No conversion is made.",
+    "hospitalization": "Hospitalization",
+    "billingMode": "Nightly billing",
+    "billingFlat": "Flat rate",
+    "billingPerRoomType": "Rate per room type",
+    "nightlyRate": "Rate per night",
+    "billingFlatHint": "One rate for every room. A night is counted each time midnight passes; a rate change only applies to later discharges.",
+    "billingPerRoomTypeHint": "Each night is billed at the rate of the room type occupied at midnight. Rates are set in"
   },
   "subscription": {
     "title": "Subscription",
@@ -911,6 +941,129 @@
       "active": "All",
       "unread": "Unread",
       "archived": "Archived"
+    }
+  },
+  "hospitalization": {
+    "title": "Hospitalization",
+    "stays": "Hospital stays",
+    "board": "Bed occupancy",
+    "newAdmission": "New admission",
+    "department": "Department",
+    "departmentRequired": "Department is required",
+    "reason": "Reason for admission",
+    "reasonRequired": "Reason is required",
+    "bed": "Bed",
+    "bedRequired": "Select a free bed",
+    "when": "Admission",
+    "admitNow": "Admit now",
+    "planLater": "Plan",
+    "noFreeBed": "No free bed in this department.",
+    "plannedFor": "Planned date",
+    "saveError": "The operation could not be saved.",
+    "transferReason": "Transfer reason (optional)",
+    "dischargeHint": "the bed will be set to “Being cleaned” and the nights added to a draft invoice.",
+    "dischargeSummary": "Discharge summary",
+    "vitalsRequired": "Enter at least one vital sign.",
+    "vitalsHint": "Only fill in the measured vital signs. Values outside plausible limits are rejected.",
+    "boardEmpty": "No beds have been set up yet.",
+    "room": "Room",
+    "staySearch": "Stay no., patient name or no.",
+    "staysEmpty": "No hospital stays.",
+    "number": "Stay no.",
+    "location": "Location",
+    "admittedAt": "Admitted on",
+    "dischargedAt": "Discharged on",
+    "backToStays": "Back to hospital stays",
+    "notFound": "Hospital stay not found or not accessible.",
+    "attendingDoctor": "Attending doctor",
+    "nights": "Nights",
+    "invoice": "Invoice",
+    "bedHistory": "Bed history",
+    "vitalSigns": "Vital signs",
+    "recordedBy": "Recorded by",
+    "noVitals": "No vital signs recorded.",
+    "nursingNotes": "Nursing notes",
+    "newNote": "New nursing note",
+    "noNotes": "No nursing notes.",
+    "confirmCancel": "Cancel this planned stay?",
+    "actions": {
+      "admit": "Admit",
+      "plan": "Plan",
+      "transfer": "Change bed",
+      "discharge": "Discharge",
+      "cancel": "Cancel stay",
+      "recordVitals": "Record vital signs",
+      "addNote": "Add note",
+      "markClean": "Mark as clean",
+      "outOfService": "Put out of service",
+      "backInService": "Put back in service"
+    },
+    "done": {
+      "admit": "Patient admitted.",
+      "planned": "Stay planned.",
+      "transfer": "Bed change recorded.",
+      "discharge": "Discharge recorded; nights billed.",
+      "cancel": "Stay cancelled.",
+      "vitals": "Vital signs recorded.",
+      "note": "Nursing note added.",
+      "bed": {
+        "clean": "Bed is free.",
+        "out-of-service": "Bed put out of service.",
+        "back-in-service": "Bed back in service."
+      }
+    },
+    "setup": {
+      "title": "Rooms and beds",
+      "intro": "Room types (with their nightly rate), rooms per department, then the beds in each room.",
+      "rooms": {
+        "new": "New room",
+        "edit": "Edit room"
+      },
+      "beds": {
+        "new": "New bed",
+        "edit": "Edit bed"
+      },
+      "room-types": {
+        "new": "New room type",
+        "edit": "Edit room type"
+      },
+      "name": "Name",
+      "nightlyRate": "Rate per night",
+      "nightlyRateHint": "Used when “rate per room type” billing is selected in Settings.",
+      "roomNumber": "Room number",
+      "roomType": "Room type",
+      "bedLabel": "Bed label",
+      "bedLabelPlaceholder": "E.g. A, B, Window",
+      "saved": "Saved.",
+      "archived": "Archived.",
+      "restored": "Restored.",
+      "perNight": "night",
+      "emptyRoomTypes": "No room types.",
+      "emptyRooms": "No rooms.",
+      "emptyBeds": "No beds.",
+      "roomTypesTab": "Room types",
+      "roomsTab": "Rooms",
+      "bedsTab": "Beds"
+    },
+    "vitals": {
+      "temperature": "Temperature",
+      "systolic": "Systolic pressure",
+      "diastolic": "Diastolic pressure",
+      "pulse": "Pulse",
+      "respiratory_rate": "Respiratory rate",
+      "oxygen_saturation": "Oxygen saturation",
+      "weight": "Weight",
+      "pain": "Pain"
+    },
+    "vitalsShort": {
+      "temperature": "Temp.",
+      "systolic": "Syst.",
+      "diastolic": "Diast.",
+      "pulse": "Pulse",
+      "respiratory_rate": "RR",
+      "oxygen_saturation": "SpO₂",
+      "weight": "Weight",
+      "pain": "Pain"
     }
   }
 }

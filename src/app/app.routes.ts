@@ -57,6 +57,13 @@ const canAccessPharmacy = roleGuard('pharmacist', 'clinic_admin');
 // par l'administrateur. Le patient consulte ses résultats validés dans le portail.
 const canAccessLaboratory = roleGuard('doctor', 'lab_technician', 'clinic_admin');
 const canManageLabCatalog = roleGuard('clinic_admin');
+// CanManageWardStructure / CanAccessAdmissions (backend/hospitalization/permissions.py) : tableau
+// d'occupation et séjours pour le médecin, l'infirmier, la réception (emplacement uniquement),
+// l'administrateur ; la comptabilité consulte les séjours (dates, nuitées). Paramétrage des chambres
+// et lits : administrateur.
+const canAccessWardBoard = roleGuard('doctor', 'nurse', 'secretary', 'clinic_admin');
+const canAccessStays = roleGuard('doctor', 'nurse', 'secretary', 'accountant', 'clinic_admin');
+const canManageWards = roleGuard('clinic_admin');
 
 export const routes: Routes = [
   {
@@ -228,6 +235,30 @@ export const routes: Routes = [
         canActivate: [canAccessLaboratory],
         loadComponent: () =>
           import('./features/laboratory/lab-order-detail/lab-order-detail').then((m) => m.LabOrderDetail),
+      },
+      {
+        path: 'hospitalization',
+        canActivate: [canAccessWardBoard],
+        loadComponent: () =>
+          import('./features/hospitalization/ward-board/ward-board').then((m) => m.WardBoard),
+      },
+      {
+        path: 'hospitalization/stays',
+        canActivate: [canAccessStays],
+        loadComponent: () =>
+          import('./features/hospitalization/stay-list/stay-list').then((m) => m.StayList),
+      },
+      {
+        path: 'hospitalization/stays/:id',
+        canActivate: [canAccessStays],
+        loadComponent: () =>
+          import('./features/hospitalization/stay-detail/stay-detail').then((m) => m.StayDetail),
+      },
+      {
+        path: 'wards',
+        canActivate: [canManageWards],
+        loadComponent: () =>
+          import('./features/hospitalization/ward-setup/ward-setup').then((m) => m.WardSetup),
       },
       {
         path: 'lab-tests',

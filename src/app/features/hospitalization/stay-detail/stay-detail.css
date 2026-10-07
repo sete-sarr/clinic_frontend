@@ -1,0 +1,85 @@
+/* Complète shared/styles/list-page.css et detail-page.css. */
+
+.header-actions mat-icon,
+.section-header mat-icon {
+  margin-right: var(--space-1);
+}
+
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.history,
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-surface);
+}
+
+.history-date {
+  font-weight: var(--font-weight-semibold);
+}
+
+.vitals-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+  font-size: 0.875rem;
+}
+
+.vitals-table th,
+.vitals-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.vitals-table th {
+  font-weight: var(--font-weight-semibold);
+}
+
+.unit {
+  font-weight: normal;
+  color: var(--color-text-secondary);
+}
+
+.note-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.note-field {
+  flex: 1 1 320px;
+}
+
+.note {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.note-text {
+  margin: 0 0 var(--space-1);
+  white-space: pre-wrap;
+}

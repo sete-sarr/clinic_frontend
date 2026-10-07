@@ -1,0 +1,95 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'hospitalization.newAdmission' | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'common.fields.patient' | transloco }}</mat-label>
+      <input
+        matInput
+        [value]="patientLabel()"
+        (input)="onPatientQueryInput($any($event.target).value)"
+        [matAutocomplete]="patientAuto"
+        autocomplete="off"
+        [placeholder]="'common.patientSearch' | transloco"
+      />
+      <mat-autocomplete #patientAuto="matAutocomplete" (optionSelected)="onPatientSelected($event.option.value)">
+        @for (patient of patientsResource.value().results; track patient.id) {
+          <mat-option [value]="patient">{{ formatPatientOption(patient) }}</mat-option>
+        }
+      </mat-autocomplete>
+      @if (admissionForm.patient().touched() && admissionForm.patient().invalid()) {
+        <mat-error>{{ admissionForm.patient().errors()[0]?.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'hospitalization.department' | transloco }}</mat-label>
+      <mat-select [formField]="admissionForm.department" (selectionChange)="onDepartmentChange()">
+        @for (department of departmentsResource.value().results; track department.id) {
+          <mat-option [value]="department.id">{{ department.name }}</mat-option>
+        }
+      </mat-select>
+      @if (admissionForm.department().touched() && admissionForm.department().invalid()) {
+        <mat-error>{{ admissionForm.department().errors()[0]?.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'hospitalization.reason' | transloco }}</mat-label>
+      <textarea matInput rows="3" [formField]="admissionForm.reason"></textarea>
+      @if (admissionForm.reason().touched() && admissionForm.reason().invalid()) {
+        <mat-error>{{ admissionForm.reason().errors()[0]?.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-button-toggle-group [value]="admitNow()" (change)="admitNow.set($event.value)" class="full-width"
+      [attr.aria-label]="'hospitalization.when' | transloco">
+      <mat-button-toggle [value]="true">{{ 'hospitalization.admitNow' | transloco }}</mat-button-toggle>
+      <mat-button-toggle [value]="false">{{ 'hospitalization.planLater' | transloco }}</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class="when-field">
+      @if (admitNow()) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.bed' | transloco }}</mat-label>
+          <mat-select [formField]="admissionForm.bed">
+            @for (bed of freeBeds(); track bed.id) {
+              <mat-option [value]="bed.id">{{ bedLocation(bed) }} · {{ bed.room_type_name }}</mat-option>
+            }
+          </mat-select>
+          @if (model().department && freeBeds().length === 0) {
+            <mat-hint>{{ 'hospitalization.noFreeBed' | transloco }}</mat-hint>
+          }
+          @if (admissionForm.bed().touched() && admissionForm.bed().invalid()) {
+            <mat-error>{{ admissionForm.bed().errors()[0]?.message }}</mat-error>
+          }
+        </mat-form-field>
+      } @else {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'hospitalization.plannedFor' | transloco }}</mat-label>
+          <input matInput type="date" [formField]="$any(admissionForm.planned_for)" />
+        </mat-form-field>
+      }
+    </div>
+
+    @if (admissionForm().errors().length > 0) {
+      <p class="server-error" role="alert">{{ admissionForm().errors()[0].message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="admissionForm().submitting()">
+        @if (admissionForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ (admitNow() ? 'hospitalization.actions.admit' : 'hospitalization.actions.plan') | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

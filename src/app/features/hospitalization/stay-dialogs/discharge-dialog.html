@@ -1,0 +1,30 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'hospitalization.actions.discharge' | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <p class="hint">{{ admission.patient_display }} — {{ 'hospitalization.dischargeHint' | transloco }}</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'hospitalization.dischargeSummary' | transloco }}</mat-label>
+    <textarea matInput rows="5" [value]="summary()" (input)="summary.set($any($event.target).value)"></textarea>
+  </mat-form-field>
+
+  @if (error()) {
+    <p class="server-error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="form-actions">
+    <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+    <button mat-flat-button color="primary" [disabled]="pending()" (click)="confirm()">
+      @if (pending()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        {{ 'hospitalization.actions.discharge' | transloco }}
+      }
+    </button>
+  </div>
+</mat-dialog-content>

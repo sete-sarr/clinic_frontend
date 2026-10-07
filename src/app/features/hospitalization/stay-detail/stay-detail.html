@@ -1,0 +1,191 @@
+<a mat-button routerLink="/hospitalization/stays" class="back-link">
+  <mat-icon>arrow_back</mat-icon>
+  {{ 'hospitalization.backToStays' | transloco }}
+</a>
+
+@if (stayResource.isLoading() && !stay()) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (stayResource.error() && !stay()) {
+  <p class="server-error" role="alert">{{ 'hospitalization.notFound' | transloco }}</p>
+} @else if (stay(); as stay) {
+  <div class="page-header">
+    <div class="title-block">
+      <h1>{{ stay.number }}</h1>
+      <mat-chip disableRipple [class]="'status-chip-' + statusTones[stay.status]">{{ statusLabels[stay.status] }}</mat-chip>
+    </div>
+    <div class="header-actions">
+      @if (canAdmit()) {
+        <button mat-flat-button color="primary" (click)="openBedChoice('admit')">
+          <mat-icon>login</mat-icon>{{ 'hospitalization.actions.admit' | transloco }}
+        </button>
+      }
+      @if (canTransfer()) {
+        <button mat-stroked-button (click)="openBedChoice('transfer')">
+          <mat-icon>swap_horiz</mat-icon>{{ 'hospitalization.actions.transfer' | transloco }}
+        </button>
+      }
+      @if (canDischarge()) {
+        <button mat-flat-button color="primary" (click)="openDischarge()">
+          <mat-icon>logout</mat-icon>{{ 'hospitalization.actions.discharge' | transloco }}
+        </button>
+      }
+      @if (canCancel()) {
+        <button mat-stroked-button (click)="cancel()">
+          <mat-icon>block</mat-icon>{{ 'hospitalization.actions.cancel' | transloco }}
+        </button>
+      }
+      @if (canPrint()) {
+        <button mat-stroked-button (click)="downloadPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>{{ 'common.actions.downloadPdf' | transloco }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="server-error" role="alert">{{ error() }}</p>
+  }
+
+  <section class="info-grid">
+    <div class="info-item">
+      <span class="info-label">{{ 'common.columns.patient' | transloco }}</span>
+      <span class="info-value">{{ stay.patient_display }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">{{ 'hospitalization.department' | transloco }}</span>
+      <span class="info-value">{{ stay.department_name }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">{{ 'hospitalization.location' | transloco }}</span>
+      <span class="info-value">{{ location(stay) }}</span>
+    </div>
+    @if (stay.doctor_display) {
+      <div class="info-item">
+        <span class="info-label">{{ 'hospitalization.attendingDoctor' | transloco }}</span>
+        <span class="info-value">{{ stay.doctor_display }}</span>
+      </div>
+    }
+    @if (stay.planned_for && stay.status === 'planned') {
+      <div class="info-item">
+        <span class="info-label">{{ 'hospitalization.plannedFor' | transloco }}</span>
+        <span class="info-value">{{ stay.planned_for | date: 'mediumDate' }}</span>
+      </div>
+    }
+    @if (stay.admitted_at) {
+      <div class="info-item">
+        <span class="info-label">{{ 'hospitalization.admittedAt' | transloco }}</span>
+        <span class="info-value">{{ stay.admitted_at | date: 'short' }}</span>
+      </div>
+    }
+    @if (stay.discharged_at) {
+      <div class="info-item">
+        <span class="info-label">{{ 'hospitalization.dischargedAt' | transloco }}</span>
+        <span class="info-value">{{ stay.discharged_at | date: 'short' }}</span>
+      </div>
+    }
+    @if (stay.nights !== undefined && stay.nights !== null) {
+      <div class="info-item">
+        <span class="info-label">{{ 'hospitalization.nights' | transloco }}</span>
+        <span class="info-value">{{ stay.nights }}</span>
+      </div>
+    }
+    @if (stay.invoice_number) {
+      <div class="info-item">
+        <span class="info-label">{{ 'hospitalization.invoice' | transloco }}</span>
+        <span class="info-value">{{ stay.invoice_number }}</span>
+      </div>
+    }
+    @if (stay.reason) {
+      <div class="info-item info-wide">
+        <span class="info-label">{{ 'hospitalization.reason' | transloco }}</span>
+        <span class="info-value">{{ stay.reason }}</span>
+      </div>
+    }
+    @if (stay.discharge_summary) {
+      <div class="info-item info-wide">
+        <span class="info-label">{{ 'hospitalization.dischargeSummary' | transloco }}</span>
+        <span class="info-value">{{ stay.discharge_summary }}</span>
+      </div>
+    }
+  </section>
+
+  @if (stay.transfers?.length) {
+    <h2 class="section-title">{{ 'hospitalization.bedHistory' | transloco }}</h2>
+    <ul class="history">
+      @for (transfer of stay.transfers; track $index) {
+        <li>
+          <span class="history-date">{{ transfer.transferred_at | date: 'short' }}</span>
+          <span>
+            @if (transfer.from_bed) { {{ transfer.from_bed }} → }{{ transfer.to_bed }}
+            @if (transfer.reason) { <span class="muted">— {{ transfer.reason }}</span> }
+          </span>
+          <span class="muted">{{ transfer.transferred_by }}</span>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (isClinical()) {
+    <div class="section-header">
+      <h2 class="section-title">{{ 'hospitalization.vitalSigns' | transloco }}</h2>
+      @if (canRecordCare()) {
+        <button mat-stroked-button (click)="openVitals()">
+          <mat-icon>monitor_heart</mat-icon>{{ 'hospitalization.actions.recordVitals' | transloco }}
+        </button>
+      }
+    </div>
+    @if (vitalsResource.value().length === 0) {
+      <p class="muted">{{ 'hospitalization.noVitals' | transloco }}</p>
+    } @else {
+      <div class="table-scroll">
+        <table class="vitals-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.columns.date' | transloco }}</th>
+              @for (field of vitalFields; track field.key) {
+                <th>{{ 'hospitalization.vitalsShort.' + field.key | transloco }}<span class="unit"> {{ field.unit }}</span></th>
+              }
+              <th>{{ 'hospitalization.recordedBy' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (vital of vitalsResource.value(); track vital.id) {
+              <tr>
+                <td>{{ vital.recorded_at | date: 'short' }}</td>
+                @for (field of vitalFields; track field.key) {
+                  <td>{{ vitalValue(vital, field.key) }}</td>
+                }
+                <td>{{ vital.recorded_by_display }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <h2 class="section-title">{{ 'hospitalization.nursingNotes' | transloco }}</h2>
+    @if (canRecordCare()) {
+      <div class="note-form">
+        <mat-form-field appearance="outline" class="note-field">
+          <mat-label>{{ 'hospitalization.newNote' | transloco }}</mat-label>
+          <textarea matInput rows="2" [value]="noteDraft()" (input)="noteDraft.set($any($event.target).value)"></textarea>
+        </mat-form-field>
+        <button mat-flat-button color="primary" [disabled]="pending() || !noteDraft().trim()" (click)="addNote()">
+          {{ 'hospitalization.actions.addNote' | transloco }}
+        </button>
+      </div>
+    }
+    @if (notesResource.value().length === 0) {
+      <p class="muted">{{ 'hospitalization.noNotes' | transloco }}</p>
+    } @else {
+      <ul class="notes">
+        @for (note of notesResource.value(); track note.id) {
+          <li class="note">
+            <p class="note-text">{{ note.note }}</p>
+            <span class="muted">{{ note.recorded_by_display }} — {{ note.recorded_at | date: 'short' }}</span>
+          </li>
+        }
+      </ul>
+    }
+  }
+}

@@ -53,7 +53,7 @@ const SEARCH_DEBOUNCE_MS = 300;
     TranslocoPipe,
   ],
   templateUrl: './lab-order-list.html',
-  styleUrl: '../laboratory-list.css',
+  styleUrl: '../../../shared/styles/list-page.css',
 })
 export class LabOrderList {
   protected readonly isHandset = injectIsHandset();

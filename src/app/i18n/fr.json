@@ -23,7 +23,8 @@
     "subscription": "Abonnement",
     "hospitalization": "Hospitalisation",
     "stays": "Séjours",
-    "wards": "Chambres et lits"
+    "wards": "Chambres et lits",
+    "visitors": "Visiteurs"
   },
   "roles": {
     "clinic_admin": "Administrateur",
@@ -329,7 +330,8 @@
       "Room": "Chambre",
       "RoomType": "Type de chambre",
       "VitalSign": "Constantes",
-      "NursingNote": "Note de soins"
+      "NursingNote": "Note de soins",
+      "VisitLog": "Visite (registre)"
     },
     "notificationCategory": {
       "appointment": "Rendez-vous",
@@ -364,6 +366,13 @@
       "admitted": "Admis",
       "discharged": "Sorti",
       "cancelled": "Annulé"
+    },
+    "visitorType": {
+      "patient_visit": "Visite à un patient",
+      "companion": "Accompagnant",
+      "supplier": "Fournisseur",
+      "contractor": "Prestataire",
+      "other": "Autre"
     }
   },
   "portal": {
@@ -1065,5 +1074,38 @@
       "weight": "Poids",
       "pain": "Douleur"
     }
+  },
+  "visitors": {
+    "title": "Registre des visiteurs",
+    "newEntry": "Enregistrer une entrée",
+    "name": "Nom du visiteur",
+    "type": "Type de visiteur",
+    "purpose": "Motif",
+    "visited": "Personne visitée (facultatif)",
+    "visitedPlaceholder": "Patient hospitalisé, membre du personnel ou texte libre",
+    "visitedHint": "Pour un patient hospitalisé, seul son emplacement est affiché.",
+    "admittedPatients": "Patients hospitalisés",
+    "staff": "Personnel",
+    "checkIn": "Enregistrer l'entrée",
+    "checkOut": "Sortie",
+    "required": "Le nom et le motif sont obligatoires.",
+    "saveError": "L'opération n'a pas pu être enregistrée.",
+    "checkedIn": "Entrée de {{ name }} enregistrée.",
+    "checkedOut": "Sortie de {{ name }} enregistrée.",
+    "updated": "Visite corrigée.",
+    "editTitle": "Corriger la visite",
+    "presentNow": "Présents en ce moment",
+    "nobodyPresent": "Aucun visiteur présent.",
+    "visiting": "Visite :",
+    "since": "Depuis",
+    "history": "Historique",
+    "searchPlaceholder": "Nom, téléphone, motif",
+    "historyEmpty": "Aucune visite pour ces critères.",
+    "present": "Présent",
+    "left": "Sorti",
+    "autoClosed": "Sortie non enregistrée",
+    "checkedInAt": "Entrée",
+    "checkedOutAt": "Sortie",
+    "exportFilename": "registre-visiteurs.csv"
   }
 }

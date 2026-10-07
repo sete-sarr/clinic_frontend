@@ -64,6 +64,8 @@ const canManageLabCatalog = roleGuard('clinic_admin');
 const canAccessWardBoard = roleGuard('doctor', 'nurse', 'secretary', 'clinic_admin');
 const canAccessStays = roleGuard('doctor', 'nurse', 'secretary', 'accountant', 'clinic_admin');
 const canManageWards = roleGuard('clinic_admin');
+// CanUseVisitorRegistry (backend/visitors/api/views.py) : réception et administrateur.
+const canAccessVisitors = roleGuard('secretary', 'clinic_admin');
 
 export const routes: Routes = [
   {
@@ -235,6 +237,12 @@ export const routes: Routes = [
         canActivate: [canAccessLaboratory],
         loadComponent: () =>
           import('./features/laboratory/lab-order-detail/lab-order-detail').then((m) => m.LabOrderDetail),
+      },
+      {
+        path: 'visitors',
+        canActivate: [canAccessVisitors],
+        loadComponent: () =>
+          import('./features/visitors/visitor-registry/visitor-registry').then((m) => m.VisitorRegistry),
       },
       {
         path: 'hospitalization',

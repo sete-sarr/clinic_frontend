@@ -1,0 +1,74 @@
+<form novalidate (submit)="$event.preventDefault(); submit()">
+  <div class="visit-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'visitors.name' | transloco }}</mat-label>
+      <input matInput maxlength="150" [value]="model().visitor_name" (input)="set('visitor_name', $any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'common.fields.phoneOptional' | transloco }}</mat-label>
+      <input matInput type="tel" maxlength="32" [value]="model().visitor_phone" (input)="set('visitor_phone', $any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'visitors.type' | transloco }}</mat-label>
+      <mat-select [value]="model().visitor_type" (selectionChange)="set('visitor_type', $event.value)">
+        @for (type of types; track type) {
+          <mat-option [value]="type">{{ typeLabels[type] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'visitors.purpose' | transloco }}</mat-label>
+      <input matInput maxlength="255" [value]="model().purpose" (input)="set('purpose', $any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="target-field">
+      <mat-label>{{ 'visitors.visited' | transloco }}</mat-label>
+      <input
+        matInput
+        maxlength="150"
+        autocomplete="off"
+        [value]="targetText()"
+        (input)="onTargetInput($any($event.target).value)"
+        [matAutocomplete]="targetAuto"
+        [placeholder]="'visitors.visitedPlaceholder' | transloco"
+      />
+      <mat-autocomplete #targetAuto="matAutocomplete" [displayWith]="displayTarget" (optionSelected)="onTargetSelected($event.option.value)">
+        @if (targetsResource.value().admissions.length) {
+          <mat-optgroup [label]="'visitors.admittedPatients' | transloco">
+            @for (option of targetsResource.value().admissions; track option.id) {
+              <mat-option [value]="{ kind: 'admission', id: option.id, label: option.label }">{{ option.label }}</mat-option>
+            }
+          </mat-optgroup>
+        }
+        @if (targetsResource.value().staff.length) {
+          <mat-optgroup [label]="'visitors.staff' | transloco">
+            @for (option of targetsResource.value().staff; track option.id) {
+              <mat-option [value]="{ kind: 'staff', id: option.id, label: option.label }">{{ option.label }}</mat-option>
+            }
+          </mat-optgroup>
+        }
+      </mat-autocomplete>
+      <mat-hint>{{ 'visitors.visitedHint' | transloco }}</mat-hint>
+    </mat-form-field>
+  </div>
+
+  @if (error()) {
+    <p class="server-error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="form-actions">
+    @if (isEdit()) {
+      <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.actions.cancel' | transloco }}</button>
+    }
+    <button mat-flat-button color="primary" type="submit" [disabled]="pending()">
+      @if (pending()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        {{ (isEdit() ? 'common.actions.save' : 'visitors.checkIn') | transloco }}
+      }
+    </button>
+  </div>
+</form>

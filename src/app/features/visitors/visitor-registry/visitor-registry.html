@@ -1,0 +1,169 @@
+<div class="page-header">
+  <h1>{{ 'visitors.title' | transloco }}</h1>
+  @if (canExport()) {
+    <div class="header-actions">
+      <button mat-stroked-button (click)="exportCsv()">
+        <mat-icon>download</mat-icon>
+        {{ 'common.actions.exportCsv' | transloco }}
+      </button>
+    </div>
+  }
+</div>
+
+<section class="panel">
+  <h2 class="panel-title">{{ 'visitors.newEntry' | transloco }}</h2>
+  <app-visit-form (saved)="onCheckedIn($event)" />
+</section>
+
+@if (error()) {
+  <p class="server-error" role="alert">{{ error() }}</p>
+}
+
+<h2 class="section-title">
+  {{ 'visitors.presentNow' | transloco }}
+  <span class="count">{{ present().length }}</span>
+</h2>
+
+@if (presentResource.isLoading() && present().length === 0) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (present().length === 0) {
+  <p class="muted">{{ 'visitors.nobodyPresent' | transloco }}</p>
+} @else {
+  <ul class="present-list">
+    @for (visit of present(); track visit.id) {
+      <li class="present-item">
+        <div class="present-main">
+          <span class="present-name">{{ visit.visitor_name }}</span>
+          <span class="muted">{{ typeLabel(visit) }} · {{ visit.purpose }}</span>
+          @if (visit.visited_display) {
+            <span class="muted">{{ 'visitors.visiting' | transloco }} {{ visit.visited_display }}</span>
+          }
+        </div>
+        <span class="present-since">{{ 'visitors.since' | transloco }} {{ visit.checked_in_at | date: 'shortTime' }}</span>
+        <div class="present-actions">
+          @if (isToday(visit)) {
+            <button mat-icon-button (click)="edit(visit)" [matTooltip]="'common.actions.edit' | transloco"
+              [attr.aria-label]="'common.actions.edit' | transloco">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
+          <button mat-flat-button color="primary" [disabled]="pending() === visit.id" (click)="checkOut(visit)">
+            <mat-icon>logout</mat-icon>{{ 'visitors.checkOut' | transloco }}
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+}
+
+<h2 class="section-title">{{ 'visitors.history' | transloco }}</h2>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>{{ 'common.search' | transloco }}</mat-label>
+    <input matInput (input)="onSearchInput($any($event.target).value)" [placeholder]="'visitors.searchPlaceholder' | transloco" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>{{ 'visitors.type' | transloco }}</mat-label>
+    <mat-select [value]="type()" (selectionChange)="onTypeChange($event.value)">
+      <mat-option value="">{{ 'common.all' | transloco }}</mat-option>
+      @for (option of types; track option) {
+        <mat-option [value]="option">{{ typeLabels[option] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field date-field">
+    <mat-label>{{ 'common.fields.from' | transloco }}</mat-label>
+    <input matInput [matDatepicker]="fromPicker" (dateChange)="onDateChange('from', $event)" />
+    <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+    <mat-datepicker #fromPicker />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field date-field">
+    <mat-label>{{ 'common.fields.to' | transloco }}</mat-label>
+    <input matInput [matDatepicker]="toPicker" (dateChange)="onDateChange('to', $event)" />
+    <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+    <mat-datepicker #toPicker />
+  </mat-form-field>
+</div>
+
+@if (historyResource.isLoading() && history().length === 0) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (history().length === 0) {
+  <app-empty-state icon="badge" [message]="'visitors.historyEmpty' | transloco" />
+} @else {
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (visit of history(); track visit.id) {
+        <app-record-card [card]="cardFor(visit)" />
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table mat-table [dataSource]="history()" class="list-table">
+        <ng-container matColumnDef="visitor">
+          <th mat-header-cell *matHeaderCellDef>{{ 'visitors.name' | transloco }}</th>
+          <td mat-cell *matCellDef="let visit">
+            {{ visit.visitor_name }}
+            @if (visit.visitor_phone) {
+              <div class="muted">{{ visit.visitor_phone }}</div>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>{{ 'visitors.type' | transloco }}</th>
+          <td mat-cell *matCellDef="let visit">
+            {{ typeLabel(visit) }}
+            <div class="muted">{{ visit.purpose }}</div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="visited">
+          <th mat-header-cell *matHeaderCellDef>{{ 'visitors.visited' | transloco }}</th>
+          <td mat-cell *matCellDef="let visit">{{ visit.visited_display || '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="checked_in_at">
+          <th mat-header-cell *matHeaderCellDef>{{ 'visitors.checkedInAt' | transloco }}</th>
+          <td mat-cell *matCellDef="let visit">{{ visit.checked_in_at | date: 'short' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="checked_out_at">
+          <th mat-header-cell *matHeaderCellDef>{{ 'visitors.checkedOutAt' | transloco }}</th>
+          <td mat-cell *matCellDef="let visit">
+            @if (visit.is_present) {
+              <mat-chip disableRipple class="status-chip-info">{{ 'visitors.present' | transloco }}</mat-chip>
+            } @else {
+              {{ visit.checked_out_at | date: 'short' }}
+              @if (visit.auto_closed) {
+                <div class="auto-closed">{{ 'visitors.autoClosed' | transloco }}</div>
+              }
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+          <td mat-cell *matCellDef="let visit">
+            @if (isToday(visit)) {
+              <button mat-icon-button (click)="edit(visit)" [matTooltip]="'common.actions.edit' | transloco"
+                [attr.aria-label]="'common.actions.edit' | transloco">
+                <mat-icon>edit</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  }
+
+  <mat-paginator
+    [length]="historyResource.value().count"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

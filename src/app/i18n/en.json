@@ -23,7 +23,8 @@
     "subscription": "Subscription",
     "hospitalization": "Hospitalization",
     "stays": "Hospital stays",
-    "wards": "Rooms and beds"
+    "wards": "Rooms and beds",
+    "visitors": "Visitors"
   },
   "roles": {
     "clinic_admin": "Administrator",
@@ -329,7 +330,8 @@
       "Room": "Room",
       "RoomType": "Room type",
       "VitalSign": "Vital signs",
-      "NursingNote": "Nursing note"
+      "NursingNote": "Nursing note",
+      "VisitLog": "Visit (log)"
     },
     "notificationCategory": {
       "appointment": "Appointments",
@@ -364,6 +366,13 @@
       "admitted": "Admitted",
       "discharged": "Discharged",
       "cancelled": "Cancelled"
+    },
+    "visitorType": {
+      "patient_visit": "Patient visit",
+      "companion": "Companion",
+      "supplier": "Supplier",
+      "contractor": "Contractor",
+      "other": "Other"
     }
   },
   "portal": {
@@ -1065,5 +1074,38 @@
       "weight": "Weight",
       "pain": "Pain"
     }
+  },
+  "visitors": {
+    "title": "Visitor log",
+    "newEntry": "Check a visitor in",
+    "name": "Visitor name",
+    "type": "Visitor type",
+    "purpose": "Purpose",
+    "visited": "Person visited (optional)",
+    "visitedPlaceholder": "Admitted patient, staff member or free text",
+    "visitedHint": "For an admitted patient, only their location is shown.",
+    "admittedPatients": "Admitted patients",
+    "staff": "Staff",
+    "checkIn": "Check in",
+    "checkOut": "Check out",
+    "required": "Name and purpose are required.",
+    "saveError": "The operation could not be saved.",
+    "checkedIn": "{{ name }} checked in.",
+    "checkedOut": "{{ name }} checked out.",
+    "updated": "Visit corrected.",
+    "editTitle": "Correct visit",
+    "presentNow": "Currently on site",
+    "nobodyPresent": "No visitors on site.",
+    "visiting": "Visiting:",
+    "since": "Since",
+    "history": "History",
+    "searchPlaceholder": "Name, phone, purpose",
+    "historyEmpty": "No visits match these filters.",
+    "present": "On site",
+    "left": "Left",
+    "autoClosed": "Check-out not recorded",
+    "checkedInAt": "Check-in",
+    "checkedOutAt": "Check-out",
+    "exportFilename": "visitor-log.csv"
   }
 }

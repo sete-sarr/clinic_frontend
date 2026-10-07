@@ -40,7 +40,7 @@ const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmaci
 // Un groupe sans entrée visible pour le rôle connecté est masqué avec son séparateur.
 const NAV_GROUPS: string[][] = [
   ['/dashboard'],
-  ['/appointments', '/patients'], // accueil
+  ['/appointments', '/patients', '/visitors'], // accueil
   ['/hospitalization', '/consultations', '/medical-records', '/prescriptions', '/laboratory', '/pharmacy'], // soins
   ['/billing', '/payments', '/hospitalization/stays'], // finances
   ['/reports', '/audit-log'], // pilotage
@@ -163,6 +163,13 @@ const NAV_ITEMS: NavItem[] = [
     // route réservée à ces deux rôles (app.routes.ts canAccessPharmacy), même schéma que
     // Départements (écran de gestion, pas un simple sélecteur en lecture).
     roles: ['pharmacist', 'clinic_admin'],
+  },
+  {
+    labelKey: 'nav.visitors',
+    icon: 'badge',
+    route: '/visitors',
+    // CanUseVisitorRegistry (backend/visitors/api/views.py) : réception et administrateur.
+    roles: ['secretary', 'clinic_admin'],
   },
   {
     labelKey: 'nav.hospitalization',

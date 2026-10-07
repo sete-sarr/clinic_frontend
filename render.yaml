@@ -43,18 +43,20 @@ services:
         name: Strict-Transport-Security
         value: max-age=31536000; includeSubDomains
 
-  # Redirection : https://procli.org et https://www.procli.org → https://app.procli.org
-  # (le domaine nu reste disponible pour un futur site vitrine).
-  - type: web
-    name: procli-redirect
-    runtime: static
-    buildCommand: mkdir -p redirect && echo "proCli" > redirect/index.html
-    staticPublishPath: redirect
-    pullRequestPreviewsEnabled: false
-    domains:
-      - procli.org
-      - www.procli.org
-    routes:
-      - type: redirect
-        source: /*
-        destination: https://app.procli.org
+# Redirection de https://procli.org et https://www.procli.org vers https://app.procli.org : non
+# déployée pour l'instant. Le plan gratuit de Render limite l'espace de travail à 2 domaines
+# personnalisés (app.procli.org et api.procli.org). Pour l'ajouter, enregistrer un moyen de paiement
+# sur Render puis rétablir ce service :
+#
+#  - type: web
+#    name: procli-redirect
+#    runtime: static
+#    buildCommand: mkdir -p redirect && echo "proCli" > redirect/index.html
+#    staticPublishPath: redirect
+#    domains:
+#      - procli.org
+#      - www.procli.org
+#    routes:
+#      - type: redirect
+#        source: /*
+#        destination: https://app.procli.org

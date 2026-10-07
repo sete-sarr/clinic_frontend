@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -24,6 +24,9 @@ import { INVOICE_STATUS_LABELS, Invoice, InvoiceStatus } from '../invoice.model'
 import { InvoiceForm } from '../invoice-form/invoice-form';
 import { InvoiceService } from '../invoice.service';
 import { MoneyPipe } from '../../../core/utils/money';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -31,6 +34,8 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-invoice-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     MoneyPipe,
     DatePipe,
     EmptyState,
@@ -50,6 +55,23 @@ const SEARCH_DEBOUNCE_MS = 300;
   styleUrl: './invoice-list.css',
 })
 export class InvoiceList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(invoice: Invoice): RecordCardData {
+    const open = invoice.status !== 'draft' && invoice.status !== 'cancelled' && invoice.balance_due !== '0.00';
+    return {
+      title: invoice.number || translate('common.draft'),
+      subtitle: invoice.patient_display,
+      icon: 'receipt_long',
+      status: { label: this.statusLabel(invoice), tone: statusTone(invoice.status) },
+      fields: [
+        { label: translate('common.columns.date'), value: invoice.issue_date, date: 'mediumDate' },
+        { label: translate('billing.total'), value: invoice.total_amount, currency: invoice.currency },
+        ...(open ? [{ label: translate('billing.remaining'), value: invoice.balance_due, currency: invoice.currency }] : []),
+      ],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly invoiceService = inject(InvoiceService);

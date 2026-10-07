@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -27,12 +28,17 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { DepartmentForm } from '../department-form/department-form';
 import { DepartmentService } from '../department.service';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 
 @Component({
   selector: 'app-department-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     EmptyState,
     MatButtonModule,
     MatChipsModule,
@@ -49,6 +55,19 @@ const PAGE_SIZE = 20;
   styleUrl: './department-list.css',
 })
 export class DepartmentList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(department: Department): RecordCardData {
+    return {
+      title: department.name,
+      subtitle: department.code,
+      icon: 'apartment',
+      status: { label: this.statusLabel(department), tone: statusTone(department.status) },
+      muted: department.status === 'archived',
+      fields: [{ label: translate('departments.type'), value: this.typeLabel(department) }],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly departmentService = inject(DepartmentService);

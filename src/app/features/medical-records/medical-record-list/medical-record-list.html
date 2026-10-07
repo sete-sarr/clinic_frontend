@@ -28,31 +28,45 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="folder_off" [message]="'medicalRecords.empty' | transloco" />
 } @else {
-  <div class="table-scroll">
-  <table mat-table [dataSource]="dataSource" class="records-table">
-    <ng-container matColumnDef="patient">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
-      <td mat-cell *matCellDef="let record">{{ record.patient_display }}</td>
-    </ng-container>
+  <ng-template #rowActions let-record>
+    <button mat-icon-button [matTooltip]="'medicalRecords.open' | transloco" (click)="openEdit(record)">
+      <mat-icon>folder_open</mat-icon>
+    </button>
+  </ng-template>
 
-    <ng-container matColumnDef="allergies">
-      <th mat-header-cell *matHeaderCellDef>{{ 'medicalRecords.allergies' | transloco }}</th>
-      <td mat-cell *matCellDef="let record">{{ record.allergies || '—' }}</td>
-    </ng-container>
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (record of dataSource.data; track record.id) {
+        <app-record-card [card]="cardFor(record)">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: record }" />
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="records-table">
+      <ng-container matColumnDef="patient">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
+        <td mat-cell *matCellDef="let record">{{ record.patient_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
-      <td mat-cell *matCellDef="let record">
-        <button mat-icon-button [matTooltip]="'medicalRecords.open' | transloco" (click)="openEdit(record)">
-          <mat-icon>folder_open</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="allergies">
+        <th mat-header-cell *matHeaderCellDef>{{ 'medicalRecords.allergies' | transloco }}</th>
+        <td mat-cell *matCellDef="let record">{{ record.allergies || '—' }}</td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  </div>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+        <td mat-cell *matCellDef="let record">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: record }" />
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    </div>
+  }
 
   <mat-paginator
     [length]="totalCount()"

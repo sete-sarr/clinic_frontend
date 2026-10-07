@@ -44,60 +44,74 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="receipt_long" [message]="'billing.empty' | transloco" />
 } @else {
-  <div class="table-scroll">
-  <table mat-table [dataSource]="dataSource" class="invoices-table">
-    <ng-container matColumnDef="number">
-      <th mat-header-cell *matHeaderCellDef>{{ 'billing.numberColumn' | transloco }}</th>
-      <td mat-cell *matCellDef="let invoice">
-        {{ invoice.number || ('common.draft' | transloco) }}
-        <span class="issue-date">{{ invoice.issue_date | date: 'mediumDate' }}</span>
-      </td>
-    </ng-container>
+  <ng-template #rowActions let-invoice>
+    <div class="actions">
+      <button mat-icon-button [matTooltip]="'common.actions.open' | transloco" (click)="openEdit(invoice)">
+        <mat-icon>{{ invoice.status === 'draft' ? 'edit' : 'visibility' }}</mat-icon>
+      </button>
+      @if (invoice.status !== 'draft') {
+        <button mat-icon-button [matTooltip]="'common.actions.downloadPdf' | transloco" (click)="downloadPdf(invoice)">
+          <mat-icon>picture_as_pdf</mat-icon>
+        </button>
+      }
+    </div>
+  </ng-template>
 
-    <ng-container matColumnDef="patient">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
-      <td mat-cell *matCellDef="let invoice">{{ invoice.patient_display }}</td>
-    </ng-container>
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (invoice of dataSource.data; track invoice.id) {
+        <app-record-card [card]="cardFor(invoice)">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: invoice }" />
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="invoices-table">
+      <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef>{{ 'billing.numberColumn' | transloco }}</th>
+        <td mat-cell *matCellDef="let invoice">
+          {{ invoice.number || ('common.draft' | transloco) }}
+          <span class="issue-date">{{ invoice.issue_date | date: 'mediumDate' }}</span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="total">
-      <th mat-header-cell *matHeaderCellDef>{{ 'billing.total' | transloco }}</th>
-      <td mat-cell *matCellDef="let invoice">
-        {{ invoice.total_amount | money: invoice.currency }}
-        @if (invoice.balance_due !== '0.00' && invoice.status !== 'draft' && invoice.status !== 'cancelled') {
-          <span class="balance-due">{{ 'billing.balanceDue' | transloco: { amount: (invoice.balance_due | money: invoice.currency) } }}</span>
-        }
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="patient">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
+        <td mat-cell *matCellDef="let invoice">{{ invoice.patient_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
-      <td mat-cell *matCellDef="let invoice">
-        <mat-chip [class]="'status-chip status-' + invoice.status" disableRipple>
-          {{ statusLabel(invoice) }}
-        </mat-chip>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
-      <td mat-cell *matCellDef="let invoice">
-        <div class="actions">
-          <button mat-icon-button [matTooltip]="'common.actions.open' | transloco" (click)="openEdit(invoice)">
-            <mat-icon>{{ invoice.status === 'draft' ? 'edit' : 'visibility' }}</mat-icon>
-          </button>
-          @if (invoice.status !== 'draft') {
-            <button mat-icon-button [matTooltip]="'common.actions.downloadPdf' | transloco" (click)="downloadPdf(invoice)">
-              <mat-icon>picture_as_pdf</mat-icon>
-            </button>
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef>{{ 'billing.total' | transloco }}</th>
+        <td mat-cell *matCellDef="let invoice">
+          {{ invoice.total_amount | money: invoice.currency }}
+          @if (invoice.balance_due !== '0.00' && invoice.status !== 'draft' && invoice.status !== 'cancelled') {
+            <span class="balance-due">{{ 'billing.balanceDue' | transloco: { amount: (invoice.balance_due | money: invoice.currency) } }}</span>
           }
-        </div>
-      </td>
-    </ng-container>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  </div>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
+        <td mat-cell *matCellDef="let invoice">
+          <mat-chip [class]="'status-chip status-' + invoice.status" disableRipple>
+            {{ statusLabel(invoice) }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+        <td mat-cell *matCellDef="let invoice">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: invoice }" />
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    </div>
+  }
 
   <mat-paginator
     [length]="totalCount()"

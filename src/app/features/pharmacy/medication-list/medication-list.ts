@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,12 +22,17 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { MedicationForm } from '../medication-form/medication-form';
 import { MedicationService } from '../medication.service';
 import { StockBatchForm } from '../stock-batch-form/stock-batch-form';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 
 @Component({
   selector: 'app-medication-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     EmptyState,
     MatButtonModule,
     MatChipsModule,
@@ -42,6 +48,24 @@ const PAGE_SIZE = 20;
   styleUrl: './medication-list.css',
 })
 export class MedicationList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(medication: Medication): RecordCardData {
+    return {
+      title: medication.name,
+      subtitle: medication.unit,
+      icon: 'medication',
+      status: medication.is_active
+        ? { label: this.stockStatusLabel(medication), tone: statusTone(this.stockStatus(medication)) }
+        : { label: translate('common.archived'), tone: 'neutral' },
+      muted: !medication.is_active,
+      fields: [
+        { label: translate('pharmacy.currentStock'), value: medication.current_stock },
+        { label: translate('pharmacy.thresholds'), value: `${medication.min_threshold} / ${medication.max_threshold ?? '—'}` },
+      ],
+    };
+  }
+
   private readonly dialog = inject(MatDialog);
   private readonly medicationService = inject(MedicationService);
   private readonly successNotifier = inject(SuccessNotifier);

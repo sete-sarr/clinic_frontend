@@ -26,70 +26,84 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="groups" [message]="'staff.empty' | transloco" />
 } @else {
-  <div class="table-scroll">
-  <table mat-table [dataSource]="dataSource" class="staff-table">
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.name' | transloco }}</th>
-      <td mat-cell *matCellDef="let member">{{ member.first_name }} {{ member.last_name }}</td>
-    </ng-container>
+  <ng-template #rowActions let-member>
+    <div class="actions">
+      <button mat-icon-button [matTooltip]="'common.actions.edit' | transloco" (click)="openEdit(member)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      @if (member.is_active) {
+        <button
+          mat-icon-button
+          [matTooltip]="(isSelf(member) ? 'staff.cannotDeactivateSelf' : 'common.actions.deactivate') | transloco"
+          [disabled]="isSelf(member) || actionPending() === member.id"
+          (click)="toggleActive(member)"
+        >
+          <mat-icon>person_off</mat-icon>
+        </button>
+      } @else {
+        <button
+          mat-icon-button
+          [matTooltip]="'common.actions.reactivate' | transloco"
+          [disabled]="actionPending() === member.id"
+          (click)="toggleActive(member)"
+        >
+          <mat-icon>person</mat-icon>
+        </button>
+      }
+    </div>
+  </ng-template>
 
-    <ng-container matColumnDef="username">
-      <th mat-header-cell *matHeaderCellDef>{{ 'staff.identifier' | transloco }}</th>
-      <td mat-cell *matCellDef="let member">{{ member.username }}</td>
-    </ng-container>
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (member of dataSource.data; track member.id) {
+        <app-record-card [card]="cardFor(member)">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: member }" />
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="staff-table">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.name' | transloco }}</th>
+        <td mat-cell *matCellDef="let member">{{ member.first_name }} {{ member.last_name }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="role">
-      <th mat-header-cell *matHeaderCellDef>{{ 'staff.role' | transloco }}</th>
-      <td mat-cell *matCellDef="let member">
-        <mat-chip disableRipple>{{ roleLabel(member) }}</mat-chip>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef>{{ 'staff.identifier' | transloco }}</th>
+        <td mat-cell *matCellDef="let member">{{ member.username }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
-      <td mat-cell *matCellDef="let member">
-        @if (member.is_active) {
-          <mat-chip disableRipple class="active-chip">{{ 'common.active' | transloco }}</mat-chip>
-        } @else {
-          <mat-chip disableRipple class="inactive-chip">{{ 'common.inactive' | transloco }}</mat-chip>
-        }
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>{{ 'staff.role' | transloco }}</th>
+        <td mat-cell *matCellDef="let member">
+          <mat-chip disableRipple>{{ roleLabel(member) }}</mat-chip>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
-      <td mat-cell *matCellDef="let member">
-        <div class="actions">
-          <button mat-icon-button [matTooltip]="'common.actions.edit' | transloco" (click)="openEdit(member)">
-            <mat-icon>edit</mat-icon>
-          </button>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
+        <td mat-cell *matCellDef="let member">
           @if (member.is_active) {
-            <button
-              mat-icon-button
-              [matTooltip]="(isSelf(member) ? 'staff.cannotDeactivateSelf' : 'common.actions.deactivate') | transloco"
-              [disabled]="isSelf(member) || actionPending() === member.id"
-              (click)="toggleActive(member)"
-            >
-              <mat-icon>person_off</mat-icon>
-            </button>
+            <mat-chip disableRipple class="active-chip">{{ 'common.active' | transloco }}</mat-chip>
           } @else {
-            <button
-              mat-icon-button
-              [matTooltip]="'common.actions.reactivate' | transloco"
-              [disabled]="actionPending() === member.id"
-              (click)="toggleActive(member)"
-            >
-              <mat-icon>person</mat-icon>
-            </button>
+            <mat-chip disableRipple class="inactive-chip">{{ 'common.inactive' | transloco }}</mat-chip>
           }
-        </div>
-      </td>
-    </ng-container>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  </div>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+        <td mat-cell *matCellDef="let member">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: member }" />
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    </div>
+  }
 
   <mat-paginator
     [length]="totalCount()"

@@ -46,62 +46,76 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="payments" [message]="'payments.empty' | transloco" />
 } @else {
-  <div class="table-scroll">
-  <table mat-table [dataSource]="dataSource" class="payments-table">
-    <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
-      <td mat-cell *matCellDef="let payment">{{ payment.date | date: 'mediumDate' }}</td>
-    </ng-container>
+  <ng-template #rowActions let-payment>
+    <button mat-icon-button [matTooltip]="'payments.downloadReceipt' | transloco" (click)="downloadReceipt(payment)">
+      <mat-icon>picture_as_pdf</mat-icon>
+    </button>
+    @if (canRefund() && payment.status === 'validated') {
+      <button mat-icon-button [matTooltip]="'payments.refund' | transloco" (click)="refund(payment)">
+        <mat-icon>undo</mat-icon>
+      </button>
+    }
+  </ng-template>
 
-    <ng-container matColumnDef="invoice">
-      <th mat-header-cell *matHeaderCellDef>{{ 'payments.invoice' | transloco }}</th>
-      <td mat-cell *matCellDef="let payment">
-        <a [routerLink]="['/billing']">{{ payment.invoice_number }}</a>
-      </td>
-    </ng-container>
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (payment of dataSource.data; track payment.id) {
+        <app-record-card [card]="cardFor(payment)">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: payment }" />
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="payments-table">
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.date | date: 'mediumDate' }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="patient">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
-      <td mat-cell *matCellDef="let payment">{{ payment.patient_display }}</td>
-    </ng-container>
+      <ng-container matColumnDef="invoice">
+        <th mat-header-cell *matHeaderCellDef>{{ 'payments.invoice' | transloco }}</th>
+        <td mat-cell *matCellDef="let payment">
+          <a [routerLink]="['/billing']">{{ payment.invoice_number }}</a>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="amount">
-      <th mat-header-cell *matHeaderCellDef>{{ 'payments.amount' | transloco }}</th>
-      <td mat-cell *matCellDef="let payment">{{ payment.amount | money: payment.currency }}</td>
-    </ng-container>
+      <ng-container matColumnDef="patient">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.patient_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="method">
-      <th mat-header-cell *matHeaderCellDef>{{ 'payments.method' | transloco }}</th>
-      <td mat-cell *matCellDef="let payment">{{ methodLabel(payment) }}</td>
-    </ng-container>
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>{{ 'payments.amount' | transloco }}</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.amount | money: payment.currency }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
-      <td mat-cell *matCellDef="let payment">
-        <mat-chip [class]="'status-chip status-' + payment.status" disableRipple>
-          {{ statusLabel(payment) }}
-        </mat-chip>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="method">
+        <th mat-header-cell *matHeaderCellDef>{{ 'payments.method' | transloco }}</th>
+        <td mat-cell *matCellDef="let payment">{{ methodLabel(payment) }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
-      <td mat-cell *matCellDef="let payment">
-        <button mat-icon-button [matTooltip]="'payments.downloadReceipt' | transloco" (click)="downloadReceipt(payment)">
-          <mat-icon>picture_as_pdf</mat-icon>
-        </button>
-        @if (canRefund() && payment.status === 'validated') {
-          <button mat-icon-button [matTooltip]="'payments.refund' | transloco" (click)="refund(payment)">
-            <mat-icon>undo</mat-icon>
-          </button>
-        }
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
+        <td mat-cell *matCellDef="let payment">
+          <mat-chip [class]="'status-chip status-' + payment.status" disableRipple>
+            {{ statusLabel(payment) }}
+          </mat-chip>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  </div>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+        <td mat-cell *matCellDef="let payment">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: payment }" />
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    </div>
+  }
 
   <mat-paginator
     [length]="totalCount()"

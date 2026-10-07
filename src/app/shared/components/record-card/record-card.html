@@ -1,0 +1,47 @@
+<article class="record-card" [class]="'tone-' + (card().status?.tone ?? 'neutral')" [class.muted]="card().muted">
+  <header class="card-header">
+    <span class="card-avatar" aria-hidden="true">
+      @if (card().initials) {
+        {{ card().initials }}
+      } @else {
+        <mat-icon>{{ card().icon ?? 'description' }}</mat-icon>
+      }
+    </span>
+    <div class="card-heading">
+      <span class="card-title">{{ card().title }}</span>
+      @if (card().subtitle) {
+        <span class="card-subtitle">{{ card().subtitle }}</span>
+      }
+    </div>
+    @if (card().status; as status) {
+      <span class="card-status">{{ status.label }}</span>
+    }
+  </header>
+
+  @if (card().fields.length) {
+    <dl class="card-fields">
+      @for (field of card().fields; track field.label) {
+        <div class="card-field">
+          <dt>{{ field.label }}</dt>
+          <dd>
+            @if (field.value === null || field.value === undefined || field.value === '') {
+              —
+            } @else if (field.date) {
+              {{ field.value | date: field.date }}
+            } @else if (field.currency) {
+              {{ field.value | money: field.currency }}
+            } @else {
+              {{ field.value }}
+            }
+          </dd>
+        </div>
+      }
+    </dl>
+  }
+
+  <ng-content select="[cardExtra]" />
+
+  <footer class="card-actions">
+    <ng-content />
+  </footer>
+</article>

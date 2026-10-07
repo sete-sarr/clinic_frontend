@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -12,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { firstValueFrom } from 'rxjs';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -21,12 +22,17 @@ import { STAFF_ROLE_LABELS, StaffMember } from '../../../core/models/staff.model
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { StaffForm } from '../staff-form/staff-form';
 import { StaffService } from '../staff.service';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, activeStatus, initialsOf } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 
 @Component({
   selector: 'app-staff-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     EmptyState,
     MatButtonModule,
     MatChipsModule,
@@ -43,6 +49,20 @@ const PAGE_SIZE = 20;
   styleUrl: './staff-list.css',
 })
 export class StaffList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(member: StaffMember): RecordCardData {
+    const name = `${member.first_name} ${member.last_name}`;
+    return {
+      title: name,
+      subtitle: this.roleLabel(member),
+      initials: initialsOf(name),
+      status: activeStatus(member.is_active),
+      muted: !member.is_active,
+      fields: [{ label: translate('staff.identifier'), value: member.username }],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly auth = inject(AuthService);

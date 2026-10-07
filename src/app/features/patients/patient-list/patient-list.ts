@@ -1,8 +1,7 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,7 +13,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { map } from 'rxjs';
 import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
@@ -25,6 +23,9 @@ import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-
 import { GENDER_LABELS, Gender, Patient } from '../patient.model';
 import { PatientForm } from '../patient-form/patient-form';
 import { PatientService } from '../patient.service';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, activeStatus, initialsOf } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -32,6 +33,8 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-patient-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     EmptyState,
     MatButtonModule,
     MatChipsModule,
@@ -49,19 +52,29 @@ const SEARCH_DEBOUNCE_MS = 300;
   styleUrl: './patient-list.css',
 })
 export class PatientList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(patient: Patient): RecordCardData {
+    const name = `${patient.first_name} ${patient.last_name}`;
+    return {
+      title: name,
+      subtitle: patient.patient_number,
+      initials: initialsOf(name),
+      status: patient.is_active ? undefined : activeStatus(false),
+      muted: !patient.is_active,
+      fields: [
+        { label: translate('common.columns.phone'), value: patient.phone },
+        { label: translate('common.fields.dateOfBirth'), value: patient.date_of_birth, date: 'mediumDate' },
+        { label: translate('common.fields.gender'), value: this.genderLabel(patient) },
+      ],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly patientService = inject(PatientService);
-  private readonly breakpointObserver = inject(BreakpointObserver);
   protected readonly auth = inject(AuthService);
 
-  // design-system/tables.md §Mobile — en dessous de ce point de rupture, une ligne de tableau est illisible, donc
-  // le tableau est remplacé par des cartes empilées (design-system/cards.md "Carte Patient"). Même
-  // pattern BreakpointObserver + Breakpoints.Handset que shared/layout/shell/shell.ts.
-  protected readonly isHandset = toSignal(
-    this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
-    { initialValue: false },
-  );
 
   readonly search = input<string | undefined>();
   readonly gender = input<Gender | undefined>();

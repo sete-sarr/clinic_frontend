@@ -1,10 +1,9 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, booleanAttribute, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -16,7 +15,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { map } from 'rxjs';
 import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
@@ -33,6 +31,9 @@ import {
 } from '../appointment.model';
 import { AppointmentForm } from '../appointment-form/appointment-form';
 import { AppointmentService } from '../appointment.service';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -40,6 +41,8 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-appointment-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     EmptyState,
     MatButtonModule,
     MatCheckboxModule,
@@ -58,18 +61,28 @@ const SEARCH_DEBOUNCE_MS = 300;
   styleUrl: './appointment-list.css',
 })
 export class AppointmentList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(appointment: Appointment): RecordCardData {
+    return {
+      title: appointment.patient_display,
+      subtitle: appointment.doctor_display,
+      icon: 'event',
+      status: { label: this.statusLabel(appointment), tone: statusTone(appointment.status) },
+      fields: [
+        { label: translate('appointments.dateTime'), value: `${appointment.date} · ${appointment.time}` },
+        ...(this.isCheckedIn(appointment)
+          ? [{ label: translate('appointments.checkedInLabel'), value: appointment.ticket_number }]
+          : []),
+      ],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly appointmentService = inject(AppointmentService);
-  private readonly breakpointObserver = inject(BreakpointObserver);
   protected readonly auth = inject(AuthService);
 
-  // design-system/tables.md §Mobile — même repli en carte que patients/patient-list.ts, en
-  // utilisant design-system/cards.md "Carte Rendez-vous".
-  protected readonly isHandset = toSignal(
-    this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
-    { initialValue: false },
-  );
 
   // Entrées liées au routeur (withComponentInputBinding) : chaque query param alimente l'entrée de
   // MÊME NOM — d'où `patientNumber` / `checkedIn` dans l'URL (et non patient_number / checked_in,

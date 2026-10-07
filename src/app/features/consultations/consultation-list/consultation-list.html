@@ -38,45 +38,59 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="medical_information" [message]="'consultations.empty' | transloco" />
 } @else {
-  <div class="table-scroll">
-  <table mat-table [dataSource]="dataSource" class="consultations-table">
-    <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
-      <td mat-cell *matCellDef="let consultation">{{ consultation.date | date: 'short' }}</td>
-    </ng-container>
+  <ng-template #rowActions let-consultation>
+    <button mat-icon-button [matTooltip]="'common.actions.open' | transloco" (click)="openEdit(consultation)">
+      <mat-icon>{{ consultation.status === 'validated' ? 'visibility' : 'edit' }}</mat-icon>
+    </button>
+  </ng-template>
 
-    <ng-container matColumnDef="patient">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
-      <td mat-cell *matCellDef="let consultation">{{ consultation.patient_display }}</td>
-    </ng-container>
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (consultation of dataSource.data; track consultation.id) {
+        <app-record-card [card]="cardFor(consultation)">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: consultation }" />
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="consultations-table">
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
+        <td mat-cell *matCellDef="let consultation">{{ consultation.date | date: 'short' }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="doctor">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.doctor' | transloco }}</th>
-      <td mat-cell *matCellDef="let consultation">{{ consultation.doctor_display }}</td>
-    </ng-container>
+      <ng-container matColumnDef="patient">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
+        <td mat-cell *matCellDef="let consultation">{{ consultation.patient_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
-      <td mat-cell *matCellDef="let consultation">
-        <mat-chip [class]="'status-chip status-' + consultation.status" disableRipple>
-          {{ statusLabel(consultation) }}
-        </mat-chip>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="doctor">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.doctor' | transloco }}</th>
+        <td mat-cell *matCellDef="let consultation">{{ consultation.doctor_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
-      <td mat-cell *matCellDef="let consultation">
-        <button mat-icon-button [matTooltip]="'common.actions.open' | transloco" (click)="openEdit(consultation)">
-          <mat-icon>{{ consultation.status === 'validated' ? 'visibility' : 'edit' }}</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
+        <td mat-cell *matCellDef="let consultation">
+          <mat-chip [class]="'status-chip status-' + consultation.status" disableRipple>
+            {{ statusLabel(consultation) }}
+          </mat-chip>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  </div>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+        <td mat-cell *matCellDef="let consultation">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: consultation }" />
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    </div>
+  }
 
   <mat-paginator
     [length]="totalCount()"

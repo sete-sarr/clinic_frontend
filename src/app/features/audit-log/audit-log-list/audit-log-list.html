@@ -46,39 +46,47 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="history" [message]="'auditLog.empty' | transloco" />
 } @else {
-  <div class="table-scroll">
-  <table mat-table [dataSource]="dataSource" class="audit-table">
-    <ng-container matColumnDef="created_at">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
-      <td mat-cell *matCellDef="let entry">{{ entry.created_at | date: 'short' }}</td>
-    </ng-container>
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (entry of dataSource.data; track entry.id) {
+        <app-record-card [card]="cardFor(entry)"></app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="audit-table">
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
+        <td mat-cell *matCellDef="let entry">{{ entry.created_at | date: 'short' }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="user_display">
-      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.user' | transloco }}</th>
-      <td mat-cell *matCellDef="let entry">{{ entry.user_display }}</td>
-    </ng-container>
+      <ng-container matColumnDef="user_display">
+        <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.user' | transloco }}</th>
+        <td mat-cell *matCellDef="let entry">{{ entry.user_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.action' | transloco }}</th>
-      <td mat-cell *matCellDef="let entry">
-        <mat-chip disableRipple>{{ actionLabel(entry) }}</mat-chip>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.action' | transloco }}</th>
+        <td mat-cell *matCellDef="let entry">
+          <mat-chip disableRipple>{{ actionLabel(entry) }}</mat-chip>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="model_name">
-      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.objectType' | transloco }}</th>
-      <td mat-cell *matCellDef="let entry">{{ modelLabel(entry.model_name) }}</td>
-    </ng-container>
+      <ng-container matColumnDef="model_name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.objectType' | transloco }}</th>
+        <td mat-cell *matCellDef="let entry">{{ modelLabel(entry.model_name) }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="object_id">
-      <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.objectId' | transloco }}</th>
-      <td mat-cell *matCellDef="let entry">{{ entry.object_id }}</td>
-    </ng-container>
+      <ng-container matColumnDef="object_id">
+        <th mat-header-cell *matHeaderCellDef>{{ 'auditLog.objectId' | transloco }}</th>
+        <td mat-cell *matCellDef="let entry">{{ entry.object_id }}</td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  </div>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    </div>
+  }
 
   <mat-paginator
     [length]="totalCount()"

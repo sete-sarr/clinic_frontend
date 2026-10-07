@@ -137,7 +137,8 @@
     "patientSearch": "Rechercher par nom, téléphone ou n° patient",
     "patientFilterPlaceholder": "Nom du patient, n° patient...",
     "invoiceFilterPlaceholder": "Nom du patient, n° facture...",
-    "draft": "Brouillon"
+    "draft": "Brouillon",
+    "archived": "Archivé"
   },
   "auth": {
     "brand": {
@@ -433,7 +434,8 @@
     "patientSearch": "Rechercher par nom, téléphone ou n° patient",
     "saved": "Rendez-vous enregistré avec succès.",
     "saveError": "Impossible d'enregistrer le rendez-vous.",
-    "edit": "Modifier le rendez-vous"
+    "edit": "Modifier le rendez-vous",
+    "checkedInLabel": "Ticket d'arrivée"
   },
   "consultations": {
     "title": "Consultations",

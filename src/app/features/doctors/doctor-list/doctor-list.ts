@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
 import { Router } from '@angular/router';
@@ -11,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -20,12 +21,17 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { DoctorForm } from '../doctor-form/doctor-form';
 import { DoctorService } from '../doctor.service';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, activeStatus, initialsOf } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 
 @Component({
   selector: 'app-doctor-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     EmptyState,
     MatButtonModule,
     MatChipsModule,
@@ -42,6 +48,20 @@ const PAGE_SIZE = 20;
   styleUrl: './doctor-list.css',
 })
 export class DoctorList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(doctor: Doctor): RecordCardData {
+    const name = `${doctor.user.first_name} ${doctor.user.last_name}`;
+    return {
+      title: name,
+      subtitle: doctor.specialty,
+      initials: initialsOf(name),
+      status: activeStatus(doctor.is_active),
+      muted: !doctor.is_active,
+      fields: [{ label: translate('doctors.professionalNumber'), value: doctor.professional_number }],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly auth = inject(AuthService);

@@ -38,50 +38,64 @@
 } @else if (dataSource.data.length === 0) {
   <app-empty-state icon="medication" [message]="'prescriptions.empty' | transloco" />
 } @else {
-  <div class="table-scroll">
-  <table mat-table [dataSource]="dataSource" class="prescriptions-table">
-    <ng-container matColumnDef="created_at">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
-      <td mat-cell *matCellDef="let prescription">{{ prescription.created_at | date: 'short' }}</td>
-    </ng-container>
+  <ng-template #rowActions let-prescription>
+    <div class="actions">
+      <button mat-icon-button [matTooltip]="'common.actions.open' | transloco" (click)="openEdit(prescription)">
+        <mat-icon>{{ prescription.status === 'draft' ? 'edit' : 'visibility' }}</mat-icon>
+      </button>
+      <button mat-icon-button [matTooltip]="'common.actions.downloadPdf' | transloco" (click)="downloadPdf(prescription)">
+        <mat-icon>picture_as_pdf</mat-icon>
+      </button>
+    </div>
+  </ng-template>
 
-    <ng-container matColumnDef="patient">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
-      <td mat-cell *matCellDef="let prescription">{{ prescription.patient_display }}</td>
-    </ng-container>
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (prescription of dataSource.data; track prescription.id) {
+        <app-record-card [card]="cardFor(prescription)">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: prescription }" />
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="prescriptions-table">
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.date' | transloco }}</th>
+        <td mat-cell *matCellDef="let prescription">{{ prescription.created_at | date: 'short' }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="doctor">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.doctor' | transloco }}</th>
-      <td mat-cell *matCellDef="let prescription">{{ prescription.doctor_display }}</td>
-    </ng-container>
+      <ng-container matColumnDef="patient">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.patient' | transloco }}</th>
+        <td mat-cell *matCellDef="let prescription">{{ prescription.patient_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
-      <td mat-cell *matCellDef="let prescription">
-        <mat-chip [class]="'status-chip status-' + prescription.status" disableRipple>
-          {{ statusLabel(prescription) }}
-        </mat-chip>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="doctor">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.doctor' | transloco }}</th>
+        <td mat-cell *matCellDef="let prescription">{{ prescription.doctor_display }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
-      <td mat-cell *matCellDef="let prescription">
-        <div class="actions">
-          <button mat-icon-button [matTooltip]="'common.actions.open' | transloco" (click)="openEdit(prescription)">
-            <mat-icon>{{ prescription.status === 'draft' ? 'edit' : 'visibility' }}</mat-icon>
-          </button>
-          <button mat-icon-button [matTooltip]="'common.actions.downloadPdf' | transloco" (click)="downloadPdf(prescription)">
-            <mat-icon>picture_as_pdf</mat-icon>
-          </button>
-        </div>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
+        <td mat-cell *matCellDef="let prescription">
+          <mat-chip [class]="'status-chip status-' + prescription.status" disableRipple>
+            {{ statusLabel(prescription) }}
+          </mat-chip>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  </div>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+        <td mat-cell *matCellDef="let prescription">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: prescription }" />
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    </div>
+  }
 
   <mat-paginator
     [length]="totalCount()"

@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,7 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -22,6 +22,9 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { CONSULTATION_STATUS_LABELS, Consultation, ConsultationStatus } from '../consultation.model';
 import { ConsultationForm } from '../consultation-form/consultation-form';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -29,6 +32,8 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-consultation-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     DatePipe,
     EmptyState,
     MatButtonModule,
@@ -47,6 +52,18 @@ const SEARCH_DEBOUNCE_MS = 300;
   styleUrl: './consultation-list.css',
 })
 export class ConsultationList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(consultation: Consultation): RecordCardData {
+    return {
+      title: consultation.patient_display,
+      subtitle: consultation.doctor_display,
+      icon: 'medical_information',
+      status: { label: this.statusLabel(consultation), tone: statusTone(consultation.status) },
+      fields: [{ label: translate('common.columns.date'), value: consultation.date, date: 'short' }],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   protected readonly auth = inject(AuthService);

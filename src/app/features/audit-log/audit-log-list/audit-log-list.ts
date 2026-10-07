@@ -11,13 +11,16 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { toIsoDate } from '../../../core/utils/date';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { AUDIT_ACTION_LABELS, AuditAction, AuditLogEntry, auditModelLabel } from '../audit-log.model';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -25,6 +28,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-audit-log-list',
   imports: [
+    RecordCard,
     DatePipe,
     EmptyState,
     MatChipsModule,
@@ -42,6 +46,20 @@ const SEARCH_DEBOUNCE_MS = 300;
   styleUrl: './audit-log-list.css',
 })
 export class AuditLogList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(entry: AuditLogEntry): RecordCardData {
+    return {
+      title: `${this.actionLabel(entry)} — ${this.modelLabel(entry.model_name)}`,
+      subtitle: entry.user_display,
+      icon: 'history',
+      fields: [
+        { label: translate('common.columns.date'), value: entry.created_at, date: 'short' },
+        { label: translate('auditLog.objectId'), value: entry.object_id },
+      ],
+    };
+  }
+
   private readonly router = inject(Router);
 
   readonly action = input<AuditAction | undefined>();

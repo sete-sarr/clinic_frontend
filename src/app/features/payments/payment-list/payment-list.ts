@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -28,6 +28,9 @@ import {
 } from '../payment.model';
 import { PaymentService } from '../payment.service';
 import { MoneyPipe } from '../../../core/utils/money';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -35,6 +38,8 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-payment-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     MoneyPipe,
     DatePipe,
     EmptyState,
@@ -55,6 +60,22 @@ const SEARCH_DEBOUNCE_MS = 300;
   styleUrl: './payment-list.css',
 })
 export class PaymentList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(payment: Payment): RecordCardData {
+    return {
+      title: payment.patient_display,
+      subtitle: payment.invoice_number,
+      icon: 'payments',
+      status: { label: this.statusLabel(payment), tone: statusTone(payment.status) },
+      fields: [
+        { label: translate('payments.amount'), value: payment.amount, currency: payment.currency },
+        { label: translate('payments.method'), value: this.methodLabel(payment) },
+        { label: translate('common.columns.date'), value: payment.date, date: 'mediumDate' },
+      ],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly paymentService = inject(PaymentService);
   protected readonly auth = inject(AuthService);

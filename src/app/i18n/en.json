@@ -137,7 +137,8 @@
     "patientSearch": "Search by name, phone or patient ID",
     "patientFilterPlaceholder": "Patient name, patient ID...",
     "invoiceFilterPlaceholder": "Patient name, invoice no....",
-    "draft": "Draft"
+    "draft": "Draft",
+    "archived": "Archived"
   },
   "auth": {
     "brand": {
@@ -433,7 +434,8 @@
     "patientSearch": "Search by name, phone or patient ID",
     "saved": "Appointment saved.",
     "saveError": "Unable to save the appointment.",
-    "edit": "Edit appointment"
+    "edit": "Edit appointment",
+    "checkedInLabel": "Check-in ticket"
   },
   "consultations": {
     "title": "Consultations",

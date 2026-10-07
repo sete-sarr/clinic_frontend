@@ -235,6 +235,14 @@ body {
   white-space: nowrap;
 }
 
+// Listes sur mobile : une carte (app-record-card) par ligne au lieu du tableau.
+.record-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
 .table-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;

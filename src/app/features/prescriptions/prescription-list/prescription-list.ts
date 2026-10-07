@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -22,6 +22,9 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { PRESCRIPTION_STATUS_LABELS, Prescription, PrescriptionStatus } from '../prescription.model';
 import { PrescriptionForm } from '../prescription-form/prescription-form';
 import { PrescriptionService } from '../prescription.service';
+import { RecordCard } from '../../../shared/components/record-card/record-card';
+import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
+import { injectIsHandset } from '../../../core/utils/handset';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -29,6 +32,8 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-prescription-list',
   imports: [
+    NgTemplateOutlet,
+    RecordCard,
     DatePipe,
     EmptyState,
     MatButtonModule,
@@ -47,6 +52,18 @@ const SEARCH_DEBOUNCE_MS = 300;
   styleUrl: './prescription-list.css',
 })
 export class PrescriptionList {
+  protected readonly isHandset = injectIsHandset();
+
+  protected cardFor(prescription: Prescription): RecordCardData {
+    return {
+      title: prescription.patient_display,
+      subtitle: prescription.doctor_display,
+      icon: 'description',
+      status: { label: this.statusLabel(prescription), tone: statusTone(prescription.status) },
+      fields: [{ label: translate('common.columns.date'), value: prescription.created_at, date: 'short' }],
+    };
+  }
+
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly prescriptionService = inject(PrescriptionService);

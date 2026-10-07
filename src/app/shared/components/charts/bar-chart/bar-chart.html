@@ -42,7 +42,7 @@
           <tr>
             <th scope="row">{{ titleFor(row) }}</th>
             @for (serie of series(); track serie.key) {
-              <td>{{ format()(serie.values[row] ?? 0) }}</td>
+              <td>{{ format()(serie.values[row]) }}</td>
             }
             @if (series().length > 1) {
               <td class="total">{{ format()(totalFor(row)) }}</td>
@@ -115,7 +115,7 @@
         @for (serie of series(); track serie.key) {
           <div class="tooltip-row">
             <span class="tooltip-key" [style.background]="serie.color"></span>
-            <strong>{{ format()(serie.values[active()!] ?? 0) }}</strong>
+            <strong>{{ format()(serie.values[active()!]) }}</strong>
             <span class="tooltip-label">{{ serie.label }}</span>
           </div>
         }

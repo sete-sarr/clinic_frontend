@@ -235,14 +235,21 @@ body {
   white-space: nowrap;
 }
 
-// Barre de filtres des listes sur mobile : chaque liste déroulante (Statut, Genre, Méthode, Action…)
-// occupe toute la largeur. !important : chaque page fixe une largeur de composant (.status-filter,
-// .filter-field…) plus spécifique. Les champs de recherche et de date gardent leur disposition.
-@media (max-width: 599px) {
-  .filters mat-form-field:has(mat-select) {
+// Barre de filtres des listes sur mobile (même point d'arrêt que les cartes : Breakpoints.Handset) :
+// chaque champ (Statut, Genre, Méthode, Action, recherche…) occupe toute la largeur. Sans :has(),
+// non pris en charge par certains navigateurs mobiles. !important : chaque page fixe une largeur plus
+// spécifique (.status-filter, .filter-field…). Exception : les dates « Du / Au » restent côte à côte.
+@media (max-width: 599.98px) and (orientation: portrait), (max-width: 959.98px) and (orientation: landscape) {
+  .filters mat-form-field {
     flex: 1 1 100% !important;
     width: 100% !important;
     max-width: none !important;
+  }
+
+  .filters mat-form-field.date-field {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0;
   }
 }
 

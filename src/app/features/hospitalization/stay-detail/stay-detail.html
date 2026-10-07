@@ -125,6 +125,10 @@
     </ul>
   }
 
+  @if (isClinical() && stay.status === 'admitted') {
+    <app-inpatient-summary [patient]="stay.patient" />
+  }
+
   @if (isClinical()) {
     <div class="section-header">
       <h2 class="section-title">{{ 'hospitalization.vitalSigns' | transloco }}</h2>

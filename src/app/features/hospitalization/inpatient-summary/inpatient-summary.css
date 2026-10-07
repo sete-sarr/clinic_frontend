@@ -1,0 +1,89 @@
+.section-title {
+  margin: var(--space-6) 0 var(--space-3);
+  font-size: 1.125rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+.summary-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.summary-card h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: 1rem;
+}
+
+.summary-card h3 mat-icon {
+  color: var(--color-primary);
+}
+
+dl {
+  margin: 0;
+}
+
+dt {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+dd {
+  margin: 0 0 var(--space-3);
+  white-space: pre-wrap;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item-title {
+  font-weight: var(--font-weight-medium);
+}
+
+.muted {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+/* Allergie connue, résultat hors norme : couleur doublée d'une mention écrite. */
+.alert,
+.flag {
+  color: var(--color-error);
+}
+
+.flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: var(--space-2);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.flag mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}

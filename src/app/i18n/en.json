@@ -1073,6 +1073,18 @@
       "oxygen_saturation": "SpO₂",
       "weight": "Weight",
       "pain": "Pain"
+    },
+    "summary": {
+      "title": "Patient file",
+      "record": "Medical record",
+      "allergies": "Allergies",
+      "history": "Medical history",
+      "none": "Nothing recorded",
+      "noRecord": "Medical record not available.",
+      "prescriptions": "Current prescriptions",
+      "noPrescriptions": "No validated prescriptions.",
+      "labResults": "Lab results",
+      "noLabResults": "No validated results."
     }
   },
   "visitors": {

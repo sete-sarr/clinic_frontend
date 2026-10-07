@@ -1,0 +1,61 @@
+<h2 class="section-title">{{ 'hospitalization.summary.title' | transloco }}</h2>
+
+<div class="summary-grid">
+  @if (seesRecord()) {
+    <section class="summary-card">
+      <h3><mat-icon>folder_shared</mat-icon>{{ 'hospitalization.summary.record' | transloco }}</h3>
+      @if (recordResource.value(); as record) {
+        <dl>
+          <dt>{{ 'hospitalization.summary.allergies' | transloco }}</dt>
+          <dd [class.alert]="record.allergies">{{ record.allergies || ('hospitalization.summary.none' | transloco) }}</dd>
+          <dt>{{ 'hospitalization.summary.history' | transloco }}</dt>
+          <dd>{{ record.medical_history || ('hospitalization.summary.none' | transloco) }}</dd>
+        </dl>
+      } @else {
+        <p class="muted">{{ 'hospitalization.summary.noRecord' | transloco }}</p>
+      }
+    </section>
+  }
+
+  <section class="summary-card">
+    <h3><mat-icon>medication</mat-icon>{{ 'hospitalization.summary.prescriptions' | transloco }}</h3>
+    @if (prescriptionItems().length === 0) {
+      <p class="muted">{{ 'hospitalization.summary.noPrescriptions' | transloco }}</p>
+    } @else {
+      <ul>
+        @for (item of prescriptionItems(); track $index) {
+          <li>
+            <span class="item-title">{{ item.medication_name }}</span>
+            <span class="muted">{{ item.dosage }} · {{ item.frequency }} · {{ item.duration }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <section class="summary-card">
+    <h3><mat-icon>biotech</mat-icon>{{ 'hospitalization.summary.labResults' | transloco }}</h3>
+    @if (labResource.value().results.length === 0) {
+      <p class="muted">{{ 'hospitalization.summary.noLabResults' | transloco }}</p>
+    } @else {
+      <ul>
+        @for (order of labResource.value().results; track order.id) {
+          @for (item of order.items; track item.id) {
+            <li [class.alert]="item.result?.is_abnormal">
+              <span class="item-title">
+                {{ item.test_name }} : {{ item.result?.value || '—' }} {{ item.unit }}
+                @if (item.result?.is_abnormal) {
+                  <span class="flag"><mat-icon>warning</mat-icon>{{ 'laboratory.abnormal' | transloco }}</span>
+                }
+              </span>
+              <span class="muted">
+                {{ 'laboratory.reference' | transloco }} : {{ referenceRange(item.reference_min, item.reference_max) }}
+                · {{ order.validated_at | date: 'short' }}
+              </span>
+            </li>
+          }
+        }
+      </ul>
+    }
+  </section>
+</div>

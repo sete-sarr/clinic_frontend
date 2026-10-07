@@ -1073,6 +1073,18 @@
       "oxygen_saturation": "SpO₂",
       "weight": "Poids",
       "pain": "Douleur"
+    },
+    "summary": {
+      "title": "Dossier du patient",
+      "record": "Dossier médical",
+      "allergies": "Allergies",
+      "history": "Antécédents",
+      "none": "Aucun renseignement",
+      "noRecord": "Dossier médical non disponible.",
+      "prescriptions": "Prescriptions en cours",
+      "noPrescriptions": "Aucune prescription validée.",
+      "labResults": "Résultats de laboratoire",
+      "noLabResults": "Aucun résultat validé."
     }
   },
   "visitors": {

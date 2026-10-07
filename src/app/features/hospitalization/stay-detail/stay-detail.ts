@@ -23,6 +23,7 @@ import {
   VitalSign,
 } from '../hospitalization.model';
 import { HospitalizationService } from '../hospitalization.service';
+import { InpatientSummary } from '../inpatient-summary/inpatient-summary';
 import { BedChoiceDialog } from '../stay-dialogs/bed-choice-dialog';
 import { DischargeDialog } from '../stay-dialogs/discharge-dialog';
 import { VITAL_FIELDS, VitalSignDialog } from '../stay-dialogs/vital-sign-dialog';
@@ -34,6 +35,7 @@ import { VITAL_FIELDS, VitalSignDialog } from '../stay-dialogs/vital-sign-dialog
   selector: 'app-stay-detail',
   imports: [
     DatePipe,
+    InpatientSummary,
     RouterLink,
     MatButtonModule,
     MatChipsModule,

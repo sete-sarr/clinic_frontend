@@ -1,5 +1,5 @@
 // import { DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
-// import { httpResource } from '@angular/common/http';
+// 
 // import { Component, computed, inject, signal } from '@angular/core';
 // import { MatButtonModule } from '@angular/material/button';
 // import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -56,7 +56,7 @@
 
 //   private readonly clinicId = computed(() => this.auth.user()?.clinic ?? null);
 
-//   protected readonly clinicResource = httpResource<Clinic | null>(
+//   protected readonly clinicResource = apiResource<Clinic | null>(
 //     () => {
 //       const id = this.clinicId();
 //       return id ? { url: `${environment.apiBaseUrl}/clinics/${id}/` } : undefined;
@@ -110,9 +110,7 @@
 //   }
 // }
 
-
 import { DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -136,6 +134,7 @@ import {
 import { SuccessNotifier } from '../../shared/notifications/success-notifier';
 import { CURRENCY_LABEL, PLAN_CATALOG, TRIAL_DAYS, priceForCycle } from './plan-catalog';
 import { SubscriptionService } from './subscription.service';
+import { apiResource } from '../../core/api/api-resource';
 
 type CheckoutNotice =
   | {
@@ -187,7 +186,7 @@ export class Subscription {
     () => this.auth.user()?.clinic ?? null,
   );
 
-  protected readonly clinicResource = httpResource<Clinic | null>(
+  protected readonly clinicResource = apiResource<Clinic | null>(
     () => {
       const id = this.clinicId();
 

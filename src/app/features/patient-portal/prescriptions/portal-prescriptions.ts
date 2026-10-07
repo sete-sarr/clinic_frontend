@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, input, numberAttribute } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +14,7 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { PRESCRIPTION_STATUS_LABELS, Prescription } from '../../prescriptions/prescription.model';
 import { PrescriptionService } from '../../prescriptions/prescription.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 
@@ -45,7 +45,7 @@ export class PortalPrescriptions {
 
   // Même endpoint que celui utilisé par la liste des ordonnances du personnel — CanManagePrescriptions restreint déjà
   // les méthodes SAFE aux propres ordonnances du patient.
-  protected readonly prescriptionsResource = httpResource<Paginated<Prescription>>(
+  protected readonly prescriptionsResource = apiResource<Paginated<Prescription>>(
     () => ({ url: `${environment.apiBaseUrl}/prescriptions/`, params: { page: this.page() } }),
     { defaultValue: emptyPage<Prescription>() },
   );

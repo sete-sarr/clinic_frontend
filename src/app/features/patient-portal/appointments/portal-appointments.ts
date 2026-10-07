@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +16,7 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { APPOINTMENT_STATUS_LABELS, Appointment } from '../../appointments/appointment.model';
 import { PortalAppointmentForm } from './portal-appointment-form/portal-appointment-form';
 import { PortalAppointmentService } from './portal-appointment.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 // REST_FRAMEWORK PAGE_SIZE (backend/backend/settings.py) — la classe de pagination par défaut n'expose
 // pas de surcharge de page_size via un paramètre de requête, donc ceci doit correspondre exactement à la taille de page réelle du serveur.
@@ -59,7 +59,7 @@ export class PortalAppointments {
 
   // Même endpoint que celui utilisé par la liste des rendez-vous du personnel — le backend le restreint déjà
   // aux "rendez-vous personnels uniquement" pour le rôle patient (patients/../get_queryset, branche patient).
-  protected readonly appointmentsResource = httpResource<Paginated<Appointment>>(
+  protected readonly appointmentsResource = apiResource<Paginated<Appointment>>(
     () => ({
       url: `${environment.apiBaseUrl}/appointments/`,
       params: { page: this.page() },

@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +25,7 @@ import {
   AdmissionStatus,
 } from '../hospitalization.model';
 import { HospitalizationService } from '../hospitalization.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -70,7 +70,7 @@ export class StayList {
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly staysResource = httpResource<Paginated<Admission>>(
+  protected readonly staysResource = apiResource<Paginated<Admission>>(
     () => ({
       url: this.hospitalizationService.admissionsUrl,
       params: {

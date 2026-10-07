@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, maxLength, required, submit } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -22,6 +21,7 @@ import { parseIsoDate, toIsoDate } from '../../../core/utils/date';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { Appointment, AppointmentPayload } from '../appointment.model';
 import { AppointmentService } from '../appointment.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface AppointmentFormDialogData {
   id?: string;
@@ -74,7 +74,7 @@ export class AppointmentForm {
   protected readonly formatDoctor = formatDoctor;
   protected readonly today = new Date();
 
-  protected readonly appointmentResource = httpResource<Appointment | null>(
+  protected readonly appointmentResource = apiResource<Appointment | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/appointments/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );
@@ -90,7 +90,7 @@ export class AppointmentForm {
   protected readonly patientQuery = signal('');
   protected readonly patientLabel = signal('');
 
-  protected readonly patientsResource = httpResource<Paginated<PatientSummary>>(
+  protected readonly patientsResource = apiResource<Paginated<PatientSummary>>(
     () => ({
       url: `${environment.apiBaseUrl}/patients/`,
       params: { search: this.patientQuery(), page_size: 10 },
@@ -98,7 +98,7 @@ export class AppointmentForm {
     { defaultValue: emptyPage<PatientSummary>() },
   );
 
-  protected readonly doctorsResource = httpResource<Paginated<DoctorSummary>>(
+  protected readonly doctorsResource = apiResource<Paginated<DoctorSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/doctors/`, params: { page_size: 100 } }),
     { defaultValue: emptyPage<DoctorSummary>() },
   );

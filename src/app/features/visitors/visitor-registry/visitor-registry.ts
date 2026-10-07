@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -29,6 +28,7 @@ import { VisitEditDialog } from '../visit-edit-dialog/visit-edit-dialog';
 import { VisitForm } from '../visit-form/visit-form';
 import { VISITOR_TYPES, VISITOR_TYPE_LABELS, Visit, VisitorType } from '../visitor.model';
 import { VisitorService } from '../visitor.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const PRESENT_LIMIT = 200;
@@ -87,11 +87,11 @@ export class VisitorRegistry {
     ...(this.dateTo() ? { date_to: this.dateTo()! } : {}),
   }));
 
-  protected readonly presentResource = httpResource<Paginated<Visit>>(
+  protected readonly presentResource = apiResource<Paginated<Visit>>(
     () => ({ url: this.visitorService.url, params: { present: 'true', page_size: PRESENT_LIMIT } }),
     { defaultValue: emptyPage<Visit>() },
   );
-  protected readonly historyResource = httpResource<Paginated<Visit>>(
+  protected readonly historyResource = apiResource<Paginated<Visit>>(
     () => ({ url: this.visitorService.url, params: { page: this.page(), ...this.historyParams() } }),
     { defaultValue: emptyPage<Visit>() },
   );

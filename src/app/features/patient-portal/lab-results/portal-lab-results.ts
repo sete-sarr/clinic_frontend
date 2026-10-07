@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, input, numberAttribute } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +12,7 @@ import { openBlobInNewTab } from '../../../core/utils/file-download';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { LabOrder, LabOrderItem, referenceRange } from '../../laboratory/laboratory.model';
 import { LaboratoryService } from '../../laboratory/laboratory.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 
@@ -41,7 +41,7 @@ export class PortalLabResults {
   protected readonly pageSize = PAGE_SIZE;
   protected readonly referenceRange = referenceRange;
 
-  protected readonly ordersResource = httpResource<Paginated<LabOrder>>(
+  protected readonly ordersResource = apiResource<Paginated<LabOrder>>(
     () => ({ url: this.laboratoryService.ordersUrl, params: { page: this.page() } }),
     { defaultValue: emptyPage<LabOrder>() },
   );

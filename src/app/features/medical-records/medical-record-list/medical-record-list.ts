@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
@@ -21,6 +20,7 @@ import { MedicalRecordForm } from '../medical-record-form/medical-record-form';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -69,7 +69,7 @@ export class MedicalRecordList {
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly recordsResource = httpResource<Paginated<MedicalRecord>>(
+  protected readonly recordsResource = apiResource<Paginated<MedicalRecord>>(
     () => ({
       url: `${environment.apiBaseUrl}/medical-records/`,
       params: {

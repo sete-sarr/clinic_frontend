@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -26,6 +25,7 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { LabTestForm } from '../lab-test-form/lab-test-form';
 import { LabTest, referenceRange } from '../laboratory.model';
 import { LaboratoryService } from '../laboratory.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 
@@ -66,7 +66,7 @@ export class LabTestList {
   protected readonly referenceRange = referenceRange;
   protected readonly displayedColumns = ['code', 'name', 'unit', 'reference', 'price', 'status', 'actions'];
 
-  protected readonly testsResource = httpResource<Paginated<LabTest>>(
+  protected readonly testsResource = apiResource<Paginated<LabTest>>(
     () => ({
       url: this.laboratoryService.testsUrl,
       params: { page: this.page(), ...(this.search() ? { search: this.search() } : {}) },

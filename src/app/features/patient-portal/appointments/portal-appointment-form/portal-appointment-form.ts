@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, maxLength, required, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +19,7 @@ import { toIsoDate } from '../../../../core/utils/date';
 import { SuccessNotifier } from '../../../../shared/notifications/success-notifier';
 import { PortalAppointmentPayload } from '../portal-appointment.model';
 import { PortalAppointmentService } from '../portal-appointment.service';
+import { apiResource } from '../../../../core/api/api-resource';
 
 interface PortalAppointmentFormModel {
   doctor: number | null;
@@ -58,7 +58,7 @@ export class PortalAppointmentForm {
   protected readonly formatDoctor = formatDoctor;
   protected readonly today = new Date();
 
-  protected readonly doctorsResource = httpResource<Paginated<DoctorSummary>>(
+  protected readonly doctorsResource = apiResource<Paginated<DoctorSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/doctors/`, params: { page_size: 100 } }),
     { defaultValue: emptyPage<DoctorSummary>() },
   );

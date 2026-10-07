@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +11,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { parseApiError } from '../../../core/api/api-error';
 import { VISITOR_TYPES, VISITOR_TYPE_LABELS, Visit, VisitPayload, VisitTargets } from '../visitor.model';
 import { VisitorService } from '../visitor.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 type TargetChoice = { kind: 'admission' | 'staff'; id: number; label: string };
 
@@ -53,7 +53,7 @@ export class VisitForm implements OnInit {
   protected readonly pending = signal(false);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly targetsResource = httpResource<VisitTargets>(
+  protected readonly targetsResource = apiResource<VisitTargets>(
     () => ({ url: this.visitorService.targetsUrl, params: { search: this.targetText() } }),
     { defaultValue: { admissions: [], staff: [] } },
   );

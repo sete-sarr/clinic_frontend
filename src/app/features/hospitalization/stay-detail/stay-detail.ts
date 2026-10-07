@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +27,7 @@ import { VitalTrends } from '../vital-trends/vital-trends';
 import { BedChoiceDialog } from '../stay-dialogs/bed-choice-dialog';
 import { DischargeDialog } from '../stay-dialogs/discharge-dialog';
 import { VITAL_FIELDS, VitalSignDialog } from '../stay-dialogs/vital-sign-dialog';
+import { apiResource } from '../../../core/api/api-resource';
 
 // Fiche de séjour. Les boutons suivent la machine à états et le rôle (permissions-matrix.md §
 // HOSPITALISATION, CONSTANTES ET NOTES DE SOINS) ; le backend revérifie chaque action et ne renvoie
@@ -62,7 +62,7 @@ export class StayDetail {
   protected readonly statusTones = ADMISSION_STATUS_TONES;
   protected readonly vitalFields = VITAL_FIELDS;
 
-  protected readonly stayResource = httpResource<Admission>(() => `${this.hospitalizationService.admissionsUrl}${this.id()}/`);
+  protected readonly stayResource = apiResource<Admission>(() => `${this.hospitalizationService.admissionsUrl}${this.id()}/`);
   private readonly updated = signal<Admission | null>(null);
   protected readonly stay = computed(() => this.updated() ?? this.stayResource.value() ?? null);
 
@@ -81,11 +81,11 @@ export class StayDetail {
   protected readonly canPrint = computed(() => this.isClinical() && this.status() === 'discharged');
 
   // Soins : chargés seulement pour les rôles cliniques (403 pour les autres).
-  protected readonly vitalsResource = httpResource<VitalSign[]>(
+  protected readonly vitalsResource = apiResource<VitalSign[]>(
     () => (this.isClinical() ? `${this.hospitalizationService.admissionsUrl}${this.id()}/vitals/` : undefined),
     { defaultValue: [] },
   );
-  protected readonly notesResource = httpResource<NursingNote[]>(
+  protected readonly notesResource = apiResource<NursingNote[]>(
     () => (this.isClinical() ? `${this.hospitalizationService.admissionsUrl}${this.id()}/notes/` : undefined),
     { defaultValue: [] },
   );

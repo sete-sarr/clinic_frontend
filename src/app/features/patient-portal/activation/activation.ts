@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormField, form, maxLength, required, submit } from '@angular/forms/signals';
 import { Router } from '@angular/router';
@@ -19,6 +18,7 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { toIsoDate } from '../../../core/utils/date';
 import { ActivationService, ClinicSummary } from './activation.service';
 import { LanguageSwitcher } from '../../../shared/components/language-switcher/language-switcher';
+import { apiResource } from '../../../core/api/api-resource';
 
 interface IdentityFormModel {
   clinic: number | null;
@@ -61,7 +61,7 @@ export class Activation {
   protected readonly clinicQuery = signal('');
   protected readonly clinicLabel = signal('');
 
-  protected readonly clinicsResource = httpResource<Paginated<ClinicSummary>>(
+  protected readonly clinicsResource = apiResource<Paginated<ClinicSummary>>(
     () => ({
       url: `${environment.apiBaseUrl}/clinics/public/`,
       params: { search: this.clinicQuery(), page_size: 10 },

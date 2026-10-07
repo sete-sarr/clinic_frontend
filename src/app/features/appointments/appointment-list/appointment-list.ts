@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, booleanAttribute, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -34,6 +33,7 @@ import { AppointmentService } from '../appointment.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -83,7 +83,6 @@ export class AppointmentList {
   private readonly appointmentService = inject(AppointmentService);
   protected readonly auth = inject(AuthService);
 
-
   // Entrées liées au routeur (withComponentInputBinding) : chaque query param alimente l'entrée de
   // MÊME NOM — d'où `patientNumber` / `checkedIn` dans l'URL (et non patient_number / checked_in,
   // noms des paramètres de l'API). Les query params absents sont mis à `undefined`, donc `page`
@@ -107,7 +106,7 @@ export class AppointmentList {
   protected readonly patientNumberInput = signal('');
   private patientNumberDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly appointmentsResource = httpResource<Paginated<Appointment>>(
+  protected readonly appointmentsResource = apiResource<Paginated<Appointment>>(
     () => ({
       url: `${environment.apiBaseUrl}/appointments/`,
       params: {

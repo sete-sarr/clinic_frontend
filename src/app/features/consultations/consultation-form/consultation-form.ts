@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, disabled, form, required, submit } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -29,6 +28,7 @@ import {
   LOCKED_CONSULTATION_STATUSES,
 } from '../consultation.model';
 import { ConsultationService } from '../consultation.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface ConsultationFormDialogData {
   id?: string;
@@ -114,7 +114,7 @@ export class ConsultationForm {
     return `${user.first_name} ${user.last_name}`.trim() || user.username;
   });
 
-  protected readonly consultationResource = httpResource<Consultation | null>(
+  protected readonly consultationResource = apiResource<Consultation | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/consultations/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );
@@ -143,7 +143,7 @@ export class ConsultationForm {
   protected readonly patientQuery = signal('');
   protected readonly patientLabel = signal('');
 
-  protected readonly patientsResource = httpResource<Paginated<PatientSummary>>(
+  protected readonly patientsResource = apiResource<Paginated<PatientSummary>>(
     () => ({
       url: `${environment.apiBaseUrl}/patients/`,
       params: { search: this.patientQuery(), page_size: 10 },
@@ -151,7 +151,7 @@ export class ConsultationForm {
     { defaultValue: emptyPage<PatientSummary>() },
   );
 
-  protected readonly doctorsResource = httpResource<Paginated<DoctorSummary>>(
+  protected readonly doctorsResource = apiResource<Paginated<DoctorSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/doctors/`, params: { page_size: 100 } }),
     { defaultValue: emptyPage<DoctorSummary>() },
   );

@@ -1,5 +1,4 @@
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -25,6 +24,7 @@ import { ConsultationForm } from '../consultation-form/consultation-form';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -82,7 +82,7 @@ export class ConsultationList {
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly consultationsResource = httpResource<Paginated<Consultation>>(
+  protected readonly consultationsResource = apiResource<Paginated<Consultation>>(
     () => ({
       url: `${environment.apiBaseUrl}/consultations/`,
       params: {

@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -25,6 +24,7 @@ import { StockBatchForm } from '../stock-batch-form/stock-batch-form';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 
@@ -75,7 +75,7 @@ export class MedicationList {
   protected readonly pageSize = PAGE_SIZE;
   protected readonly displayedColumns = ['name', 'unit', 'stock', 'thresholds', 'status', 'actions'];
 
-  protected readonly medicationsResource = httpResource<Paginated<Medication>>(
+  protected readonly medicationsResource = apiResource<Paginated<Medication>>(
     () => ({ url: `${environment.apiBaseUrl}/pharmacy/medications/`, params: { page: this.page() } }),
     { defaultValue: emptyPage<Medication>() },
   );

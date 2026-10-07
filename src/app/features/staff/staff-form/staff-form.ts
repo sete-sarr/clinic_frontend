@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, email, form, required, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +15,7 @@ import { parseApiError } from '../../../core/api/api-error';
 import { STAFF_ROLE_LABELS, StaffMember, StaffRole } from '../../../core/models/staff.model';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { StaffService } from '../staff.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface StaffFormDialogData {
   id?: string;
@@ -57,7 +57,7 @@ export class StaffForm {
   protected readonly isEditMode = computed(() => this.currentId() !== undefined);
   protected readonly roleOptions = Object.entries(STAFF_ROLE_LABELS) as [StaffRole, string][];
 
-  protected readonly memberResource = httpResource<StaffMember | null>(
+  protected readonly memberResource = apiResource<StaffMember | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/accounts/staff/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );

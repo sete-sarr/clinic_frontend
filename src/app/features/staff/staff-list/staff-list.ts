@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +24,7 @@ import { StaffService } from '../staff.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, activeStatus, initialsOf } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 
@@ -77,7 +77,7 @@ export class StaffList {
   protected readonly currentUserId = computed(() => this.auth.user()?.id ?? null);
   protected readonly canManage = computed(() => this.auth.hasRole('clinic_admin'));
 
-  protected readonly staffResource = httpResource<Paginated<StaffMember>>(
+  protected readonly staffResource = apiResource<Paginated<StaffMember>>(
     () => ({
       url: `${environment.apiBaseUrl}/accounts/staff/`,
       params: {

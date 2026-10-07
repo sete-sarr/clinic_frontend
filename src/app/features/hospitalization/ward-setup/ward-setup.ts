@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -18,6 +17,7 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { BED_STATUS_LABELS, Bed, Room, RoomType } from '../hospitalization.model';
 import { HospitalizationService, StructureKind } from '../hospitalization.service';
 import { StructureForm } from './structure-form';
+import { apiResource } from '../../../core/api/api-resource';
 
 const LIST_SIZE = 200;
 
@@ -48,7 +48,7 @@ export class WardSetup {
   protected readonly bedStatusLabels = BED_STATUS_LABELS;
 
   private resource<T>(kind: StructureKind) {
-    return httpResource<Paginated<T>>(
+    return apiResource<Paginated<T>>(
       () => ({ url: this.hospitalizationService.structureUrl(kind), params: { page_size: LIST_SIZE } }),
       { defaultValue: emptyPage<T>() },
     );

@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +21,7 @@ import { ChartSeries, DonutSegment } from '../../shared/components/charts/chart.
 import { DonutChart } from '../../shared/components/charts/donut-chart/donut-chart';
 import { EmptyState } from '../../shared/components/empty-state/empty-state';
 import { DashboardStats } from './dashboard-stats.model';
+import { apiResource } from '../../core/api/api-resource';
 
 @Component({
   selector: 'app-dashboard',
@@ -57,7 +57,7 @@ export class Dashboard {
     this.auth.hasRole('secretary', 'accountant', 'clinic_admin', 'doctor'),
   );
 
-  protected readonly todaysAppointments = httpResource<Paginated<Appointment>>(
+  protected readonly todaysAppointments = apiResource<Paginated<Appointment>>(
     () =>
       this.seesSchedule()
         ? { url: `${environment.apiBaseUrl}/appointments/`, params: { date: this.today, page_size: 5 } }
@@ -65,7 +65,7 @@ export class Dashboard {
     { defaultValue: emptyPage<Appointment>() },
   );
 
-  protected readonly draftConsultations = httpResource<Paginated<unknown>>(
+  protected readonly draftConsultations = apiResource<Paginated<unknown>>(
     () =>
       this.seesClinicalQueue()
         ? { url: `${environment.apiBaseUrl}/consultations/`, params: { status: 'draft', page_size: 1 } }
@@ -73,7 +73,7 @@ export class Dashboard {
     { defaultValue: emptyPage<unknown>() },
   );
 
-  protected readonly draftPrescriptions = httpResource<Paginated<unknown>>(
+  protected readonly draftPrescriptions = apiResource<Paginated<unknown>>(
     () =>
       this.seesClinicalQueue()
         ? { url: `${environment.apiBaseUrl}/prescriptions/`, params: { status: 'draft', page_size: 1 } }
@@ -81,7 +81,7 @@ export class Dashboard {
     { defaultValue: emptyPage<unknown>() },
   );
 
-  private readonly issuedInvoices = httpResource<Paginated<unknown>>(
+  private readonly issuedInvoices = apiResource<Paginated<unknown>>(
     () =>
       this.seesBilling()
         ? { url: `${environment.apiBaseUrl}/billing/`, params: { status: 'issued', page_size: 1 } }
@@ -89,7 +89,7 @@ export class Dashboard {
     { defaultValue: emptyPage<unknown>() },
   );
 
-  private readonly pendingPaymentInvoices = httpResource<Paginated<unknown>>(
+  private readonly pendingPaymentInvoices = apiResource<Paginated<unknown>>(
     () =>
       this.seesBilling()
         ? { url: `${environment.apiBaseUrl}/billing/`, params: { status: 'pending_payment', page_size: 1 } }
@@ -117,7 +117,7 @@ export class Dashboard {
   protected readonly seesCharts = computed(() =>
     this.auth.hasRole('clinic_admin', 'secretary', 'doctor', 'accountant'),
   );
-  protected readonly stats = httpResource<DashboardStats | null>(
+  protected readonly stats = apiResource<DashboardStats | null>(
     () => (this.seesCharts() ? { url: `${environment.apiBaseUrl}/reports/dashboard/` } : undefined),
     { defaultValue: null },
   );
@@ -189,7 +189,7 @@ export class Dashboard {
     return { segments, balanceDue: this.moneyFormat(Number(data.balance_due)) };
   });
 
-  protected readonly recentActivity = httpResource<Paginated<AuditLogEntry>>(
+  protected readonly recentActivity = apiResource<Paginated<AuditLogEntry>>(
     () =>
       this.isClinicAdmin()
         ? { url: `${environment.apiBaseUrl}/audit-log/`, params: { page_size: 8 } }

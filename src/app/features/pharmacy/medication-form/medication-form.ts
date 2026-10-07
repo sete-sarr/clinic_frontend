@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, maxLength, min, required, submit, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +16,7 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { MedicationService } from '../medication.service';
 import { DEFAULT_CURRENCY, currencySymbol } from '../../../core/utils/money';
 import { AuthService } from '../../../core/auth/auth.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface MedicationFormDialogData {
   id?: string;
@@ -56,7 +56,7 @@ export class MedicationForm {
   protected readonly currentId = signal<string | undefined>(this.data?.id);
   protected readonly isEditMode = computed(() => this.currentId() !== undefined);
 
-  protected readonly medicationResource = httpResource<Medication | null>(
+  protected readonly medicationResource = apiResource<Medication | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/pharmacy/medications/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );

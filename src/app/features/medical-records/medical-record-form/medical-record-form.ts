@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +14,7 @@ import { parseApiError } from '../../../core/api/api-error';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { MedicalRecord, MedicalRecordPayload } from '../medical-record.model';
 import { MedicalRecordService } from '../medical-record.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface MedicalRecordFormDialogData {
   id: string;
@@ -49,7 +49,7 @@ export class MedicalRecordForm {
 
   protected readonly currentId = signal<string | undefined>(this.data?.id);
 
-  protected readonly recordResource = httpResource<MedicalRecord | null>(
+  protected readonly recordResource = apiResource<MedicalRecord | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/medical-records/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );

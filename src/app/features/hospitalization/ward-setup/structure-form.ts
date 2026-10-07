@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -17,6 +16,7 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { DEFAULT_CURRENCY, currencySymbol } from '../../../core/utils/money';
 import { Bed, Room, RoomType } from '../hospitalization.model';
 import { HospitalizationService, StructureKind } from '../hospitalization.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface StructureFormData {
   kind: StructureKind;
@@ -51,15 +51,15 @@ export class StructureForm {
   protected readonly pending = signal(false);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly departmentsResource = httpResource<Paginated<DepartmentSummary>>(
+  protected readonly departmentsResource = apiResource<Paginated<DepartmentSummary>>(
     () => (this.data.kind === 'rooms' ? { url: `${environment.apiBaseUrl}/departments/`, params: { page_size: 200 } } : undefined),
     { defaultValue: emptyPage<DepartmentSummary>() },
   );
-  protected readonly roomTypesResource = httpResource<Paginated<RoomType>>(
+  protected readonly roomTypesResource = apiResource<Paginated<RoomType>>(
     () => (this.data.kind === 'rooms' ? { url: this.hospitalizationService.structureUrl('room-types'), params: { is_active: 'true', page_size: 200 } } : undefined),
     { defaultValue: emptyPage<RoomType>() },
   );
-  protected readonly roomsResource = httpResource<Paginated<Room>>(
+  protected readonly roomsResource = apiResource<Paginated<Room>>(
     () => (this.data.kind === 'beds' ? { url: this.hospitalizationService.structureUrl('rooms'), params: { is_active: 'true', page_size: 200 } } : undefined),
     { defaultValue: emptyPage<Room>() },
   );

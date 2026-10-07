@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, input, numberAttribute } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +15,7 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { INVOICE_STATUS_LABELS, Invoice } from '../../billing/invoice.model';
 import { InvoiceService } from '../../billing/invoice.service';
 import { MoneyPipe } from '../../../core/utils/money';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 
@@ -47,7 +47,7 @@ export class PortalInvoices {
 
   // Même endpoint que celui utilisé par la liste des factures du personnel — CanManageInvoices restreint déjà
   // les méthodes SAFE aux propres factures du patient.
-  protected readonly invoicesResource = httpResource<Paginated<Invoice>>(
+  protected readonly invoicesResource = apiResource<Paginated<Invoice>>(
     () => ({ url: `${environment.apiBaseUrl}/billing/`, params: { page: this.page() } }),
     { defaultValue: emptyPage<Invoice>() },
   );

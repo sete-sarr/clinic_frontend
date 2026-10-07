@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, email, form, required, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +17,7 @@ import { parseIsoDate, toIsoDate } from '../../../core/utils/date';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { BLOOD_TYPE_LABELS, BloodType, GENDER_LABELS, Gender, Patient, PatientPayload } from '../patient.model';
 import { PatientService } from '../patient.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface PatientFormDialogData {
   id?: string;
@@ -64,7 +64,7 @@ export class PatientForm {
   protected readonly genderOptions = Object.entries(GENDER_LABELS) as [Gender, string][];
   protected readonly bloodTypeOptions = Object.entries(BLOOD_TYPE_LABELS) as [BloodType, string][];
 
-  protected readonly patientResource = httpResource<Patient | null>(
+  protected readonly patientResource = apiResource<Patient | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/patients/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );

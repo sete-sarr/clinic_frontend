@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, required, submit, validate } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -21,6 +20,7 @@ import { PatientSummary } from '../../../core/models/patient.model';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { AdmissionPayload, Bed, bedLocation } from '../hospitalization.model';
 import { HospitalizationService } from '../hospitalization.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 function formatPatient(patient: PatientSummary): string {
   return `${patient.first_name} ${patient.last_name} (${patient.patient_number})`;
@@ -57,15 +57,15 @@ export class AdmissionForm {
   protected readonly patientQuery = signal('');
   protected readonly patientLabel = signal('');
 
-  protected readonly patientsResource = httpResource<Paginated<PatientSummary>>(
+  protected readonly patientsResource = apiResource<Paginated<PatientSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/patients/`, params: { search: this.patientQuery(), page_size: 10 } }),
     { defaultValue: emptyPage<PatientSummary>() },
   );
-  protected readonly departmentsResource = httpResource<Paginated<DepartmentSummary>>(
+  protected readonly departmentsResource = apiResource<Paginated<DepartmentSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/departments/`, params: { is_active: 'true', page_size: 100 } }),
     { defaultValue: emptyPage<DepartmentSummary>() },
   );
-  private readonly bedsResource = httpResource<Bed[]>(() => this.hospitalizationService.boardUrl, { defaultValue: [] });
+  private readonly bedsResource = apiResource<Bed[]>(() => this.hospitalizationService.boardUrl, { defaultValue: [] });
   protected readonly freeBeds = computed(() =>
     this.bedsResource.value().filter((bed) => bed.status === 'free' && bed.department === this.model().department),
   );

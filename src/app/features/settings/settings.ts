@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -21,6 +20,7 @@ import { UserGuideService } from '../../core/services/user-guide.service';
 import { SuccessNotifier } from '../../shared/notifications/success-notifier';
 import { ClinicService } from './clinic.service';
 import { CURRENCY_CODES, CurrencyCode, DEFAULT_CURRENCY, currencySymbol } from '../../core/utils/money';
+import { apiResource } from '../../core/api/api-resource';
 
 interface LogoField {
   key: 'logo_light' | 'logo_dark' | 'logo_print' | 'favicon';
@@ -66,7 +66,7 @@ export class Settings {
 
   private readonly clinicId = computed(() => this.auth.user()?.clinic ?? null);
 
-  protected readonly clinicResource = httpResource<Clinic | null>(
+  protected readonly clinicResource = apiResource<Clinic | null>(
     () => {
       const id = this.clinicId();
       return id ? { url: `${environment.apiBaseUrl}/clinics/${id}/` } : undefined;

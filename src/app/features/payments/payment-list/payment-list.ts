@@ -1,5 +1,4 @@
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,6 +30,7 @@ import { MoneyPipe } from '../../../core/utils/money';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -93,7 +93,7 @@ export class PaymentList {
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly paymentsResource = httpResource<Paginated<Payment>>(
+  protected readonly paymentsResource = apiResource<Paginated<Payment>>(
     () => ({
       url: `${environment.apiBaseUrl}/payments/`,
       params: {

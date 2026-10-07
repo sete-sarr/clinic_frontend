@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +13,7 @@ import {
   SEARCH_GROUP_LABELS,
   SearchResultItem,
 } from './global-search.model';
+import { apiResource } from '../../../core/api/api-resource';
 
 const SEARCH_DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 2;
@@ -33,7 +33,7 @@ export class GlobalSearch {
   protected readonly panelOpen = signal(false);
   private debounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly resultsResource = httpResource<GlobalSearchResults>(
+  protected readonly resultsResource = apiResource<GlobalSearchResults>(
     () =>
       this.submittedQuery().length >= MIN_QUERY_LENGTH
         ? { url: `${environment.apiBaseUrl}/search/`, params: { q: this.submittedQuery() } }

@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -10,6 +9,7 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { LabOrder, referenceRange } from '../../laboratory/laboratory.model';
 import { MedicalRecord } from '../../medical-records/medical-record.model';
 import { Prescription } from '../../prescriptions/prescription.model';
+import { apiResource } from '../../../core/api/api-resource';
 
 const API = environment.apiBaseUrl;
 
@@ -32,23 +32,23 @@ export class InpatientSummary {
   // Dossier médical : médecin et infirmier (l'administrateur n'y a pas accès, medical_records/permissions.py).
   protected readonly seesRecord = computed(() => this.auth.hasRole('doctor', 'nurse'));
 
-  private readonly recordListResource = httpResource<Paginated<MedicalRecord>>(
+  private readonly recordListResource = apiResource<Paginated<MedicalRecord>>(
     () => (this.seesRecord() ? { url: `${API}/medical-records/`, params: { patient: this.patient() } } : undefined),
     { defaultValue: emptyPage<MedicalRecord>() },
   );
   // Lecture du dossier par son détail : c'est elle qui est auditée (MedicalRecordViewSet.retrieve).
-  protected readonly recordResource = httpResource<MedicalRecord | null>(
+  protected readonly recordResource = apiResource<MedicalRecord | null>(
     () => {
       const record = this.recordListResource.value().results[0];
       return record ? `${API}/medical-records/${record.id}/` : undefined;
     },
     { defaultValue: null },
   );
-  protected readonly prescriptionsResource = httpResource<Paginated<Prescription>>(
+  protected readonly prescriptionsResource = apiResource<Paginated<Prescription>>(
     () => ({ url: `${API}/prescriptions/`, params: { patient: this.patient(), status: 'validated' } }),
     { defaultValue: emptyPage<Prescription>() },
   );
-  protected readonly labResource = httpResource<Paginated<LabOrder>>(
+  protected readonly labResource = apiResource<Paginated<LabOrder>>(
     () => ({ url: `${API}/laboratory/orders/`, params: { patient: this.patient(), status: 'validated' } }),
     { defaultValue: emptyPage<LabOrder>() },
   );

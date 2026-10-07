@@ -1,5 +1,4 @@
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -25,6 +24,7 @@ import { PrescriptionService } from '../prescription.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -83,7 +83,7 @@ export class PrescriptionList {
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly prescriptionsResource = httpResource<Paginated<Prescription>>(
+  protected readonly prescriptionsResource = apiResource<Paginated<Prescription>>(
     () => ({
       url: `${environment.apiBaseUrl}/prescriptions/`,
       params: {

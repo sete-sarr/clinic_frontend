@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -13,6 +12,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { parseApiError } from '../../../core/api/api-error';
 import { Admission, Bed, bedLocation } from '../hospitalization.model';
 import { HospitalizationService } from '../hospitalization.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface BedChoiceData {
   admission: Admission;
@@ -42,7 +42,7 @@ export class BedChoiceDialog {
   protected readonly data = inject<BedChoiceData>(MAT_DIALOG_DATA);
   protected readonly bedLocation = bedLocation;
 
-  private readonly bedsResource = httpResource<Bed[]>(() => this.hospitalizationService.boardUrl, { defaultValue: [] });
+  private readonly bedsResource = apiResource<Bed[]>(() => this.hospitalizationService.boardUrl, { defaultValue: [] });
   // Lits libres, ceux du service du séjour en premier.
   protected readonly freeBeds = computed(() =>
     this.bedsResource

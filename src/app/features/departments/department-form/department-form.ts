@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, maxLength, required, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +19,7 @@ import {
 } from '../../../core/models/department.model';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { DepartmentService } from '../department.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface DepartmentFormDialogData {
   id?: string;
@@ -59,7 +59,7 @@ export class DepartmentForm {
   protected readonly isEditMode = computed(() => this.currentId() !== undefined);
   protected readonly typeOptions = Object.entries(DEPARTMENT_TYPE_LABELS) as [DepartmentType, string][];
 
-  protected readonly departmentResource = httpResource<Department | null>(
+  protected readonly departmentResource = apiResource<Department | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/departments/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );

@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, email, form, required, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +17,7 @@ import { Doctor } from '../../../core/models/doctor.model';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { DoctorService } from '../doctor.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface DoctorFormDialogData {
   id?: string;
@@ -61,12 +61,12 @@ export class DoctorForm {
 
   protected readonly isEditMode = computed(() => this.currentId() !== undefined);
 
-  protected readonly doctorResource = httpResource<Doctor | null>(
+  protected readonly doctorResource = apiResource<Doctor | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/doctors/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );
 
-  protected readonly departmentsResource = httpResource<Paginated<DepartmentSummary>>(
+  protected readonly departmentsResource = apiResource<Paginated<DepartmentSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/departments/`, params: { is_active: true } }),
     { defaultValue: emptyPage<DepartmentSummary>() },
   );

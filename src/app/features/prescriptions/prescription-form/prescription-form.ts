@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, LOCALE_ID, computed, effect, inject, signal } from '@angular/core';
 import {
   FieldTree,
@@ -40,6 +39,7 @@ import {
   PrescriptionPayload,
 } from '../prescription.model';
 import { PrescriptionService } from '../prescription.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface PrescriptionFormDialogData {
   id?: string;
@@ -123,7 +123,7 @@ export class PrescriptionForm {
     return `${user.first_name} ${user.last_name}`.trim() || user.username;
   });
 
-  protected readonly prescriptionResource = httpResource<Prescription | null>(
+  protected readonly prescriptionResource = apiResource<Prescription | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/prescriptions/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );
@@ -143,7 +143,7 @@ export class PrescriptionForm {
   protected readonly patientLabel = signal('');
   protected readonly selectedPatientId = signal<number | null>(null);
 
-  protected readonly patientsResource = httpResource<Paginated<PatientSummary>>(
+  protected readonly patientsResource = apiResource<Paginated<PatientSummary>>(
     () => ({
       url: `${environment.apiBaseUrl}/patients/`,
       params: { search: this.patientQuery(), page_size: 10 },
@@ -151,13 +151,13 @@ export class PrescriptionForm {
     { defaultValue: emptyPage<PatientSummary>() },
   );
 
-  protected readonly doctorsResource = httpResource<Paginated<DoctorSummary>>(
+  protected readonly doctorsResource = apiResource<Paginated<DoctorSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/doctors/`, params: { page_size: 100 } }),
     { defaultValue: emptyPage<DoctorSummary>() },
   );
 
   // Récupéré uniquement en mode création — en mode édition, le lien vers la consultation est immuable (voir disabled() ci-dessous).
-  protected readonly consultationsResource = httpResource<Paginated<Consultation>>(
+  protected readonly consultationsResource = apiResource<Paginated<Consultation>>(
     () =>
       this.selectedPatientId()
         ? {

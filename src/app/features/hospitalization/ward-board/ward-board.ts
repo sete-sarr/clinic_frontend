@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +16,7 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { AdmissionForm } from '../admission-form/admission-form';
 import { Admission, BED_STATUSES, BED_STATUS_LABELS, BED_STATUS_TONES, Bed, BedStatus } from '../hospitalization.model';
 import { BedTransition, HospitalizationService } from '../hospitalization.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 interface RoomGroup {
   number: string;
@@ -68,7 +68,7 @@ export class WardBoard {
   protected readonly pending = signal<number | null>(null);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly bedsResource = httpResource<Bed[]>(() => this.hospitalizationService.boardUrl, { defaultValue: [] });
+  protected readonly bedsResource = apiResource<Bed[]>(() => this.hospitalizationService.boardUrl, { defaultValue: [] });
 
   protected readonly departments = computed(() => {
     const seen = new Map<number, string>();

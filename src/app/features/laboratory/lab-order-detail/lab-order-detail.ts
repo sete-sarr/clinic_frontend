@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,6 +26,7 @@ import {
   referenceRange,
 } from '../laboratory.model';
 import { LabOrderTransition, LaboratoryService } from '../laboratory.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 // Fiche d'une demande d'examens. Les boutons affichés suivent la machine à états et le rôle
 // (permissions-matrix.md § DEMANDE / RÉSULTAT DE LABORATOIRE) ; le backend revérifie chaque action.
@@ -59,7 +59,7 @@ export class LabOrderDetail {
   protected readonly statusTones = LAB_ORDER_STATUS_TONES;
   protected readonly referenceRange = referenceRange;
 
-  protected readonly orderResource = httpResource<LabOrder>(() => `${this.laboratoryService.ordersUrl}${this.id()}/`);
+  protected readonly orderResource = apiResource<LabOrder>(() => `${this.laboratoryService.ordersUrl}${this.id()}/`);
   // Dernière version renvoyée par une action (évite un second aller-retour après chaque transition).
   private readonly updated = signal<LabOrder | null>(null);
   protected readonly order = computed(() => this.updated() ?? this.orderResource.value() ?? null);

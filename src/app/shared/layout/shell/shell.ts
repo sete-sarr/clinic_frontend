@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -23,6 +22,7 @@ import { LanguageSwitcher } from '../../components/language-switcher/language-sw
 import { NotificationBell } from '../../components/notification-bell/notification-bell';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { APP_NAME } from '../../../core/brand';
+import { apiResource } from '../../../core/api/api-resource';
 
 interface NavItem {
   labelKey: string; // clé de traduction (i18n/*.json → nav.*)
@@ -280,7 +280,7 @@ export class Shell {
   // Habillage de la sidebar — retombe sur l'icône local_hospital + texte tant qu'aucun logo n'est téléversé
   // (fonctionnalité Settings, features/settings/settings.ts). Seul .brand est câblé ; l'application du favicon
   // est reportée (préoccupation build/SSR, hors périmètre ici).
-  private readonly clinicResource = httpResource<Clinic | null>(
+  private readonly clinicResource = apiResource<Clinic | null>(
     () => (this.user()?.clinic ? { url: `${environment.apiBaseUrl}/clinics/${this.user()!.clinic}/` } : undefined),
     { defaultValue: null },
   );

@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,6 +30,7 @@ import { DepartmentService } from '../department.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 
@@ -81,7 +81,7 @@ export class DepartmentList {
   protected readonly statusLabels = DEPARTMENT_STATUS_LABELS;
   protected readonly displayedColumns = ['name', 'code', 'type', 'status', 'actions'];
 
-  protected readonly departmentsResource = httpResource<Paginated<Department>>(
+  protected readonly departmentsResource = apiResource<Paginated<Department>>(
     () => ({
       url: `${environment.apiBaseUrl}/departments/`,
       params: {

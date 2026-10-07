@@ -1,4 +1,3 @@
-import { httpResource } from '@angular/common/http';
 import { Component, LOCALE_ID, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, submit, validate } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -20,6 +19,7 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { Consultation } from '../../consultations/consultation.model';
 import { LabOrderPayload, LabTest } from '../laboratory.model';
 import { LaboratoryService } from '../laboratory.service';
+import { apiResource } from '../../../core/api/api-resource';
 
 function formatPatient(patient: PatientSummary): string {
   return `${patient.first_name} ${patient.last_name} (${patient.patient_number})`;
@@ -55,12 +55,12 @@ export class LabOrderForm {
   protected readonly patientQuery = signal('');
   protected readonly patientLabel = signal('');
 
-  protected readonly patientsResource = httpResource<Paginated<PatientSummary>>(
+  protected readonly patientsResource = apiResource<Paginated<PatientSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/patients/`, params: { search: this.patientQuery(), page_size: 10 } }),
     { defaultValue: emptyPage<PatientSummary>() },
   );
 
-  protected readonly consultationsResource = httpResource<Paginated<Consultation>>(
+  protected readonly consultationsResource = apiResource<Paginated<Consultation>>(
     () =>
       this.model().patient
         ? { url: `${environment.apiBaseUrl}/consultations/`, params: { patient: this.model().patient, page_size: 50 } }
@@ -68,7 +68,7 @@ export class LabOrderForm {
     { defaultValue: emptyPage<Consultation>() },
   );
 
-  protected readonly testsResource = httpResource<Paginated<LabTest>>(
+  protected readonly testsResource = apiResource<Paginated<LabTest>>(
     () => ({ url: this.laboratoryService.testsUrl, params: { is_active: 'true', page_size: 200 } }),
     { defaultValue: emptyPage<LabTest>() },
   );

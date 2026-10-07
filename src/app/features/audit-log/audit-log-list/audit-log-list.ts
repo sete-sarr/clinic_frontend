@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatChipsModule } from '@angular/material/chips';
@@ -21,6 +20,7 @@ import { AUDIT_ACTION_LABELS, AuditAction, AuditLogEntry, auditModelLabel } from
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -76,7 +76,7 @@ export class AuditLogList {
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly logsResource = httpResource<Paginated<AuditLogEntry>>(
+  protected readonly logsResource = apiResource<Paginated<AuditLogEntry>>(
     () => ({
       url: `${environment.apiBaseUrl}/audit-log/`,
       params: {

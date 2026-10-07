@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, applyEach, disabled, form, min, required, schema, submit } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
@@ -39,6 +38,7 @@ import { InvoiceService } from '../invoice.service';
 import { PAYMENT_METHOD_LABELS, PAYMENT_STATUS_LABELS, Payment, PaymentMethod } from '../../payments/payment.model';
 import { PaymentService } from '../../payments/payment.service';
 import { DEFAULT_CURRENCY, MoneyPipe, currencySymbol } from '../../../core/utils/money';
+import { apiResource } from '../../../core/api/api-resource';
 
 export interface InvoiceFormDialogData {
   id?: string;
@@ -127,7 +127,7 @@ export class InvoiceForm {
   protected readonly formatDoctor = formatDoctor;
   protected readonly statusLabels = INVOICE_STATUS_LABELS;
 
-  protected readonly invoiceResource = httpResource<Invoice | null>(
+  protected readonly invoiceResource = apiResource<Invoice | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/billing/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );
@@ -166,7 +166,7 @@ export class InvoiceForm {
   protected readonly patientQuery = signal('');
   protected readonly patientLabel = signal('');
 
-  protected readonly patientsResource = httpResource<Paginated<PatientSummary>>(
+  protected readonly patientsResource = apiResource<Paginated<PatientSummary>>(
     () => ({
       url: `${environment.apiBaseUrl}/patients/`,
       params: { search: this.patientQuery(), page_size: 10 },
@@ -174,14 +174,14 @@ export class InvoiceForm {
     { defaultValue: emptyPage<PatientSummary>() },
   );
 
-  protected readonly doctorsResource = httpResource<Paginated<DoctorSummary>>(
+  protected readonly doctorsResource = apiResource<Paginated<DoctorSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/doctors/`, params: { page_size: 100 } }),
     { defaultValue: emptyPage<DoctorSummary>() },
   );
 
   // Catalogue pharmacie (lecture ouverte à tout le personnel, CanManageMedications) — seuls les
   // médicaments actifs sont proposés pour une nouvelle ligne.
-  protected readonly medicationsResource = httpResource<Paginated<Medication>>(
+  protected readonly medicationsResource = apiResource<Paginated<Medication>>(
     () => ({ url: `${environment.apiBaseUrl}/pharmacy/medications/`, params: { is_active: true, page_size: 200 } }),
     { defaultValue: emptyPage<Medication>() },
   );
@@ -212,7 +212,7 @@ export class InvoiceForm {
   protected readonly canRecordPayment = computed(() => this.auth.hasRole('accountant', 'clinic_admin'));
   protected readonly canRefund = computed(() => this.auth.hasRole('clinic_admin'));
 
-  protected readonly paymentsResource = httpResource<Paginated<Payment>>(
+  protected readonly paymentsResource = apiResource<Paginated<Payment>>(
     () =>
       this.currentId()
         ? {

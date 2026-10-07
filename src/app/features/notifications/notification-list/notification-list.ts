@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
 import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +22,7 @@ import {
 } from '../../../core/notifications/notification.model';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
+import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -76,7 +76,7 @@ export class NotificationList {
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;
 
-  protected readonly notificationsResource = httpResource<Paginated<InAppNotification>>(
+  protected readonly notificationsResource = apiResource<Paginated<InAppNotification>>(
     () => ({
       url: this.service.url,
       params: {

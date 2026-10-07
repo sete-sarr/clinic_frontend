@@ -313,6 +313,20 @@
       "StockBatch": "Lot",
       "StockMovement": "Mouvement de stock",
       "User": "Utilisateur"
+    },
+    "notificationCategory": {
+      "appointment": "Rendez-vous",
+      "laboratory": "Laboratoire",
+      "hospitalization": "Hospitalisation",
+      "pharmacy": "Pharmacie",
+      "billing": "Facturation",
+      "system": "Système"
+    },
+    "notificationPriority": {
+      "low": "Basse",
+      "medium": "Moyenne",
+      "high": "Haute",
+      "critical": "Critique"
     }
   },
   "portal": {
@@ -773,5 +787,23 @@
     "value": "Nombre",
     "share": "Part",
     "detail": "Montant"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "bellLabel": "Notifications ({{ count }} non lues)",
+    "markAllRead": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu",
+    "archive": "Archiver",
+    "open": "Ouvrir",
+    "unread": "Non lue",
+    "viewAll": "Voir toutes les notifications",
+    "empty": "Aucune notification",
+    "state": "Affichage",
+    "category": "Catégorie",
+    "states": {
+      "active": "Toutes",
+      "unread": "Non lues",
+      "archived": "Archivées"
+    }
   }
 }

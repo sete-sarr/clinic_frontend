@@ -1,0 +1,104 @@
+<div class="page-header">
+  <h1>{{ 'notifications.title' | transloco }}</h1>
+  @if (unreadCount() > 0 && state() !== 'archived') {
+    <button mat-stroked-button (click)="markAllRead()">
+      <mat-icon>done_all</mat-icon>
+      {{ 'notifications.markAllRead' | transloco }}
+    </button>
+  }
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>{{ 'common.search' | transloco }}</mat-label>
+    <input matInput [value]="searchInput()" (input)="onSearchInput($any($event.target).value)" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>{{ 'notifications.state' | transloco }}</mat-label>
+    <mat-select [value]="state()" (selectionChange)="onStateChange($event.value)">
+      @for (option of states; track option) {
+        <mat-option [value]="option">{{ 'notifications.states.' + option | transloco }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>{{ 'notifications.category' | transloco }}</mat-label>
+    <mat-select [value]="category() ?? ''" (selectionChange)="onCategoryChange($event.value)">
+      <mat-option value="">{{ 'common.allFeminine' | transloco }}</mat-option>
+      @for (option of categoryOptions; track option[0]) {
+        <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (notificationsResource.isLoading()) {
+  <div class="loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else if (notifications().length === 0) {
+  <app-empty-state icon="notifications_none" [message]="'notifications.empty' | transloco" />
+} @else {
+  <ul class="notification-list">
+    @for (notification of notifications(); track notification.id) {
+      <li
+        class="notification tone-{{ priorityTones[notification.priority] }}"
+        [class.unread]="!notification.is_read"
+        [class.archived]="notification.archived_at"
+      >
+        <span class="notification-icon">
+          <mat-icon>{{ categoryIcons[notification.category] }}</mat-icon>
+        </span>
+
+        <div class="notification-content">
+          <div class="notification-heading">
+            <span class="notification-title">{{ notification.title }}</span>
+            @if (!notification.is_read) {
+              <span class="unread-label">{{ 'notifications.unread' | transloco }}</span>
+            }
+          </div>
+          @if (notification.body) {
+            <p class="notification-body">{{ notification.body }}</p>
+          }
+          <div class="notification-meta">
+            <span>{{ notification.created_at | date: 'short' }}</span>
+            <span>{{ categoryLabels[notification.category] }}</span>
+            <span class="priority-chip">{{ priorityLabels[notification.priority] }}</span>
+          </div>
+        </div>
+
+        <div class="notification-actions">
+          @if (notification.link) {
+            <button mat-icon-button (click)="open(notification)" [matTooltip]="'notifications.open' | transloco"
+              [attr.aria-label]="'notifications.open' | transloco">
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+          }
+          @if (!notification.is_read) {
+            <button mat-icon-button (click)="markRead(notification)" [matTooltip]="'notifications.markRead' | transloco"
+              [attr.aria-label]="'notifications.markRead' | transloco">
+              <mat-icon>done</mat-icon>
+            </button>
+          }
+          @if (!notification.archived_at) {
+            <button mat-icon-button (click)="archive(notification)" [matTooltip]="'notifications.archive' | transloco"
+              [attr.aria-label]="'notifications.archive' | transloco">
+              <mat-icon>archive</mat-icon>
+            </button>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

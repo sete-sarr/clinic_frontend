@@ -1,0 +1,58 @@
+<button
+  mat-icon-button
+  class="bell-button"
+  [matMenuTriggerFor]="panel"
+  (menuOpened)="loadRecent()"
+  [attr.aria-label]="'notifications.bellLabel' | transloco: { count: unreadCount() }"
+>
+  <mat-icon
+    [matBadge]="unreadCount() > 99 ? '99+' : unreadCount()"
+    [matBadgeHidden]="unreadCount() === 0"
+    matBadgeColor="warn"
+    aria-hidden="false"
+    >notifications</mat-icon
+  >
+</button>
+
+<mat-menu #panel="matMenu" xPosition="before" class="notification-panel">
+  <div class="panel-header" (click)="$event.stopPropagation()">
+    <span class="panel-title">{{ 'notifications.title' | transloco }}</span>
+    @if (unreadCount() > 0) {
+      <button mat-button class="panel-action" (click)="markAllRead($event)">
+        {{ 'notifications.markAllRead' | transloco }}
+      </button>
+    }
+  </div>
+
+  @if (loading() && recent().length === 0) {
+    <div class="panel-loading"><mat-spinner diameter="24" /></div>
+  } @else if (recent().length === 0) {
+    <p class="panel-empty">{{ 'notifications.empty' | transloco }}</p>
+  } @else {
+    @for (notification of recent(); track notification.id) {
+      <button
+        mat-menu-item
+        class="panel-item"
+        [class.unread]="!notification.is_read"
+        [class.critical]="notification.priority === 'critical'"
+        (click)="open(notification)"
+      >
+        <mat-icon class="item-icon">{{ icons[notification.category] }}</mat-icon>
+        <span class="item-text">
+          <span class="item-title">{{ notification.title }}</span>
+          @if (notification.body) {
+            <span class="item-body">{{ notification.body }}</span>
+          }
+          <span class="item-date">{{ notification.created_at | date: 'short' }}</span>
+        </span>
+        @if (!notification.is_read) {
+          <span class="unread-dot" [attr.aria-label]="'notifications.unread' | transloco"></span>
+        }
+      </button>
+    }
+  }
+
+  <a mat-menu-item routerLink="/notifications" class="panel-footer">
+    {{ 'notifications.viewAll' | transloco }}
+  </a>
+</mat-menu>

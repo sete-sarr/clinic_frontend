@@ -20,6 +20,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { UserGuideService } from '../../../core/services/user-guide.service';
 import { GlobalSearch } from '../../components/global-search/global-search';
 import { LanguageSwitcher } from '../../components/language-switcher/language-switcher';
+import { NotificationBell } from '../../components/notification-bell/notification-bell';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { APP_NAME } from '../../../core/brand';
 
@@ -181,6 +182,7 @@ const NAV_ITEMS: NavItem[] = [
     RouterOutlet,
     GlobalSearch,
     LanguageSwitcher,
+    NotificationBell,
     TranslocoPipe,
     MatButtonModule,
     MatIconModule,

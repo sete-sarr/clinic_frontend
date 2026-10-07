@@ -313,6 +313,20 @@
       "StockBatch": "Batch",
       "StockMovement": "Stock movement",
       "User": "User"
+    },
+    "notificationCategory": {
+      "appointment": "Appointments",
+      "laboratory": "Laboratory",
+      "hospitalization": "Hospitalization",
+      "pharmacy": "Pharmacy",
+      "billing": "Billing",
+      "system": "System"
+    },
+    "notificationPriority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
     }
   },
   "portal": {
@@ -773,5 +787,23 @@
     "value": "Count",
     "share": "Share",
     "detail": "Amount"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "bellLabel": "Notifications ({{ count }} unread)",
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "archive": "Archive",
+    "open": "Open",
+    "unread": "Unread",
+    "viewAll": "View all notifications",
+    "empty": "No notifications",
+    "state": "Show",
+    "category": "Category",
+    "states": {
+      "active": "All",
+      "unread": "Unread",
+      "archived": "Archived"
+    }
   }
 }

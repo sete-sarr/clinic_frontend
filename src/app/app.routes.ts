@@ -164,6 +164,12 @@ export const routes: Routes = [
           import('./features/payments/payment-list/payment-list').then((m) => m.PaymentList),
       },
       {
+        // Tout utilisateur de l'espace personnel : l'API ne renvoie que ses propres notifications.
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/notifications/notification-list/notification-list').then((m) => m.NotificationList),
+      },
+      {
         path: 'audit-log',
         canActivate: [canAccessAuditLog],
         loadComponent: () =>

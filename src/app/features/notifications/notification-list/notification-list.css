@@ -1,0 +1,174 @@
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.search-field {
+  flex: 1 1 280px;
+}
+
+.filter-field {
+  width: 200px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+/* Même langage visuel que app-record-card (design-system/cards.md) : liseré gauche à la couleur de la
+   priorité, toujours doublé de son libellé (jamais la couleur seule). Une seule mise en page, lisible
+   sur ordinateur comme sur mobile. */
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.notification {
+  --tone: var(--color-neutral-400);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  padding-left: calc(var(--space-4) + 2px);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-neutral-900) 6%, transparent);
+  overflow: hidden;
+}
+
+.notification::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background-color: var(--tone);
+}
+
+.tone-success { --tone: var(--color-success); }
+.tone-warning { --tone: var(--color-warning); }
+.tone-error { --tone: var(--color-error); }
+.tone-info { --tone: var(--color-info); }
+.tone-neutral { --tone: var(--color-neutral-400); }
+
+.notification.unread {
+  background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+}
+
+.notification.archived {
+  opacity: 0.75;
+}
+
+.notification-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.notification-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.notification-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.notification-title {
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.notification.unread .notification-title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.unread-label {
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.5;
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.notification-body {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.notification-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.priority-chip {
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.5;
+  color: var(--tone);
+  background-color: color-mix(in srgb, var(--tone) 12%, transparent);
+}
+
+.notification-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: var(--space-1);
+}
+
+/* Mobile : actions sous le contenu, alignées à droite. */
+@media (max-width: 599.98px) {
+  .notification {
+    flex-wrap: wrap;
+  }
+
+  .notification-content {
+    flex-basis: calc(100% - 40px - var(--space-3));
+  }
+
+  .notification-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: calc(var(--space-2) * -1);
+  }
+}

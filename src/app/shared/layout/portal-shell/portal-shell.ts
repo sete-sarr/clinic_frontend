@@ -25,6 +25,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { labelKey: 'portal.nav.appointments', icon: 'event', route: '/portal/appointments' },
   { labelKey: 'portal.nav.prescriptions', icon: 'description', route: '/portal/prescriptions' },
+  { labelKey: 'portal.nav.labResults', icon: 'biotech', route: '/portal/lab-results' },
   { labelKey: 'portal.nav.invoices', icon: 'receipt_long', route: '/portal/invoices' },
   { labelKey: 'portal.nav.medicalRecord', icon: 'folder_shared', route: '/portal/medical-record' },
 ];

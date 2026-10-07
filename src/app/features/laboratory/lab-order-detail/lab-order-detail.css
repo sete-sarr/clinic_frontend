@@ -1,0 +1,164 @@
+/* Complète laboratory-list.css (en-tête, statuts, mention « Hors norme »). */
+
+.back-link {
+  margin-bottom: var(--space-2);
+}
+
+.title-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title-block h1 {
+  margin: 0;
+}
+
+.header-actions mat-icon,
+.item-actions mat-icon {
+  margin-right: var(--space-1);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.info-wide {
+  grid-column: 1 / -1;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.info-value {
+  overflow-wrap: anywhere;
+}
+
+.section-title {
+  margin: var(--space-6) 0 var(--space-3);
+  font-size: 1.125rem;
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Un examen = une carte (même langage que app-record-card) ; liseré rouge si hors norme, toujours
+   accompagné de la mention « Hors norme ». */
+.item-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  padding-left: calc(var(--space-4) + 2px);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+  overflow: hidden;
+}
+
+.item-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background-color: var(--color-primary);
+}
+
+.item-card.abnormal::before {
+  background-color: var(--color-error);
+}
+
+.item-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.item-name {
+  font-weight: var(--font-weight-semibold);
+}
+
+.item-code,
+.item-reference,
+.result-meta {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.item-code {
+  margin-left: var(--space-2);
+}
+
+.field-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.value-field {
+  flex: 0 1 220px;
+  min-width: 0;
+}
+
+.comment-field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.result-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.result-value {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.result-comment {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.item-actions:empty {
+  display: none;
+}
+
+.history {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.history ul {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-4);
+}

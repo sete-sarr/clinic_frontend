@@ -32,7 +32,7 @@ interface NavItem {
 }
 
 // Du plus privilégié au moins privilégié — un utilisateur avec plusieurs rôles n'affiche qu'un seul libellé dans la puce de l'en-tête.
-const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmacist', 'secretary', 'patient'];
+const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmacist', 'lab_technician', 'secretary', 'patient'];
 
 // Ne liste que les routes qui existent réellement. Ajouter une entrée ici (avec les rôles autorisés à la voir,
 // selon business/access-policy.md) à chaque nouveau module de fonctionnalité livré.
@@ -41,10 +41,10 @@ const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmaci
 const NAV_GROUPS: string[][] = [
   ['/dashboard'],
   ['/appointments', '/patients'], // accueil
-  ['/consultations', '/medical-records', '/prescriptions', '/pharmacy'], // soins
+  ['/consultations', '/medical-records', '/prescriptions', '/laboratory', '/pharmacy'], // soins
   ['/billing', '/payments'], // finances
   ['/reports', '/audit-log'], // pilotage
-  ['/doctors', '/staff', '/departments'], // organisation de la clinique
+  ['/doctors', '/staff', '/departments', '/lab-tests'], // organisation de la clinique
   ['/settings', '/subscription'], // compte de la clinique
 ];
 
@@ -163,6 +163,22 @@ const NAV_ITEMS: NavItem[] = [
     // route réservée à ces deux rôles (app.routes.ts canAccessPharmacy), même schéma que
     // Départements (écran de gestion, pas un simple sélecteur en lecture).
     roles: ['pharmacist', 'clinic_admin'],
+  },
+  {
+    labelKey: 'nav.laboratory',
+    icon: 'biotech',
+    route: '/laboratory',
+    // CanAccessLabOrders (backend/laboratory/permissions.py) : médecin (ses demandes), technicien de
+    // laboratoire et administrateur — jamais la réception ni la comptabilité (access-policy.md).
+    roles: ['doctor', 'lab_technician', 'clinic_admin'],
+  },
+  {
+    labelKey: 'nav.labCatalog',
+    icon: 'science',
+    // Hors de /laboratory pour que l'entrée « Laboratoire » ne soit pas surlignée en même temps.
+    route: '/lab-tests',
+    // CanManageLabTests (backend/laboratory/permissions.py) : écriture réservée à l'administrateur.
+    roles: ['clinic_admin'],
   },
   {
     labelKey: 'nav.subscription',

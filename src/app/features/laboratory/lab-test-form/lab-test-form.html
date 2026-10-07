@@ -1,0 +1,80 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ (test ? 'laboratory.editTest' : 'laboratory.newTest') | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close(false)" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>{{ 'laboratory.code' | transloco }}</mat-label>
+        <input matInput [formField]="testForm.code" />
+        @if (testForm.code().touched() && testForm.code().invalid()) {
+          <mat-error>{{ testForm.code().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>{{ 'laboratory.price' | transloco }}</mat-label>
+        <input matInput type="number" step="0.01" [formField]="testForm.price" />
+        <span matTextSuffix class="currency-suffix">{{ currencySymbol }}</span>
+        @if (testForm.price().touched() && testForm.price().invalid()) {
+          <mat-error>{{ testForm.price().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'laboratory.testName' | transloco }}</mat-label>
+        <input matInput [formField]="testForm.name" />
+        @if (testForm.name().touched() && testForm.name().invalid()) {
+          <mat-error>{{ testForm.name().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'laboratory.unit' | transloco }}</mat-label>
+        <input matInput [placeholder]="'laboratory.unitPlaceholder' | transloco" [formField]="testForm.unit" />
+        @if (testForm.unit().touched() && testForm.unit().invalid()) {
+          <mat-error>{{ testForm.unit().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field-row field-pair">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>{{ 'laboratory.referenceMin' | transloco }}</mat-label>
+        <input matInput type="number" step="any" [formField]="testForm.reference_min" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>{{ 'laboratory.referenceMax' | transloco }}</mat-label>
+        <input matInput type="number" step="any" [formField]="testForm.reference_max" />
+        @if (testForm.reference_max().touched() && testForm.reference_max().invalid()) {
+          <mat-error>{{ testForm.reference_max().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <p class="hint">{{ 'laboratory.referenceHint' | transloco }}</p>
+
+    @if (testForm().errors().length > 0) {
+      <p class="server-error" role="alert">{{ testForm().errors()[0].message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close(false)">{{ 'common.actions.cancel' | transloco }}</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="testForm().submitting()">
+        @if (testForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ 'common.actions.save' | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

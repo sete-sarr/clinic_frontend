@@ -1,0 +1,76 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'laboratory.newOrder' | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'common.fields.patient' | transloco }}</mat-label>
+      <input
+        matInput
+        [value]="patientLabel()"
+        (input)="onPatientQueryInput($any($event.target).value)"
+        [matAutocomplete]="patientAuto"
+        autocomplete="off"
+        [placeholder]="'common.patientSearch' | transloco"
+      />
+      <mat-autocomplete #patientAuto="matAutocomplete" (optionSelected)="onPatientSelected($event.option.value)">
+        @for (patient of patientsResource.value().results; track patient.id) {
+          <mat-option [value]="patient">{{ formatPatientOption(patient) }}</mat-option>
+        }
+      </mat-autocomplete>
+      @if (orderForm.patient().touched() && orderForm.patient().invalid()) {
+        <mat-error>{{ orderForm.patient().errors()[0]?.message ?? ('common.validation.invalidPatient' | transloco) }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'laboratory.consultationOptional' | transloco }}</mat-label>
+      <mat-select [formField]="orderForm.consultation">
+        <mat-option [value]="null">{{ 'common.none' | transloco }}</mat-option>
+        @for (consultation of consultationsResource.value().results; track consultation.id) {
+          <mat-option [value]="consultation.id">{{ formatConsultationOption(consultation) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'laboratory.tests' | transloco }}</mat-label>
+      <mat-select multiple [formField]="orderForm.tests">
+        @for (test of testsResource.value().results; track test.id) {
+          <mat-option [value]="test.id">{{ test.name }} ({{ test.code }})</mat-option>
+        }
+      </mat-select>
+      @if (testsResource.value().results.length === 0 && !testsResource.isLoading()) {
+        <mat-hint>{{ 'laboratory.catalogEmptyHint' | transloco }}</mat-hint>
+      }
+      @if (orderForm.tests().touched() && orderForm.tests().invalid()) {
+        <mat-error>{{ orderForm.tests().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'laboratory.clinicalNote' | transloco }}</mat-label>
+      <textarea matInput rows="3" [formField]="orderForm.clinical_note"></textarea>
+      <mat-hint>{{ 'laboratory.clinicalNoteHint' | transloco }}</mat-hint>
+    </mat-form-field>
+
+    @if (orderForm().errors().length > 0) {
+      <p class="server-error" role="alert">{{ orderForm().errors()[0].message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="orderForm().submitting()">
+        @if (orderForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ 'laboratory.sendOrder' | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

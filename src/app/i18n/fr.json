@@ -18,6 +18,8 @@
     "settings": "Paramètres",
     "departments": "Départements",
     "pharmacy": "Pharmacie",
+    "laboratory": "Laboratoire",
+    "labCatalog": "Catalogue d'examens",
     "subscription": "Abonnement"
   },
   "roles": {
@@ -26,6 +28,7 @@
     "secretary": "Secrétaire",
     "accountant": "Comptable",
     "pharmacist": "Pharmacien",
+    "lab_technician": "Technicien de laboratoire",
     "patient": "Patient"
   },
   "shell": {
@@ -229,7 +232,8 @@
       "secretary": "Secrétaire",
       "accountant": "Comptable",
       "clinic_admin": "Administrateur de clinique",
-      "pharmacist": "Pharmacien"
+      "pharmacist": "Pharmacien",
+      "lab_technician": "Technicien de laboratoire"
     },
     "appointmentStatus": {
       "pending": "En attente",
@@ -305,6 +309,8 @@
       "Department": "Département",
       "Doctor": "Médecin",
       "Invoice": "Facture",
+      "LabOrder": "Demande d'examens",
+      "LabTest": "Examen (catalogue)",
       "MedicalRecord": "Dossier médical",
       "Medication": "Médicament",
       "Patient": "Patient",
@@ -327,6 +333,14 @@
       "medium": "Moyenne",
       "high": "Haute",
       "critical": "Critique"
+    },
+    "labOrderStatus": {
+      "requested": "Demandé",
+      "collected": "Prélevé",
+      "in_progress": "En traitement",
+      "completed": "Terminé",
+      "validated": "Validé",
+      "cancelled": "Annulé"
     }
   },
   "portal": {
@@ -335,7 +349,13 @@
       "appointments": "Mes rendez-vous",
       "prescriptions": "Mes prescriptions",
       "invoices": "Mes factures",
-      "medicalRecord": "Mon dossier médical"
+      "medicalRecord": "Mon dossier médical",
+      "labResults": "Mes résultats"
+    },
+    "labResults": {
+      "empty": "Aucun résultat d'examen validé pour le moment.",
+      "document": "Document joint",
+      "advice": "Votre médecin reste votre interlocuteur pour l'interprétation de ces résultats."
     },
     "appointments": {
       "book": "Prendre rendez-vous",
@@ -729,6 +749,93 @@
       "advancedReports": "Rapports et exports avancés",
       "smsNotifications": "SMS de rendez-vous aux patients",
       "dayBeforeReminder": "Rappel automatique la veille du rendez-vous"
+    }
+  },
+  "laboratory": {
+    "title": "Laboratoire",
+    "catalogTitle": "Catalogue d'examens",
+    "newTest": "Nouvel examen",
+    "editTest": "Modifier l'examen",
+    "testSearch": "Code ou nom de l'examen",
+    "catalogEmpty": "Aucun examen dans le catalogue.",
+    "catalogEmptyHint": "Le catalogue est vide : l'administrateur doit d'abord y ajouter des examens.",
+    "code": "Code",
+    "testName": "Nom de l'examen",
+    "price": "Prix",
+    "unit": "Unité",
+    "unitPlaceholder": "Ex. g/L, mmol/L",
+    "reference": "Valeurs de référence",
+    "referenceMin": "Valeur minimale",
+    "referenceMax": "Valeur maximale",
+    "referenceHint": "Facultatives : utilisées pour signaler automatiquement un résultat hors norme.",
+    "codeRequired": "Code requis",
+    "codeTooLong": "30 caractères maximum",
+    "nameRequired": "Nom requis",
+    "nameTooLong": "200 caractères maximum",
+    "unitTooLong": "30 caractères maximum",
+    "priceNotNegative": "Le prix ne peut pas être négatif",
+    "maxBelowMin": "La valeur maximale doit être supérieure ou égale à la valeur minimale",
+    "testSaved": "Examen enregistré.",
+    "testArchived": "Examen archivé.",
+    "testRestored": "Examen restauré.",
+    "saveError": "L'opération n'a pas pu être enregistrée.",
+    "newOrder": "Nouvelle demande",
+    "sendOrder": "Envoyer la demande",
+    "orderCreated": "Demande d'examens envoyée au laboratoire.",
+    "orderSearch": "N° de demande, nom ou n° du patient",
+    "ordersEmpty": "Aucune demande d'examens.",
+    "number": "N° de demande",
+    "tests": "Examens",
+    "testsRequired": "Choisissez au moins un examen",
+    "requestedAt": "Demandée le",
+    "collectedAt": "Prélevée le",
+    "validatedAt": "Validée le",
+    "prescriber": "Médecin prescripteur",
+    "invoice": "Facture",
+    "abnormal": "Hors norme",
+    "consultationOptional": "Consultation (facultative)",
+    "clinicalNote": "Renseignement clinique",
+    "clinicalNoteHint": "Information utile au laboratoire (jeûne, traitement en cours…), sans diagnostic détaillé.",
+    "backToList": "Retour aux demandes",
+    "notFound": "Demande introuvable ou inaccessible.",
+    "value": "Résultat",
+    "comment": "Commentaire",
+    "corrected": "Résultat corrigé",
+    "enteredBy": "Saisi par {{ name }}",
+    "pendingResult": "Résultat en attente",
+    "attachPdf": "Joindre un PDF",
+    "history": "Valeurs remplacées",
+    "replacedAt": "remplacée le",
+    "correctTitle": "Corriger le résultat — {{ test }}",
+    "correctHint": "Le résultat validé est conservé dans l'historique ; la correction et son motif sont tracés.",
+    "correctedValue": "Valeur corrigée",
+    "correctionReason": "Motif de la correction",
+    "valueRequired": "Valeur requise",
+    "valueTooLong": "100 caractères maximum",
+    "reasonRequired": "Le motif est obligatoire",
+    "actions": {
+      "collect": "Prélèvement effectué",
+      "start": "Démarrer l'analyse",
+      "saveResults": "Enregistrer les résultats",
+      "complete": "Terminer",
+      "validate": "Valider les résultats",
+      "cancel": "Annuler la demande",
+      "correct": "Corriger"
+    },
+    "confirm": {
+      "complete": "Terminer la demande ? Les résultats seront transmis au médecin pour validation.",
+      "validate": "Valider ces résultats ? Ils deviendront visibles du patient et les examens seront ajoutés à une facture brouillon.",
+      "cancel": "Annuler cette demande d'examens ?"
+    },
+    "done": {
+      "collect": "Prélèvement enregistré.",
+      "start": "Analyse démarrée.",
+      "results": "Résultats enregistrés.",
+      "attachment": "Document joint.",
+      "complete": "Demande terminée : le médecin a été prévenu.",
+      "validate": "Résultats validés ; facture brouillon créée.",
+      "cancel": "Demande annulée.",
+      "correct": "Résultat corrigé."
     }
   },
   "auditLog": {

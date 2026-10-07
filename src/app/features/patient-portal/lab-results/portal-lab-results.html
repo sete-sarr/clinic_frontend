@@ -1,0 +1,57 @@
+<h1>{{ 'portal.nav.labResults' | transloco }}</h1>
+
+@if (ordersResource.isLoading()) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (orders().length === 0) {
+  <app-empty-state icon="biotech" [message]="'portal.labResults.empty' | transloco" />
+} @else {
+  <div class="result-cards">
+    @for (order of orders(); track order.id) {
+      <article class="result-card">
+        <header class="card-header">
+          <div>
+            <div class="date">{{ order.validated_at | date: 'mediumDate' }}</div>
+            <div class="secondary">{{ order.number }} — {{ order.doctor_display }}</div>
+          </div>
+          <button mat-stroked-button (click)="downloadPdf(order)">
+            <mat-icon>picture_as_pdf</mat-icon>
+            {{ 'common.actions.downloadPdf' | transloco }}
+          </button>
+        </header>
+
+        <ul class="result-list">
+          @for (item of order.items; track item.id) {
+            <li class="result-row" [class.abnormal]="item.result?.is_abnormal">
+              <span class="test-name">{{ item.test_name }}</span>
+              <span class="test-value">
+                @if (item.result?.value) {
+                  {{ item.result?.value }} {{ item.unit }}
+                } @else {
+                  —
+                }
+                @if (item.result?.is_abnormal) {
+                  <span class="abnormal-flag"><mat-icon>warning</mat-icon>{{ 'laboratory.abnormal' | transloco }}</span>
+                }
+              </span>
+              <span class="secondary">{{ 'laboratory.reference' | transloco }} : {{ referenceRange(item.reference_min, item.reference_max) }}</span>
+              @if (item.result?.attachment_name) {
+                <button mat-button class="attachment" (click)="openAttachment(order, item)">
+                  <mat-icon>attach_file</mat-icon>{{ 'portal.labResults.document' | transloco }}
+                </button>
+              }
+            </li>
+          }
+        </ul>
+        <p class="secondary">{{ 'portal.labResults.advice' | transloco }}</p>
+      </article>
+    }
+  </div>
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

@@ -1,0 +1,105 @@
+<div class="page-header">
+  <h1>{{ 'laboratory.catalogTitle' | transloco }}</h1>
+  <div class="header-actions">
+    <button mat-flat-button color="primary" (click)="openForm()">
+      <mat-icon>add</mat-icon>
+      {{ 'laboratory.newTest' | transloco }}
+    </button>
+  </div>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>{{ 'common.search' | transloco }}</mat-label>
+    <input matInput (input)="onSearch($any($event.target).value)" [placeholder]="'laboratory.testSearch' | transloco" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+@if (actionError()) {
+  <p class="server-error" role="alert">{{ actionError() }}</p>
+}
+
+@if (testsResource.isLoading()) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (tests().length === 0) {
+  <app-empty-state icon="biotech" [message]="'laboratory.catalogEmpty' | transloco" />
+} @else {
+  <ng-template #rowActions let-test>
+    <div class="actions">
+      <button mat-icon-button [matTooltip]="'common.actions.edit' | transloco" [attr.aria-label]="'common.actions.edit' | transloco"
+        [disabled]="!test.is_active" (click)="openForm(test)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        [matTooltip]="(test.is_active ? 'common.actions.archive' : 'common.actions.restore') | transloco"
+        [attr.aria-label]="(test.is_active ? 'common.actions.archive' : 'common.actions.restore') | transloco"
+        [disabled]="actionPending() === test.id"
+        (click)="toggleArchived(test)"
+      >
+        <mat-icon>{{ test.is_active ? 'archive' : 'unarchive' }}</mat-icon>
+      </button>
+    </div>
+  </ng-template>
+
+  @if (isHandset()) {
+    <div class="record-card-list">
+      @for (test of tests(); track test.id) {
+        <app-record-card [card]="cardFor(test)">
+          <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: test }" />
+        </app-record-card>
+      }
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table mat-table [dataSource]="tests()" class="lab-table">
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>{{ 'laboratory.code' | transloco }}</th>
+          <td mat-cell *matCellDef="let test">{{ test.code }}</td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>{{ 'laboratory.testName' | transloco }}</th>
+          <td mat-cell *matCellDef="let test">{{ test.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="unit">
+          <th mat-header-cell *matHeaderCellDef>{{ 'laboratory.unit' | transloco }}</th>
+          <td mat-cell *matCellDef="let test">{{ test.unit || '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="reference">
+          <th mat-header-cell *matHeaderCellDef>{{ 'laboratory.reference' | transloco }}</th>
+          <td mat-cell *matCellDef="let test">{{ referenceRange(test.reference_min, test.reference_max) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>{{ 'laboratory.price' | transloco }}</th>
+          <td mat-cell *matCellDef="let test">{{ test.price | money: currency }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.status' | transloco }}</th>
+          <td mat-cell *matCellDef="let test">
+            <mat-chip disableRipple [class]="test.is_active ? 'status-chip-success' : 'status-chip-neutral'">
+              {{ (test.is_active ? 'common.active' : 'common.archived') | transloco }}
+            </mat-chip>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.actions' | transloco }}</th>
+          <td mat-cell *matCellDef="let test">
+            <ng-container *ngTemplateOutlet="rowActions; context: { $implicit: test }" />
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  }
+
+  <mat-paginator
+    [length]="totalCount()"
+    [pageSize]="pageSize"
+    [pageIndex]="page() - 1"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+  />
+}

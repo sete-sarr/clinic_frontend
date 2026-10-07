@@ -18,6 +18,8 @@
     "settings": "Settings",
     "departments": "Departments",
     "pharmacy": "Pharmacy",
+    "laboratory": "Laboratory",
+    "labCatalog": "Lab test catalog",
     "subscription": "Subscription"
   },
   "roles": {
@@ -26,6 +28,7 @@
     "secretary": "Receptionist",
     "accountant": "Accountant",
     "pharmacist": "Pharmacist",
+    "lab_technician": "Lab technician",
     "patient": "Patient"
   },
   "shell": {
@@ -229,7 +232,8 @@
       "secretary": "Receptionist",
       "accountant": "Accountant",
       "clinic_admin": "Clinic administrator",
-      "pharmacist": "Pharmacist"
+      "pharmacist": "Pharmacist",
+      "lab_technician": "Lab technician"
     },
     "appointmentStatus": {
       "pending": "Pending",
@@ -305,6 +309,8 @@
       "Department": "Department",
       "Doctor": "Doctor",
       "Invoice": "Invoice",
+      "LabOrder": "Lab order",
+      "LabTest": "Lab test (catalog)",
       "MedicalRecord": "Medical record",
       "Medication": "Medication",
       "Patient": "Patient",
@@ -327,6 +333,14 @@
       "medium": "Medium",
       "high": "High",
       "critical": "Critical"
+    },
+    "labOrderStatus": {
+      "requested": "Requested",
+      "collected": "Sample collected",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "validated": "Validated",
+      "cancelled": "Cancelled"
     }
   },
   "portal": {
@@ -335,7 +349,13 @@
       "appointments": "My appointments",
       "prescriptions": "My prescriptions",
       "invoices": "My invoices",
-      "medicalRecord": "My medical record"
+      "medicalRecord": "My medical record",
+      "labResults": "My results"
+    },
+    "labResults": {
+      "empty": "No validated lab results yet.",
+      "document": "Attached document",
+      "advice": "Please talk to your doctor about what these results mean for you."
     },
     "appointments": {
       "book": "Book an appointment",
@@ -729,6 +749,93 @@
       "advancedReports": "Advanced reports and exports",
       "smsNotifications": "Appointment text messages to patients",
       "dayBeforeReminder": "Automatic reminder the day before the appointment"
+    }
+  },
+  "laboratory": {
+    "title": "Laboratory",
+    "catalogTitle": "Lab test catalog",
+    "newTest": "New lab test",
+    "editTest": "Edit lab test",
+    "testSearch": "Test code or name",
+    "catalogEmpty": "No lab tests in the catalog.",
+    "catalogEmptyHint": "The catalog is empty: an administrator must add lab tests first.",
+    "code": "Code",
+    "testName": "Test name",
+    "price": "Price",
+    "unit": "Unit",
+    "unitPlaceholder": "E.g. g/L, mmol/L",
+    "reference": "Reference range",
+    "referenceMin": "Lower limit",
+    "referenceMax": "Upper limit",
+    "referenceHint": "Optional: used to flag out-of-range results automatically.",
+    "codeRequired": "Code is required",
+    "codeTooLong": "30 characters maximum",
+    "nameRequired": "Name is required",
+    "nameTooLong": "200 characters maximum",
+    "unitTooLong": "30 characters maximum",
+    "priceNotNegative": "Price cannot be negative",
+    "maxBelowMin": "The upper limit must be greater than or equal to the lower limit",
+    "testSaved": "Lab test saved.",
+    "testArchived": "Lab test archived.",
+    "testRestored": "Lab test restored.",
+    "saveError": "The operation could not be saved.",
+    "newOrder": "New lab order",
+    "sendOrder": "Send order",
+    "orderCreated": "Lab order sent to the laboratory.",
+    "orderSearch": "Order no., patient name or no.",
+    "ordersEmpty": "No lab orders.",
+    "number": "Order no.",
+    "tests": "Lab tests",
+    "testsRequired": "Select at least one lab test",
+    "requestedAt": "Requested on",
+    "collectedAt": "Collected on",
+    "validatedAt": "Validated on",
+    "prescriber": "Ordering doctor",
+    "invoice": "Invoice",
+    "abnormal": "Out of range",
+    "consultationOptional": "Consultation (optional)",
+    "clinicalNote": "Clinical information",
+    "clinicalNoteHint": "Information useful to the laboratory (fasting, current treatment…), without a detailed diagnosis.",
+    "backToList": "Back to lab orders",
+    "notFound": "Lab order not found or not accessible.",
+    "value": "Result",
+    "comment": "Comment",
+    "corrected": "Corrected result",
+    "enteredBy": "Entered by {{ name }}",
+    "pendingResult": "Result pending",
+    "attachPdf": "Attach a PDF",
+    "history": "Replaced values",
+    "replacedAt": "replaced on",
+    "correctTitle": "Correct result — {{ test }}",
+    "correctHint": "The validated result is kept in the history; the correction and its reason are recorded.",
+    "correctedValue": "Corrected value",
+    "correctionReason": "Reason for correction",
+    "valueRequired": "Value is required",
+    "valueTooLong": "100 characters maximum",
+    "reasonRequired": "A reason is required",
+    "actions": {
+      "collect": "Sample collected",
+      "start": "Start analysis",
+      "saveResults": "Save results",
+      "complete": "Complete",
+      "validate": "Validate results",
+      "cancel": "Cancel order",
+      "correct": "Correct"
+    },
+    "confirm": {
+      "complete": "Complete this order? The results will be sent to the doctor for validation.",
+      "validate": "Validate these results? They will become visible to the patient and the tests will be added to a draft invoice.",
+      "cancel": "Cancel this lab order?"
+    },
+    "done": {
+      "collect": "Sample collection recorded.",
+      "start": "Analysis started.",
+      "results": "Results saved.",
+      "attachment": "Document attached.",
+      "complete": "Order completed: the doctor has been notified.",
+      "validate": "Results validated; draft invoice created.",
+      "cancel": "Order cancelled.",
+      "correct": "Result corrected."
     }
   },
   "auditLog": {

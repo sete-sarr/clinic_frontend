@@ -1,0 +1,92 @@
+/* Pages de liste du laboratoire (demandes, catalogue). */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.search-field {
+  flex: 1 1 280px;
+}
+
+.filter-field {
+  width: 200px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.lab-table {
+  min-width: 100%;
+  background-color: var(--color-surface);
+}
+
+.lab-table tr.clickable {
+  cursor: pointer;
+}
+
+.lab-table tr.clickable:hover {
+  background-color: var(--color-surface-secondary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.muted {
+  color: var(--color-text-secondary);
+}
+
+/* Statut : couleur toujours doublée du libellé (design-system/colors.md). */
+.status-chip-success { background-color: color-mix(in srgb, var(--color-success) 15%, transparent); color: var(--color-success); }
+.status-chip-warning { background-color: color-mix(in srgb, var(--color-warning) 15%, transparent); color: var(--color-warning); }
+.status-chip-error { background-color: color-mix(in srgb, var(--color-error) 15%, transparent); color: var(--color-error); }
+.status-chip-info { background-color: color-mix(in srgb, var(--color-info) 15%, transparent); color: var(--color-info); }
+.status-chip-neutral { background-color: var(--color-surface-secondary); color: var(--color-text-secondary); }
+
+.abnormal-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-error);
+}
+
+.abnormal-flag mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}

@@ -1,0 +1,191 @@
+<a mat-button routerLink="/laboratory" class="back-link">
+  <mat-icon>arrow_back</mat-icon>
+  {{ 'laboratory.backToList' | transloco }}
+</a>
+
+@if (orderResource.isLoading() && !order()) {
+  <div class="loading"><mat-spinner diameter="32" /></div>
+} @else if (orderResource.error() && !order()) {
+  <p class="server-error" role="alert">{{ 'laboratory.notFound' | transloco }}</p>
+} @else if (order(); as order) {
+  <div class="page-header">
+    <div class="title-block">
+      <h1>{{ order.number }}</h1>
+      <mat-chip disableRipple [class]="'status-chip-' + statusTones[order.status]">{{ statusLabels[order.status] }}</mat-chip>
+      @if (order.has_abnormal) {
+        <span class="abnormal-flag"><mat-icon>warning</mat-icon>{{ 'laboratory.abnormal' | transloco }}</span>
+      }
+    </div>
+
+    <div class="header-actions">
+      @if (canCollect()) {
+        <button mat-flat-button color="primary" [disabled]="pending()" (click)="transition('collect')">
+          <mat-icon>colorize</mat-icon>{{ 'laboratory.actions.collect' | transloco }}
+        </button>
+      }
+      @if (canStart()) {
+        <button mat-flat-button color="primary" [disabled]="pending()" (click)="transition('start')">
+          <mat-icon>science</mat-icon>{{ 'laboratory.actions.start' | transloco }}
+        </button>
+      }
+      @if (canEnter()) {
+        <button mat-stroked-button [disabled]="pending()" (click)="saveResults()">
+          <mat-icon>save</mat-icon>{{ 'laboratory.actions.saveResults' | transloco }}
+        </button>
+        <button mat-flat-button color="primary" [disabled]="pending()" (click)="transition('complete', 'laboratory.confirm.complete')">
+          <mat-icon>task_alt</mat-icon>{{ 'laboratory.actions.complete' | transloco }}
+        </button>
+      }
+      @if (canValidate()) {
+        <button mat-flat-button color="primary" [disabled]="pending()" (click)="transition('validate', 'laboratory.confirm.validate')">
+          <mat-icon>verified</mat-icon>{{ 'laboratory.actions.validate' | transloco }}
+        </button>
+      }
+      @if (canCancel()) {
+        <button mat-stroked-button [disabled]="pending()" (click)="transition('cancel', 'laboratory.confirm.cancel')">
+          <mat-icon>block</mat-icon>{{ 'laboratory.actions.cancel' | transloco }}
+        </button>
+      }
+      @if (canPrint()) {
+        <button mat-stroked-button (click)="downloadPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>{{ 'common.actions.downloadPdf' | transloco }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="server-error" role="alert">{{ error() }}</p>
+  }
+
+  <section class="info-grid">
+    <div class="info-item">
+      <span class="info-label">{{ 'common.columns.patient' | transloco }}</span>
+      <span class="info-value">{{ order.patient_display }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">{{ 'laboratory.prescriber' | transloco }}</span>
+      <span class="info-value">{{ order.doctor_display }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">{{ 'laboratory.requestedAt' | transloco }}</span>
+      <span class="info-value">{{ order.created_at | date: 'short' }}</span>
+    </div>
+    @if (order.collected_at) {
+      <div class="info-item">
+        <span class="info-label">{{ 'laboratory.collectedAt' | transloco }}</span>
+        <span class="info-value">{{ order.collected_at | date: 'short' }}</span>
+      </div>
+    }
+    @if (order.validated_at) {
+      <div class="info-item">
+        <span class="info-label">{{ 'laboratory.validatedAt' | transloco }}</span>
+        <span class="info-value">{{ order.validated_at | date: 'short' }} — {{ order.validated_by_display }}</span>
+      </div>
+    }
+    @if (order.invoice_number) {
+      <div class="info-item">
+        <span class="info-label">{{ 'laboratory.invoice' | transloco }}</span>
+        <span class="info-value">{{ order.invoice_number }}</span>
+      </div>
+    }
+    @if (order.clinical_note) {
+      <div class="info-item info-wide">
+        <span class="info-label">{{ 'laboratory.clinicalNote' | transloco }}</span>
+        <span class="info-value">{{ order.clinical_note }}</span>
+      </div>
+    }
+  </section>
+
+  <h2 class="section-title">{{ 'laboratory.tests' | transloco }}</h2>
+
+  <div class="item-list">
+    @for (item of order.items; track item.id) {
+      <article class="item-card" [class.abnormal]="item.result?.is_abnormal">
+        <header class="item-header">
+          <div>
+            <span class="item-name">{{ item.test_name }}</span>
+            <span class="item-code">{{ item.test_code }}</span>
+          </div>
+          <span class="item-reference">
+            {{ 'laboratory.reference' | transloco }} : {{ referenceRange(item.reference_min, item.reference_max) }}
+            @if (item.unit) { {{ item.unit }} }
+          </span>
+        </header>
+
+        @if (canEnter()) {
+          <div class="field-row field-pair">
+            <mat-form-field appearance="outline" class="value-field">
+              <mat-label>{{ 'laboratory.value' | transloco }}</mat-label>
+              <input matInput [value]="drafts()[item.id]?.value ?? ''" (input)="setDraft(item, 'value', $any($event.target).value)" />
+              @if (item.unit) {
+                <span matTextSuffix>{{ item.unit }}</span>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="comment-field">
+              <mat-label>{{ 'laboratory.comment' | transloco }}</mat-label>
+              <input matInput [value]="drafts()[item.id]?.comment ?? ''" (input)="setDraft(item, 'comment', $any($event.target).value)" />
+            </mat-form-field>
+          </div>
+        }
+
+        @if (item.result; as result) {
+          @if (!canEnter() || result.is_abnormal) {
+          <div class="result-line">
+            @if (result.value && !canEnter()) {
+              <span class="result-value">{{ result.value }} {{ item.unit }}</span>
+            }
+            @if (result.is_abnormal) {
+              <span class="abnormal-flag"><mat-icon>warning</mat-icon>{{ 'laboratory.abnormal' | transloco }}</span>
+            }
+            @if (result.comment && !canEnter()) {
+              <span class="result-comment">{{ result.comment }}</span>
+            }
+            @if (result.correction_reason) {
+              <span class="result-comment">{{ 'laboratory.corrected' | transloco }} : {{ result.correction_reason }}</span>
+            }
+          </div>
+          }
+          <div class="result-meta">
+            {{ 'laboratory.enteredBy' | transloco: { name: result.entered_by_display } }} — {{ result.entered_at | date: 'short' }}
+          </div>
+        } @else if (!canEnter()) {
+          <div class="result-meta">{{ 'laboratory.pendingResult' | transloco }}</div>
+        }
+
+        <div class="item-actions">
+          @if (item.result?.attachment_name) {
+            <button mat-button (click)="openAttachment(item)">
+              <mat-icon>attach_file</mat-icon>{{ item.result?.attachment_name }}
+            </button>
+          }
+          @if (canEnter()) {
+            <button mat-button (click)="fileInput.click()" [disabled]="pending()">
+              <mat-icon>upload_file</mat-icon>{{ 'laboratory.attachPdf' | transloco }}
+            </button>
+            <input #fileInput type="file" accept="application/pdf" hidden (change)="onFileSelected(item, fileInput)" />
+          }
+          @if (canCorrect() && item.result) {
+            <button mat-button (click)="correct(item)">
+              <mat-icon>edit_note</mat-icon>{{ 'laboratory.actions.correct' | transloco }}
+            </button>
+          }
+        </div>
+
+        @if (item.history?.length) {
+          <details class="history">
+            <summary>{{ 'laboratory.history' | transloco }} ({{ item.history!.length }})</summary>
+            <ul>
+              @for (previous of item.history; track previous.id) {
+                <li>
+                  {{ previous.value }} {{ item.unit }} — {{ previous.entered_by_display }}, {{ previous.entered_at | date: 'short' }}
+                  ({{ 'laboratory.replacedAt' | transloco }} {{ previous.superseded_at | date: 'short' }})
+                </li>
+              }
+            </ul>
+          </details>
+        }
+      </article>
+    }
+  </div>
+}

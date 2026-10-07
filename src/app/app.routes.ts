@@ -52,6 +52,11 @@ const canAccessDepartments = roleGuard('clinic_admin');
 // personnel, écriture (catalogue + réception de lot) pour pharmacist/clinic_admin uniquement — la
 // route elle-même est réservée à ces deux rôles, même schéma que Départements ci-dessus.
 const canAccessPharmacy = roleGuard('pharmacist', 'clinic_admin');
+// CanAccessLabOrders / CanManageLabTests (backend/laboratory/permissions.py) : demandes pour le
+// médecin (les siennes), le technicien de laboratoire et l'administrateur ; catalogue d'examens géré
+// par l'administrateur. Le patient consulte ses résultats validés dans le portail.
+const canAccessLaboratory = roleGuard('doctor', 'lab_technician', 'clinic_admin');
+const canManageLabCatalog = roleGuard('clinic_admin');
 
 export const routes: Routes = [
   {
@@ -102,6 +107,11 @@ export const routes: Routes = [
           import('./features/patient-portal/medical-record/portal-medical-record').then(
             (m) => m.PortalMedicalRecord,
           ),
+      },
+      {
+        path: 'lab-results',
+        loadComponent: () =>
+          import('./features/patient-portal/lab-results/portal-lab-results').then((m) => m.PortalLabResults),
       },
     ],
   },
@@ -206,6 +216,24 @@ export const routes: Routes = [
         canActivate: [canAccessPharmacy],
         loadComponent: () =>
           import('./features/pharmacy/medication-list/medication-list').then((m) => m.MedicationList),
+      },
+      {
+        path: 'laboratory',
+        canActivate: [canAccessLaboratory],
+        loadComponent: () =>
+          import('./features/laboratory/lab-order-list/lab-order-list').then((m) => m.LabOrderList),
+      },
+      {
+        path: 'laboratory/orders/:id',
+        canActivate: [canAccessLaboratory],
+        loadComponent: () =>
+          import('./features/laboratory/lab-order-detail/lab-order-detail').then((m) => m.LabOrderDetail),
+      },
+      {
+        path: 'lab-tests',
+        canActivate: [canManageLabCatalog],
+        loadComponent: () =>
+          import('./features/laboratory/lab-test-list/lab-test-list').then((m) => m.LabTestList),
       },
       {
         path: 'subscription',

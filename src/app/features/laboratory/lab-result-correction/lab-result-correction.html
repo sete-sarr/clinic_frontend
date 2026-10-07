@@ -1,0 +1,50 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'laboratory.correctTitle' | transloco: { test: data.item.test_name } }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <p class="hint">{{ 'laboratory.correctHint' | transloco }}</p>
+  <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'laboratory.correctedValue' | transloco }}</mat-label>
+      <input matInput [formField]="correctionForm.value" />
+      @if (data.item.unit) {
+        <span matTextSuffix>{{ data.item.unit }}</span>
+      }
+      @if (correctionForm.value().touched() && correctionForm.value().invalid()) {
+        <mat-error>{{ correctionForm.value().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'laboratory.comment' | transloco }}</mat-label>
+      <input matInput [formField]="correctionForm.comment" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'laboratory.correctionReason' | transloco }}</mat-label>
+      <textarea matInput rows="3" [formField]="correctionForm.reason"></textarea>
+      @if (correctionForm.reason().touched() && correctionForm.reason().invalid()) {
+        <mat-error>{{ correctionForm.reason().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (correctionForm().errors().length > 0) {
+      <p class="server-error" role="alert">{{ correctionForm().errors()[0].message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="correctionForm().submitting()">
+        @if (correctionForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ 'laboratory.actions.correct' | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

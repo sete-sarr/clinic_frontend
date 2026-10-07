@@ -235,6 +235,17 @@ body {
   white-space: nowrap;
 }
 
+// Barre de filtres des listes sur mobile : chaque liste déroulante (Statut, Genre, Méthode, Action…)
+// occupe toute la largeur. !important : chaque page fixe une largeur de composant (.status-filter,
+// .filter-field…) plus spécifique. Les champs de recherche et de date gardent leur disposition.
+@media (max-width: 599px) {
+  .filters mat-form-field:has(mat-select) {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
 // Listes sur mobile : une carte (app-record-card) par ligne au lieu du tableau.
 .record-card-list {
   display: flex;

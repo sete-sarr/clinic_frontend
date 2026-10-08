@@ -61,6 +61,8 @@
 }
 
 .card-avatar.has-photo {
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
 }
 

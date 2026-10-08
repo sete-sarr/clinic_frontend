@@ -28,7 +28,7 @@
 
       <div class="field-row">
         <mat-form-field appearance="outline" class="half-width">
-          <mat-label>{{ 'pharmacy.unit' | transloco }}</mat-label>
+          <mat-label>{{ 'pharmacy.packaging.baseUnit' | transloco }}</mat-label>
           <input matInput [placeholder]="'pharmacy.unitPlaceholder' | transloco" [formField]="medicationForm.unit" />
           @if (medicationForm.unit().touched() && medicationForm.unit().invalid()) {
             <mat-error>{{ medicationForm.unit().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
@@ -36,7 +36,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="half-width">
-          <mat-label>{{ 'pharmacy.unitPrice' | transloco }}</mat-label>
+          <mat-label>{{ 'pharmacy.packaging.unitPrice' | transloco }}</mat-label>
           <input matInput type="number" step="0.01" [formField]="medicationForm.unit_price" />
           <span matTextSuffix class="currency-suffix">{{ currencySymbol }}</span>
           @if (medicationForm.unit_price().touched() && medicationForm.unit_price().invalid()) {
@@ -45,11 +45,50 @@
         </mat-form-field>
       </div>
 
+      <h3 class="section-title">{{ 'pharmacy.packaging.title' | transloco }}</h3>
+      <div class="field-row with-hint">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>{{ 'pharmacy.packaging.unitsPerPack' | transloco }}</mat-label>
+          <input matInput type="number" [formField]="medicationForm.units_per_pack" />
+          <mat-hint>{{ (packagingLocked() ? 'pharmacy.packaging.lockedHint' : 'pharmacy.packaging.unitsPerPackHint') | transloco }}</mat-hint>
+          @if (medicationForm.units_per_pack().touched() && medicationForm.units_per_pack().invalid()) {
+            <mat-error>{{ medicationForm.units_per_pack().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (isPackaged()) {
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>{{ 'pharmacy.packaging.packUnit' | transloco }}</mat-label>
+            <input matInput [placeholder]="'pharmacy.packaging.packUnitPlaceholder' | transloco" [formField]="medicationForm.pack_unit" />
+          @if (medicationForm.pack_unit().touched() && medicationForm.pack_unit().invalid()) {
+              <mat-error>{{ medicationForm.pack_unit().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+            }
+          </mat-form-field>
+        }
+      </div>
+
+      @if (isPackaged()) {
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>{{ 'pharmacy.packaging.packPrice' | transloco }}</mat-label>
+            <input matInput type="number" step="0.01" [formField]="medicationForm.pack_price" />
+            <span matTextSuffix class="currency-suffix">{{ currencySymbol }}</span>
+          @if (medicationForm.pack_price().touched() && medicationForm.pack_price().invalid()) {
+              <mat-error>{{ medicationForm.pack_price().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="half-width checkbox-cell">
+            <mat-checkbox [formField]="medicationForm.allow_unit_sale">{{ 'pharmacy.packaging.allowUnitSale' | transloco }}</mat-checkbox>
+          </div>
+        </div>
+      }
+
       <div class="field-row">
         <mat-form-field appearance="outline" class="half-width">
           <mat-label>{{ 'pharmacy.minThreshold' | transloco }}</mat-label>
           <input matInput type="number" [formField]="medicationForm.min_threshold" />
-          <mat-hint>{{ 'pharmacy.minHint' | transloco }}</mat-hint>
+          <mat-hint>{{ 'pharmacy.minHint' | transloco }} @if (model().unit) {{{ 'pharmacy.packaging.inBaseUnits' | transloco: { unit: model().unit } }}}</mat-hint>
           @if (medicationForm.min_threshold().touched() && medicationForm.min_threshold().invalid()) {
             <mat-error>{{ medicationForm.min_threshold().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
           }

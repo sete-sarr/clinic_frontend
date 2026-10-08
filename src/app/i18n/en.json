@@ -621,7 +621,9 @@
     "saveError": "Unable to save the invoice.",
     "issueError": "Unable to issue the invoice.",
     "confirmCancel": "Cancel this invoice? This cannot be undone.",
-    "cancelError": "Unable to cancel the invoice."
+    "cancelError": "Unable to cancel the invoice.",
+    "saleUnit": "Sold per",
+    "packLineDescription": "{{name}} — {{pack}} of {{count}} {{unit}}"
   },
   "payments": {
     "title": "Payments",
@@ -659,7 +661,7 @@
     "updateError": "Unable to update this medication.",
     "archivedReadOnly": "This medication is archived and read-only. Restore it before editing.",
     "medicationName": "Medication name",
-    "unitPlaceholder": "box, tablet, vial...",
+    "unitPlaceholder": "tablet, capsule, bottle...",
     "unitPrice": "Unit price",
     "minThreshold": "Minimum threshold",
     "minHint": "0 = no alert",
@@ -691,6 +693,39 @@
       "quantityMin": "The quantity must be at least 1",
       "costNotNegative": "The cost cannot be negative",
       "saveError": "Unable to record this stock receipt."
+    },
+    "packaging": {
+      "title": "Packaging",
+      "baseUnit": "Base unit",
+      "unitPrice": "Unit price",
+      "unitsPerPack": "Units per pack",
+      "unitsPerPackHint": "1 = sold as is",
+      "unitsPerPackMin": "At least 1 unit per pack",
+      "packUnit": "Pack",
+      "packUnitPlaceholder": "box, blister...",
+      "packUnitRequired": "Enter the pack name (e.g. box)",
+      "packPrice": "Pack price",
+      "allowUnitSale": "Sale by the unit allowed",
+      "lockedHint": "Stock already counted per {{unit}}: use “Split stock into units”",
+      "inBaseUnits": "· in {{unit}}",
+      "unitWithPack": "{{unit}} ({{pack}} of {{count}})",
+      "totalUnits": "i.e. {{count}} × {{unit}}",
+      "equalsUnits": "= {{count}} × {{unit}}",
+      "receivedIn": "Received in",
+      "packOf": "{{pack}} of {{count}} {{unit}}",
+      "costPer": "Cost per {{unit}}"
+    },
+    "split": {
+      "action": "Split stock into units (pack → units)",
+      "title": "Split stock into units — {{name}}",
+      "intro": "This medication is counted per {{unit}}. Enter what one {{unit}} contains so it can be sold by the unit.",
+      "unitsPerPack": "Units per {{unit}}",
+      "unitsPerPackMin": "At least 2 units",
+      "preview": "{{packs}} × {{packUnit}} → {{units}} × {{unit}}",
+      "note": "This medication's batches, movement history, alert thresholds and already issued invoices are converted. The operation is recorded in the audit log and can only be done once.",
+      "confirm": "Convert the stock",
+      "done": "Stock converted into units.",
+      "error": "Could not convert the stock."
     }
   },
   "staff": {

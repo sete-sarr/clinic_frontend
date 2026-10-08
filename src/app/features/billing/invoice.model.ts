@@ -1,3 +1,4 @@
+import { SaleUnit } from '../../core/models/pharmacy.model';
 import { translatedLabels } from '../../core/i18n/translated-labels';
 
 // Reflète billing.api.serializers.InvoiceSerializer/InvoiceLineSerializer et
@@ -22,6 +23,10 @@ export interface InvoiceLine {
   // Ligne liée au catalogue pharmacie : le stock est décrémenté à l'émission de la facture
   // (pharmacy/services.py::sync_invoice_stock). null = prestation sans article de stock.
   medication: number | null;
+  // Ligne médicament : vendue au conditionnement (boîte) ou à l'unité de base (comprimé) ; le
+  // serveur en déduit stock_quantity (unités de base retirées du stock), figée sur la ligne.
+  sale_unit: SaleUnit;
+  stock_quantity?: number;
 }
 
 export interface Invoice {

@@ -22,7 +22,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { DoctorSummary } from '../../../core/models/doctor.model';
 import { PatientSummary } from '../../../core/models/patient.model';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { Medication } from '../../../core/models/pharmacy.model';
+import { Medication, SaleUnit, formatStock, isPackaged } from '../../../core/models/pharmacy.model';
 import { parseIsoDate, toIsoDate } from '../../../core/utils/date';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
@@ -63,7 +63,7 @@ function emptyPaymentEntry(): PaymentEntryModel {
 }
 
 function emptyLine(): InvoiceLine {
-  return { description: '', quantity: 1, unit_price: 0, medication: null };
+  return { description: '', quantity: 1, unit_price: 0, medication: null, sale_unit: 'unit' };
 }
 
 function formatPatient(patient: PatientSummary): string {
@@ -264,19 +264,62 @@ export class InvoiceForm {
   }
 
   // Pré-remplit la ligne depuis le catalogue ; description et prix restent modifiables ensuite.
+  // Produit conditionné : vendu à la boîte par défaut.
   protected onMedicationSelected(index: number, medicationId: number | null): void {
     const medication = this.medicationFor(medicationId);
     if (!medication) {
+      this.updateLine(index, { sale_unit: 'unit' });
       return;
     }
+    this.applySaleUnit(index, medication, isPackaged(medication) ? 'pack' : 'unit');
+  }
+
+  protected onSaleUnitSelected(index: number, saleUnit: SaleUnit): void {
+    const medication = this.medicationFor(this.model().lines[index]?.medication);
+    if (medication) {
+      this.applySaleUnit(index, medication, saleUnit);
+    }
+  }
+
+  private applySaleUnit(index: number, medication: Medication, saleUnit: SaleUnit): void {
+    const byPack = saleUnit === 'pack' && isPackaged(medication);
+    this.updateLine(index, {
+      sale_unit: saleUnit,
+      description: byPack
+        ? translate('billing.packLineDescription', {
+            name: medication.name,
+            pack: medication.pack_unit,
+            count: medication.units_per_pack,
+            unit: medication.unit,
+          })
+        : `${medication.name} (${medication.unit})`,
+      unit_price: Number(byPack ? medication.pack_price : medication.unit_price),
+    });
+  }
+
+  private updateLine(index: number, changes: Partial<InvoiceLine>): void {
     this.model.update((current) => ({
       ...current,
-      lines: current.lines.map((line, i) =>
-        i === index
-          ? { ...line, description: `${medication.name} (${medication.unit})`, unit_price: Number(medication.unit_price) }
-          : line,
-      ),
+      lines: current.lines.map((line, i) => (i === index ? { ...line, ...changes } : line)),
     }));
+  }
+
+  protected readonly isPackaged = isPackaged;
+
+  protected stockHint(medication: Medication): string {
+    const stock = formatStock(medication, medication.current_stock);
+    return isPackaged(medication) && medication.current_stock > 0 ? stock : `${stock} ${medication.unit}`;
+  }
+
+  // « Paracétamol 500 mg (comprimé, boîte de 16) » dans la liste des médicaments.
+  protected medicationOptionLabel(medication: Medication): string {
+    return isPackaged(medication)
+      ? `${medication.name} (${translate('pharmacy.packaging.unitWithPack', {
+          unit: medication.unit,
+          pack: medication.pack_unit,
+          count: medication.units_per_pack,
+        })})`
+      : `${medication.name} (${medication.unit})`;
   }
 
   protected addLine(): void {
@@ -302,7 +345,9 @@ export class InvoiceForm {
           doctor: value.doctor,
           issue_date: toIsoDate(value.issue_date),
           vat_rate: value.vat_rate,
-          lines: value.lines.map(({ id: _lineId, line_total: _lineTotal, ...line }) => line),
+          lines: value.lines.map(
+            ({ id: _lineId, line_total: _lineTotal, stock_quantity: _stockQuantity, ...line }) => line,
+          ),
         };
 
         const id = this.currentId();

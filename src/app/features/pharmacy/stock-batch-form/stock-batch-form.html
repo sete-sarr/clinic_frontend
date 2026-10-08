@@ -1,5 +1,5 @@
 <div class="app-dialog-header">
-  <h2 mat-dialog-title>{{ 'pharmacy.batch.title' | transloco: { name: data.medicationName } }}</h2>
+  <h2 mat-dialog-title>{{ 'pharmacy.batch.title' | transloco: { name: medication.name } }}</h2>
   <button mat-icon-button type="button" (click)="dialogRef.close(false)" [attr.aria-label]="'common.actions.close' | transloco">
     <mat-icon>close</mat-icon>
   </button>
@@ -39,27 +39,40 @@
       </mat-form-field>
     </div>
 
-    <div class="field-row">
+    <div class="field-row" [class.with-hint]="isPackaged">
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>{{ 'pharmacy.batch.quantityReceived' | transloco }}</mat-label>
-        <input matInput type="number" [formField]="batchForm.quantity_received" />
-        @if (batchForm.quantity_received().touched() && batchForm.quantity_received().invalid()) {
-          <mat-error>{{ batchForm.quantity_received().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        <input matInput type="number" [formField]="batchForm.quantity" />
+        @if (isPackaged) {
+          <mat-hint>{{ 'pharmacy.packaging.equalsUnits' | transloco: { count: unitsPreview(), unit: medication.unit } }}</mat-hint>
+        }
+        @if (batchForm.quantity().touched() && batchForm.quantity().invalid()) {
+          <mat-error>{{ batchForm.quantity().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
         }
       </mat-form-field>
 
+      @if (isPackaged) {
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>{{ 'pharmacy.packaging.receivedIn' | transloco }}</mat-label>
+          <mat-select [formField]="batchForm.received_in">
+            <mat-option value="pack">{{ 'pharmacy.packaging.packOf' | transloco: { pack: medication.pack_unit, count: medication.units_per_pack, unit: medication.unit } }}</mat-option>
+            <mat-option value="unit">{{ medication.unit }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
+
+    <div class="field-row">
       <mat-form-field appearance="outline" class="half-width">
-        <mat-label>{{ 'pharmacy.batch.unitCost' | transloco }}</mat-label>
+        <mat-label>{{ (isPackaged ? 'pharmacy.packaging.costPer' : 'pharmacy.batch.unitCost') | transloco: { unit: model().received_in === 'pack' ? medication.pack_unit : medication.unit } }}</mat-label>
         <input matInput type="number" step="0.01" [formField]="batchForm.unit_cost" />
         <span matTextSuffix class="currency-suffix">{{ currencySymbol }}</span>
         @if (batchForm.unit_cost().touched() && batchForm.unit_cost().invalid()) {
           <mat-error>{{ batchForm.unit_cost().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
         }
       </mat-form-field>
-    </div>
 
-    <div class="field-row">
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>{{ 'pharmacy.batch.supplierOptional' | transloco }}</mat-label>
         <input matInput [formField]="batchForm.supplier" />
       </mat-form-field>

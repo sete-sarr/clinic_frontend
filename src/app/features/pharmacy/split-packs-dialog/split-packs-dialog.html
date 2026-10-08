@@ -1,0 +1,66 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'pharmacy.split.title' | transloco: { name: medication.name } }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <p class="split-intro">{{ 'pharmacy.split.intro' | transloco: { unit: medication.unit } }}</p>
+
+  <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>{{ 'pharmacy.split.unitsPerPack' | transloco: { unit: medication.unit } }}</mat-label>
+        <input matInput type="number" [formField]="splitForm.units_per_pack" />
+        @if (splitForm.units_per_pack().touched() && splitForm.units_per_pack().invalid()) {
+          <mat-error>{{ splitForm.units_per_pack().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>{{ 'pharmacy.packaging.baseUnit' | transloco }}</mat-label>
+        <input matInput [placeholder]="'pharmacy.unitPlaceholder' | transloco" [formField]="splitForm.unit" />
+        @if (splitForm.unit().touched() && splitForm.unit().invalid()) {
+          <mat-error>{{ splitForm.unit().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>{{ 'pharmacy.packaging.unitPrice' | transloco }}</mat-label>
+        <input matInput type="number" step="0.01" [formField]="splitForm.unit_price" />
+        <span matTextSuffix class="currency-suffix">{{ currencySymbol }}</span>
+        @if (splitForm.unit_price().touched() && splitForm.unit_price().invalid()) {
+          <mat-error>{{ splitForm.unit_price().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="half-width checkbox-cell">
+        <mat-checkbox [formField]="splitForm.allow_unit_sale">{{ 'pharmacy.packaging.allowUnitSale' | transloco }}</mat-checkbox>
+      </div>
+    </div>
+
+    <div class="split-preview" role="status">
+      <mat-icon aria-hidden="true">swap_horiz</mat-icon>
+      <span>{{ 'pharmacy.split.preview' | transloco: preview() }}</span>
+    </div>
+    <p class="split-note">{{ 'pharmacy.split.note' | transloco }}</p>
+
+    @if (splitForm().errors().length > 0) {
+      <p class="server-error" role="alert">{{ splitForm().errors()[0].message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="splitForm().submitting()">
+        @if (splitForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ 'pharmacy.split.confirm' | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

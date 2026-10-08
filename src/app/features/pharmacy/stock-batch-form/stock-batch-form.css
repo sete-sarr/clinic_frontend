@@ -24,3 +24,8 @@
   gap: var(--space-2);
   margin-top: var(--space-2);
 }
+
+/* La conversion « = 500 × comprimé » s'affiche sous la quantité : place avant la rangée suivante. */
+.field-row.with-hint {
+  margin-bottom: var(--space-4);
+}

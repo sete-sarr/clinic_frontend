@@ -30,6 +30,12 @@
         <mat-icon>inventory_2</mat-icon>
       </button>
 
+      @if (medication.is_active && !isPackaged(medication)) {
+        <button mat-icon-button [matTooltip]="'pharmacy.split.action' | transloco" (click)="openSplitPacks(medication)">
+          <mat-icon>call_split</mat-icon>
+        </button>
+      }
+
       <button
         mat-icon-button
         [matTooltip]="'common.actions.edit' | transloco"
@@ -79,12 +85,17 @@
 
       <ng-container matColumnDef="unit">
         <th mat-header-cell *matHeaderCellDef>{{ 'pharmacy.unit' | transloco }}</th>
-        <td mat-cell *matCellDef="let medication">{{ medication.unit }}</td>
+        <td mat-cell *matCellDef="let medication">{{ unitLabel(medication) }}</td>
       </ng-container>
 
       <ng-container matColumnDef="stock">
         <th mat-header-cell *matHeaderCellDef>{{ 'pharmacy.currentStock' | transloco }}</th>
-        <td mat-cell *matCellDef="let medication">{{ medication.current_stock }}</td>
+        <td mat-cell *matCellDef="let medication">
+          {{ stockLabel(medication) }}
+          @if (isPackaged(medication) && medication.current_stock >= medication.units_per_pack) {
+            <span class="stock-total">{{ 'pharmacy.packaging.totalUnits' | transloco: { count: medication.current_stock, unit: medication.unit } }}</span>
+          }
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="thresholds">

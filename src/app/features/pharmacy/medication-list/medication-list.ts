@@ -15,11 +15,12 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { Medication } from '../../../core/models/pharmacy.model';
+import { Medication, formatStock, isPackaged } from '../../../core/models/pharmacy.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { MedicationForm } from '../medication-form/medication-form';
 import { MedicationService } from '../medication.service';
+import { SplitPacksDialog } from '../split-packs-dialog/split-packs-dialog';
 import { StockBatchForm } from '../stock-batch-form/stock-batch-form';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
@@ -53,14 +54,14 @@ export class MedicationList {
   protected cardFor(medication: Medication): RecordCardData {
     return {
       title: medication.name,
-      subtitle: medication.unit,
+      subtitle: this.unitLabel(medication),
       icon: 'medication',
       status: medication.is_active
         ? { label: this.stockStatusLabel(medication), tone: statusTone(this.stockStatus(medication)) }
         : { label: translate('common.archived'), tone: 'neutral' },
       muted: !medication.is_active,
       fields: [
-        { label: translate('pharmacy.currentStock'), value: medication.current_stock },
+        { label: translate('pharmacy.currentStock'), value: this.stockLabel(medication) },
         { label: translate('pharmacy.thresholds'), value: `${medication.min_threshold} / ${medication.max_threshold ?? '—'}` },
       ],
     };
@@ -94,6 +95,23 @@ export class MedicationList {
   protected onPageChange(event: PageEvent): void {
     this.page.set(event.pageIndex + 1);
   }
+
+  // « comprimé (boîte de 50) » pour un produit conditionné, l'unité seule sinon.
+  protected unitLabel(medication: Medication): string {
+    return isPackaged(medication)
+      ? translate('pharmacy.packaging.unitWithPack', {
+          unit: medication.unit,
+          pack: medication.pack_unit,
+          count: medication.units_per_pack,
+        })
+      : medication.unit;
+  }
+
+  protected stockLabel(medication: Medication): string {
+    return formatStock(medication, medication.current_stock);
+  }
+
+  protected readonly isPackaged = isPackaged;
 
   // Statut visuel toujours doublé d'un libellé texte (jamais la couleur seule, design-system/colors.md).
   protected stockStatus(medication: Medication): 'low' | 'over' | 'ok' {
@@ -139,11 +157,21 @@ export class MedicationList {
     const ref = this.dialog.open(StockBatchForm, {
       width: '640px',
       maxWidth: '95vw',
-      data: { medicationId: medication.id, medicationName: medication.name },
+      data: { medication },
     });
     ref.afterClosed().subscribe((result) => {
       if (result) {
         this.successNotifier.show(translate('pharmacy.batchReceived'));
+        this.medicationsResource.reload();
+      }
+    });
+  }
+
+  protected openSplitPacks(medication: Medication): void {
+    const ref = this.dialog.open(SplitPacksDialog, { width: '640px', maxWidth: '95vw', data: medication });
+    ref.afterClosed().subscribe((result) => {
+      if (result) {
+        this.successNotifier.show(translate('pharmacy.split.done'));
         this.medicationsResource.reload();
       }
     });

@@ -99,6 +99,11 @@
   flex: 0 1 140px;
 }
 
+/* Vente à la boîte ou à l'unité (médicament conditionné uniquement). */
+.line-unit {
+  flex: 0 1 160px;
+}
+
 /* Plus large que la quantité : le symbole de devise en suffixe (« F CFA ») prend de la place. */
 .line-price {
   flex: 0 1 200px;

@@ -621,7 +621,9 @@
     "saveError": "Impossible d'enregistrer la facture.",
     "issueError": "Impossible d'émettre la facture.",
     "confirmCancel": "Annuler cette facture ? Cette action est définitive.",
-    "cancelError": "Impossible d'annuler la facture."
+    "cancelError": "Impossible d'annuler la facture.",
+    "saleUnit": "Vendu par",
+    "packLineDescription": "{{name}} — {{pack}} de {{count}} {{unit}}"
   },
   "payments": {
     "title": "Paiements",
@@ -659,7 +661,7 @@
     "updateError": "Impossible de modifier ce médicament.",
     "archivedReadOnly": "Ce médicament est archivé et en lecture seule. Restaurez-le avant de le modifier.",
     "medicationName": "Nom du médicament",
-    "unitPlaceholder": "boîte, comprimé, flacon...",
+    "unitPlaceholder": "comprimé, gélule, flacon...",
     "unitPrice": "Prix unitaire",
     "minThreshold": "Seuil minimal",
     "minHint": "0 = pas d'alerte",
@@ -691,6 +693,39 @@
       "quantityMin": "La quantité doit être au moins 1",
       "costNotNegative": "Le coût ne peut pas être négatif",
       "saveError": "Impossible d'enregistrer cette réception de stock."
+    },
+    "packaging": {
+      "title": "Conditionnement",
+      "baseUnit": "Unité de base",
+      "unitPrice": "Prix à l'unité",
+      "unitsPerPack": "Unités par conditionnement",
+      "unitsPerPackHint": "1 = vendu tel quel",
+      "unitsPerPackMin": "Au moins 1 unité par conditionnement",
+      "packUnit": "Conditionnement",
+      "packUnitPlaceholder": "boîte, plaquette...",
+      "packUnitRequired": "Indiquez le nom du conditionnement (ex. boîte)",
+      "packPrice": "Prix du conditionnement",
+      "allowUnitSale": "Vente au détail autorisée",
+      "lockedHint": "Stock déjà compté par {{unit}} : utilisez « Détailler le stock »",
+      "inBaseUnits": "· en {{unit}}",
+      "unitWithPack": "{{unit}} ({{pack}} de {{count}})",
+      "totalUnits": "soit {{count}} × {{unit}}",
+      "equalsUnits": "= {{count}} × {{unit}}",
+      "receivedIn": "Reçu en",
+      "packOf": "{{pack}} de {{count}} {{unit}}",
+      "costPer": "Coût par {{unit}}"
+    },
+    "split": {
+      "action": "Détailler le stock (conditionnement → unités)",
+      "title": "Détailler le stock — {{name}}",
+      "intro": "Ce médicament est compté par {{unit}}. Indiquez ce que contient un(e) {{unit}} pour pouvoir le vendre au détail.",
+      "unitsPerPack": "Unités par {{unit}}",
+      "unitsPerPackMin": "Au moins 2 unités",
+      "preview": "{{packs}} × {{packUnit}} → {{units}} × {{unit}}",
+      "note": "Les lots, l'historique des mouvements, les seuils d'alerte et les factures déjà émises de ce médicament sont convertis. Cette opération est enregistrée dans le journal d'audit et ne peut être faite qu'une fois.",
+      "confirm": "Convertir le stock",
+      "done": "Stock converti en unités.",
+      "error": "Impossible de convertir le stock."
     }
   },
   "staff": {

@@ -92,7 +92,7 @@
               >
                 <mat-option [value]="null">{{ 'billing.noMedication' | transloco }}</mat-option>
                 @for (medication of medicationsResource.value().results; track medication.id) {
-                  <mat-option [value]="medication.id">{{ medication.name }} ({{ medication.unit }})</mat-option>
+                  <mat-option [value]="medication.id">{{ medicationOptionLabel(medication) }}</mat-option>
                 }
                 @if (lineField.medication().value() && !medicationFor(lineField.medication().value())) {
                   <!-- Médicament archivé depuis : conservé pour l'affichage de la ligne existante. -->
@@ -100,9 +100,23 @@
                 }
               </mat-select>
               @if (medicationFor(lineField.medication().value()); as medication) {
-                <mat-hint>{{ 'billing.stockAvailable' | transloco: { stock: medication.current_stock, unit: medication.unit } }}</mat-hint>
+                <mat-hint>{{ 'billing.stockAvailable' | transloco: { stock: stockHint(medication), unit: '' } }}</mat-hint>
               }
             </mat-form-field>
+
+            @if (medicationFor(lineField.medication().value()); as medication) {
+              @if (isPackaged(medication)) {
+                <mat-form-field appearance="outline" class="line-unit">
+                  <mat-label>{{ 'billing.saleUnit' | transloco }}</mat-label>
+                  <mat-select [formField]="lineField.sale_unit" (selectionChange)="onSaleUnitSelected($index, $event.value)">
+                    <mat-option value="pack">{{ medication.pack_unit }}</mat-option>
+                    @if (medication.allow_unit_sale) {
+                      <mat-option value="unit">{{ medication.unit }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+            }
 
             <mat-form-field appearance="outline" class="line-description">
               <mat-label>{{ 'billing.description' | transloco }}</mat-label>

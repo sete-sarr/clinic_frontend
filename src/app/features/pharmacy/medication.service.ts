@@ -7,6 +7,7 @@ import {
   Medication,
   MedicationCreatePayload,
   MedicationUpdatePayload,
+  SplitPacksPayload,
   StockBatch,
   StockBatchCreatePayload,
 } from '../../core/models/pharmacy.model';
@@ -33,6 +34,10 @@ export class MedicationService {
 
   restore(id: number): Observable<Medication> {
     return this.http.post<Medication>(`${this.medicationsUrl}${id}/restore/`, {});
+  }
+
+  splitPacks(id: number, payload: SplitPacksPayload): Observable<Medication> {
+    return this.http.post<Medication>(`${this.medicationsUrl}${id}/split-packs/`, payload);
   }
 
   receiveBatch(payload: StockBatchCreatePayload): Observable<StockBatch> {

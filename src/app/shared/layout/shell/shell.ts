@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -17,8 +18,10 @@ import { Clinic } from '../../../core/models/clinic.model';
 import { Role } from '../../../core/models/user.model';
 import { ThemeService } from '../../../core/services/theme.service';
 import { UserGuideService } from '../../../core/services/user-guide.service';
+import { Avatar } from '../../components/avatar/avatar';
 import { GlobalSearch } from '../../components/global-search/global-search';
 import { LanguageSwitcher } from '../../components/language-switcher/language-switcher';
+import { MyPhotoDialog } from '../../components/my-photo-dialog/my-photo-dialog';
 import { NotificationBell } from '../../components/notification-bell/notification-bell';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { APP_NAME } from '../../../core/brand';
@@ -225,6 +228,7 @@ const NAV_ITEMS: NavItem[] = [
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
+    Avatar,
     GlobalSearch,
     LanguageSwitcher,
     NotificationBell,
@@ -246,6 +250,7 @@ export class Shell {
   private readonly router = inject(Router);
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly themeService = inject(ThemeService);
+  private readonly dialog = inject(MatDialog);
 
   protected readonly isHandset = toSignal(
     this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
@@ -311,6 +316,10 @@ export class Shell {
     const last = current.last_name?.[0] ?? '';
     return (first + last).toUpperCase() || current.username[0]?.toUpperCase() || '';
   });
+
+  protected openMyPhoto(): void {
+    this.dialog.open(MyPhotoDialog, { width: '480px', maxWidth: '95vw' });
+  }
 
   protected downloadUserGuide(): void {
     this.userGuideService.download();

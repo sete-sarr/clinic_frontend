@@ -285,6 +285,13 @@ body {
   border-bottom-color: var(--sidebar-bg) !important;
 }
 
+// Colonne photo (app-avatar) en tête des listes de personnes : médecins, personnel, patients.
+.mat-mdc-table .photo-cell {
+  width: 56px;
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+
 .mat-mdc-row:hover .mat-mdc-cell {
   background-color: color-mix(in srgb, var(--color-primary) 4%, transparent) !important;
 }

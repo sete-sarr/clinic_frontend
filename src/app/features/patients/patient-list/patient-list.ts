@@ -23,7 +23,8 @@ import { GENDER_LABELS, Gender, Patient } from '../patient.model';
 import { PatientForm } from '../patient-form/patient-form';
 import { PatientService } from '../patient.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
-import { RecordCardData, activeStatus, initialsOf } from '../../../shared/components/record-card/record-card.model';
+import { RecordCardData, activeStatus } from '../../../shared/components/record-card/record-card.model';
+import { Avatar } from '../../../shared/components/avatar/avatar';
 import { injectIsHandset } from '../../../core/utils/handset';
 import { apiResource } from '../../../core/api/api-resource';
 
@@ -33,6 +34,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 @Component({
   selector: 'app-patient-list',
   imports: [
+    Avatar,
     NgTemplateOutlet,
     RecordCard,
     EmptyState,
@@ -59,12 +61,11 @@ export class PatientList {
     return {
       title: name,
       subtitle: patient.patient_number,
-      initials: initialsOf(name),
+      photo: { src: patient.photo, kind: 'patient' },
       status: patient.is_active ? undefined : activeStatus(false),
       muted: !patient.is_active,
       fields: [
         { label: translate('common.columns.phone'), value: patient.phone },
-        { label: translate('common.fields.dateOfBirth'), value: patient.date_of_birth, date: 'mediumDate' },
         { label: translate('common.fields.gender'), value: this.genderLabel(patient) },
       ],
     };
@@ -81,7 +82,7 @@ export class PatientList {
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly genderOptions = Object.entries(GENDER_LABELS) as [Gender, string][];
-  protected readonly displayedColumns = ['patient_number', 'name', 'phone', 'date_of_birth', 'gender', 'actions'];
+  protected readonly displayedColumns = ['photo', 'patient_number', 'name', 'phone', 'gender', 'actions'];
 
   protected readonly searchInput = signal('');
   private searchDebounceHandle?: ReturnType<typeof setTimeout>;

@@ -12,6 +12,15 @@
     </div>
   } @else {
       <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <app-photo-picker
+          [currentSrc]="currentPhoto()"
+          kind="patient"
+          [name]="model().first_name + ' ' + model().last_name"
+          [requireConsent]="true"
+          [(change)]="photoChange"
+          [(consent)]="photoConsent"
+        />
+
         <div class="field-row field-pair">
           <mat-form-field appearance="outline" class="half-width">
             <mat-label>{{ 'common.fields.firstName' | transloco }}</mat-label>

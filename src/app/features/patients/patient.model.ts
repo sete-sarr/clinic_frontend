@@ -28,6 +28,8 @@ export interface Patient {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  // URL signée de la photo du patient (null : image par défaut).
+  photo: string | null;
 }
 
 export interface PatientPayload {

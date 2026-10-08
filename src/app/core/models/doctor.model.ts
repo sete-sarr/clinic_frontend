@@ -8,6 +8,8 @@ export interface DoctorSummary {
     email: string;
     first_name: string;
     last_name: string;
+    // URL signée de la photo du médecin (null : image par défaut).
+    photo?: string | null;
   };
   specialty: string;
 }

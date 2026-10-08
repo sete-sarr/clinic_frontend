@@ -20,6 +20,8 @@ export interface User {
   language?: '' | 'fr' | 'en';
   // Devise de la clinique (docs/i18n.md §8) ; absente des sessions antérieures.
   clinic_currency?: string | null;
+  // URL signée et temporaire de la photo de profil (null : image par défaut).
+  photo?: string | null;
 }
 
 export interface AuthTokens {

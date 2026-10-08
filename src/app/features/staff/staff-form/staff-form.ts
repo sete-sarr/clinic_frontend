@@ -16,6 +16,8 @@ import { STAFF_ROLE_LABELS, StaffMember, StaffRole } from '../../../core/models/
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { StaffService } from '../staff.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { PHOTO_URLS, PhotoChange, PhotoService } from '../../../core/services/photo.service';
+import { PhotoPicker } from '../../../shared/components/photo-picker/photo-picker';
 
 export interface StaffFormDialogData {
   id?: string;
@@ -34,6 +36,7 @@ interface StaffFormModel {
   selector: 'app-staff-form',
   imports: [
     FormField,
+    PhotoPicker,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -48,6 +51,7 @@ interface StaffFormModel {
 })
 export class StaffForm {
   private readonly staffService = inject(StaffService);
+  private readonly photoService = inject(PhotoService);
   private readonly successNotifier = inject(SuccessNotifier);
   protected readonly dialogRef = inject(MatDialogRef<StaffForm>);
   private readonly data = inject<StaffFormDialogData>(MAT_DIALOG_DATA, { optional: true });
@@ -60,6 +64,14 @@ export class StaffForm {
   protected readonly memberResource = apiResource<StaffMember | null>(
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/accounts/staff/${this.currentId()}/` } : undefined),
     { defaultValue: null },
+  );
+
+  // Photo du membre, appliquée après l'enregistrement de la fiche.
+  protected readonly photoChange = signal<PhotoChange>(null);
+  protected readonly currentPhoto = computed(() => this.memberResource.value()?.photo ?? null);
+  // Un médecin peut être ouvert depuis cette liste (rôle « doctor » en lecture seule).
+  protected readonly photoKind = computed(() =>
+    (this.memberResource.value()?.role as string | undefined) === 'doctor' ? 'doctor' : 'staff',
   );
 
   protected readonly model = signal<StaffFormModel>({
@@ -106,8 +118,9 @@ export class StaffForm {
       const value = this.model();
       try {
         const id = this.currentId();
+        let saved: StaffMember;
         if (id) {
-          await firstValueFrom(
+          saved = await firstValueFrom(
             this.staffService.update(Number(id), {
               first_name: value.first_name,
               last_name: value.last_name,
@@ -115,7 +128,7 @@ export class StaffForm {
             }),
           );
         } else {
-          await firstValueFrom(
+          saved = await firstValueFrom(
             this.staffService.create({
               username: value.username,
               email: value.email,
@@ -125,6 +138,12 @@ export class StaffForm {
               role: value.role,
             }),
           );
+        }
+        // Fiche enregistrée : en cas d'échec de la photo, le formulaire reste ouvert, en modification.
+        this.currentId.set(String(saved.id));
+        const photoError = await this.photoService.apply(PHOTO_URLS.staff(saved.id), this.photoChange());
+        if (photoError) {
+          return [{ kind: 'server', message: photoError }];
         }
         this.successNotifier.show(translate('staff.saved'));
         this.dialogRef.close(true);

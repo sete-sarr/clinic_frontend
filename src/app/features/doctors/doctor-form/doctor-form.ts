@@ -18,6 +18,8 @@ import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { DoctorService } from '../doctor.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { PHOTO_URLS, PhotoChange, PhotoService } from '../../../core/services/photo.service';
+import { PhotoPicker } from '../../../shared/components/photo-picker/photo-picker';
 
 export interface DoctorFormDialogData {
   id?: string;
@@ -39,6 +41,7 @@ interface DoctorFormModel {
   selector: 'app-doctor-form',
   imports: [
     FormField,
+    PhotoPicker,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -53,6 +56,7 @@ interface DoctorFormModel {
 })
 export class DoctorForm {
   private readonly doctorService = inject(DoctorService);
+  private readonly photoService = inject(PhotoService);
   private readonly successNotifier = inject(SuccessNotifier);
   protected readonly dialogRef = inject(MatDialogRef<DoctorForm>);
   private readonly data = inject<DoctorFormDialogData>(MAT_DIALOG_DATA, { optional: true });
@@ -65,6 +69,10 @@ export class DoctorForm {
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/doctors/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );
+
+  // Photo du compte du médecin, appliquée après l'enregistrement de la fiche.
+  protected readonly photoChange = signal<PhotoChange>(null);
+  protected readonly currentPhoto = computed(() => this.doctorResource.value()?.user.photo ?? null);
 
   protected readonly departmentsResource = apiResource<Paginated<DepartmentSummary>>(
     () => ({ url: `${environment.apiBaseUrl}/departments/`, params: { is_active: true } }),
@@ -121,8 +129,9 @@ export class DoctorForm {
       const value = this.model();
       try {
         const id = this.currentId();
+        let saved: Doctor;
         if (id) {
-          await firstValueFrom(
+          saved = await firstValueFrom(
             this.doctorService.update(Number(id), {
               department: value.department,
               professional_number: value.professional_number,
@@ -131,7 +140,7 @@ export class DoctorForm {
             }),
           );
         } else {
-          await firstValueFrom(
+          saved = await firstValueFrom(
             this.doctorService.create({
               username: value.username,
               email: value.email,
@@ -144,6 +153,12 @@ export class DoctorForm {
               phone: value.phone,
             }),
           );
+        }
+        // Fiche enregistrée : en cas d'échec de la photo, le formulaire reste ouvert, en modification.
+        this.currentId.set(String(saved.id));
+        const photoError = await this.photoService.apply(PHOTO_URLS.staff(saved.user.id), this.photoChange());
+        if (photoError) {
+          return [{ kind: 'server', message: photoError }];
         }
         this.successNotifier.show(translate('doctors.saved'));
         this.dialogRef.close(true);

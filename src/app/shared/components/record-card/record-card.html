@@ -1,7 +1,9 @@
 <article class="record-card" [class]="'tone-' + (card().status?.tone ?? 'neutral')" [class.muted]="card().muted">
   <header class="card-header">
-    <span class="card-avatar" aria-hidden="true">
-      @if (card().initials) {
+    <span class="card-avatar" [class.has-photo]="card().photo" aria-hidden="true">
+      @if (card().photo; as photo) {
+        <app-avatar [src]="photo.src" [kind]="photo.kind" />
+      } @else if (card().initials) {
         {{ card().initials }}
       } @else {
         <mat-icon>{{ card().icon ?? 'description' }}</mat-icon>

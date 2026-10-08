@@ -18,6 +18,8 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { BLOOD_TYPE_LABELS, BloodType, GENDER_LABELS, Gender, Patient, PatientPayload } from '../patient.model';
 import { PatientService } from '../patient.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { PHOTO_URLS, PhotoChange, PhotoService } from '../../../core/services/photo.service';
+import { PhotoPicker } from '../../../shared/components/photo-picker/photo-picker';
 
 export interface PatientFormDialogData {
   id?: string;
@@ -38,6 +40,7 @@ interface PatientFormModel {
   selector: 'app-patient-form',
   imports: [
     FormField,
+    PhotoPicker,
     MatButtonModule,
     MatDialogModule,
     MatDatepickerModule,
@@ -53,6 +56,7 @@ interface PatientFormModel {
 })
 export class PatientForm {
   private readonly patientService = inject(PatientService);
+  private readonly photoService = inject(PhotoService);
   private readonly successNotifier = inject(SuccessNotifier);
   protected readonly dialogRef = inject(MatDialogRef<PatientForm>);
   private readonly data = inject<PatientFormDialogData>(MAT_DIALOG_DATA, { optional: true });
@@ -68,6 +72,11 @@ export class PatientForm {
     () => (this.currentId() ? { url: `${environment.apiBaseUrl}/patients/${this.currentId()}/` } : undefined),
     { defaultValue: null },
   );
+
+  // Photo du patient, appliquée après l'enregistrement de la fiche, avec son consentement.
+  protected readonly photoChange = signal<PhotoChange>(null);
+  protected readonly photoConsent = signal(false);
+  protected readonly currentPhoto = computed(() => this.patientResource.value()?.photo ?? null);
 
   protected readonly model = signal<PatientFormModel>({
     first_name: '',
@@ -109,6 +118,9 @@ export class PatientForm {
 
   protected async onSubmit(): Promise<void> {
     await submit(this.patientForm, async () => {
+      if (this.photoChange() instanceof File && !this.photoConsent()) {
+        return [{ kind: 'server', message: translate('photo.consentRequired') }];
+      }
       const value = this.model();
       const payload: PatientPayload = {
         first_name: value.first_name,
@@ -123,10 +135,14 @@ export class PatientForm {
 
       try {
         const id = this.currentId();
-        if (id) {
-          await firstValueFrom(this.patientService.update(Number(id), payload));
-        } else {
-          await firstValueFrom(this.patientService.create(payload));
+        const saved = await firstValueFrom(
+          id ? this.patientService.update(Number(id), payload) : this.patientService.create(payload),
+        );
+        // Fiche enregistrée : en cas d'échec de la photo, le formulaire reste ouvert, en modification.
+        this.currentId.set(String(saved.id));
+        const photoError = await this.photoService.apply(PHOTO_URLS.patient(saved.id), this.photoChange(), { consent: 'true' });
+        if (photoError) {
+          return [{ kind: 'server', message: photoError }];
         }
         this.successNotifier.show(translate('patients.saved'));
         this.dialogRef.close(true);

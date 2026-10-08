@@ -44,8 +44,22 @@
     "complianceText": "Vos données sont protégées conformément aux exigences HIPAA et RGPD."
   },
   "userMenu": {
+    "myPhoto": "Ma photo",
     "downloadGuide": "Télécharger le guide d'utilisation",
     "logout": "Déconnexion"
+  },
+  "photo": {
+    "add": "Ajouter une photo",
+    "change": "Changer la photo",
+    "remove": "Retirer la photo",
+    "hint": "PNG ou JPEG, 2 Mo maximum.",
+    "consent": "Le patient consent à l'enregistrement de sa photo",
+    "consentRequired": "Cochez le consentement du patient pour enregistrer sa photo.",
+    "invalidType": "Seuls les formats PNG et JPEG sont acceptés.",
+    "tooLarge": "L'image ne doit pas dépasser 2 Mo.",
+    "saveError": "La photo n'a pas pu être enregistrée.",
+    "saved": "Photo enregistrée.",
+    "myPhotoTitle": "Ma photo de profil"
   },
   "userGuide": {
     "downloadError": "Impossible de télécharger le guide d'utilisation.",
@@ -137,7 +151,8 @@
       "date": "Date",
       "status": "Statut",
       "patient": "Patient",
-      "doctor": "Médecin"
+      "doctor": "Médecin",
+      "photo": "Photo"
     },
     "activePlural": "Actifs",
     "inactivePlural": "Inactifs",
@@ -684,7 +699,6 @@
     "newTitle": "Nouveau membre du personnel",
     "editTitle": "Modifier le membre du personnel",
     "empty": "Aucun membre du personnel trouvé.",
-    "identifier": "Identifiant",
     "role": "Rôle",
     "changeRole": "Changer le rôle",
     "cannotDeactivateSelf": "Vous ne pouvez pas vous désactiver vous-même",

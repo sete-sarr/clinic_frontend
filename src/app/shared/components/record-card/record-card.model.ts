@@ -1,5 +1,7 @@
 import { translate } from '@jsverse/transloco';
 
+import { AvatarKind } from '../avatar/avatar';
+
 // Carte d'une ligne de liste sur mobile (design-system/cards.md) : chaque liste décrit ses cartes avec
 // ces données ; la mise en forme est entièrement portée par app-record-card.
 
@@ -17,7 +19,9 @@ export interface CardField {
 export interface RecordCardData {
   title: string;
   subtitle?: string;
-  // Pastille : initiales (personnes) ou icône Material (documents, objets).
+  // Pastille : photo (personnes ayant une photo de profil, avec image par défaut), sinon initiales
+  // (personnes) ou icône Material (documents, objets).
+  photo?: { src: string | null | undefined; kind: AvatarKind };
   initials?: string;
   icon?: string;
   status?: { label: string; tone: CardTone };

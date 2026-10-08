@@ -44,8 +44,22 @@
     "complianceText": "Your data is protected in line with HIPAA and GDPR requirements."
   },
   "userMenu": {
+    "myPhoto": "My photo",
     "downloadGuide": "Download the user guide",
     "logout": "Log out"
+  },
+  "photo": {
+    "add": "Add a photo",
+    "change": "Change photo",
+    "remove": "Remove photo",
+    "hint": "PNG or JPEG, 2 MB maximum.",
+    "consent": "The patient consents to their photo being saved",
+    "consentRequired": "Tick the patient's consent to save their photo.",
+    "invalidType": "Only PNG and JPEG formats are accepted.",
+    "tooLarge": "The image must not exceed 2 MB.",
+    "saveError": "The photo could not be saved.",
+    "saved": "Photo saved.",
+    "myPhotoTitle": "My profile photo"
   },
   "userGuide": {
     "downloadError": "Unable to download the user guide.",
@@ -137,7 +151,8 @@
       "date": "Date",
       "status": "Status",
       "patient": "Patient",
-      "doctor": "Doctor"
+      "doctor": "Doctor",
+      "photo": "Photo"
     },
     "activePlural": "Active",
     "inactivePlural": "Inactive",
@@ -684,7 +699,6 @@
     "newTitle": "New staff member",
     "editTitle": "Edit staff member",
     "empty": "No staff members found.",
-    "identifier": "Username",
     "role": "Role",
     "changeRole": "Change role",
     "cannotDeactivateSelf": "You cannot deactivate yourself",

@@ -12,6 +12,13 @@
     </div>
   } @else {
       <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+        <app-photo-picker
+          [currentSrc]="currentPhoto()"
+          [kind]="photoKind()"
+          [name]="model().first_name + ' ' + model().last_name"
+          [(change)]="photoChange"
+        />
+
         @if (!isEditMode()) {
           <div class="field-row">
             <mat-form-field appearance="outline" class="half-width">

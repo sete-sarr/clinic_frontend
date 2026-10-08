@@ -66,13 +66,21 @@
 
       @if (user(); as currentUser) {
         <button mat-button class="user-chip" [matMenuTriggerFor]="userMenu">
-          <span class="user-avatar">{{ userInitials() }}</span>
+          @if (currentUser.photo) {
+            <app-avatar class="user-avatar" [src]="currentUser.photo" kind="staff" [size]="36" />
+          } @else {
+            <span class="user-avatar">{{ userInitials() }}</span>
+          }
           <span class="user-text">
             <span class="user-name">{{ currentUser.first_name || currentUser.username }}</span>
             <span class="user-role">{{ primaryRoleKey() ? (primaryRoleKey() | transloco) : '' }}</span>
           </span>
         </button>
         <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="openMyPhoto()">
+            <mat-icon>account_circle</mat-icon>
+            <span>{{ 'userMenu.myPhoto' | transloco }}</span>
+          </button>
           @if (canDownloadUserGuide()) {
             <button mat-menu-item (click)="downloadUserGuide()">
               <mat-icon>menu_book</mat-icon>

@@ -20,6 +20,8 @@ export interface StaffMember {
   role: StaffRole;
   is_active: boolean;
   date_joined: string;
+  // URL signée de la photo (null : image par défaut).
+  photo: string | null;
 }
 
 export interface StaffCreatePayload {

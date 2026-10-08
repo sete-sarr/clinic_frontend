@@ -60,6 +60,10 @@
   background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
+.card-avatar.has-photo {
+  border-radius: 50%;
+}
+
 .card-avatar mat-icon {
   width: 22px;
   height: 22px;

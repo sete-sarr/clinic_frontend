@@ -22,7 +22,8 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { StaffForm } from '../staff-form/staff-form';
 import { StaffService } from '../staff.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
-import { RecordCardData, activeStatus, initialsOf } from '../../../shared/components/record-card/record-card.model';
+import { RecordCardData, activeStatus } from '../../../shared/components/record-card/record-card.model';
+import { Avatar, AvatarKind } from '../../../shared/components/avatar/avatar';
 import { injectIsHandset } from '../../../core/utils/handset';
 import { apiResource } from '../../../core/api/api-resource';
 
@@ -31,6 +32,7 @@ const PAGE_SIZE = 20;
 @Component({
   selector: 'app-staff-list',
   imports: [
+    Avatar,
     NgTemplateOutlet,
     RecordCard,
     EmptyState,
@@ -56,10 +58,10 @@ export class StaffList {
     return {
       title: name,
       subtitle: this.roleLabel(member),
-      initials: initialsOf(name),
+      photo: { src: member.photo, kind: this.avatarKind(member) },
       status: activeStatus(member.is_active),
       muted: !member.is_active,
-      fields: [{ label: translate('staff.identifier'), value: member.username }],
+      fields: [],
     };
   }
 
@@ -73,7 +75,7 @@ export class StaffList {
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly roleLabels = STAFF_ROLE_LABELS;
-  protected readonly displayedColumns = ['name', 'username', 'role', 'status', 'actions'];
+  protected readonly displayedColumns = ['photo', 'name', 'role', 'status', 'actions'];
   protected readonly currentUserId = computed(() => this.auth.user()?.id ?? null);
   protected readonly canManage = computed(() => this.auth.hasRole('clinic_admin'));
 
@@ -110,8 +112,14 @@ export class StaffList {
     return member.id === this.currentUserId();
   }
 
+  // Les médecins figurent aussi dans cette liste (rôle « doctor », en lecture seule — backend
+  // StaffListSerializer), hors des rôles attribuables de STAFF_ROLE_LABELS.
   protected roleLabel(member: StaffMember): string {
-    return this.roleLabels[member.role];
+    return this.roleLabels[member.role] ?? translate(`roles.${member.role}`);
+  }
+
+  protected avatarKind(member: StaffMember): AvatarKind {
+    return (member.role as string) === 'doctor' ? 'doctor' : 'staff';
   }
 
   protected async toggleActive(member: StaffMember): Promise<void> {

@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslocoPipe, translate } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -21,7 +21,8 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { DoctorForm } from '../doctor-form/doctor-form';
 import { DoctorService } from '../doctor.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
-import { RecordCardData, activeStatus, initialsOf } from '../../../shared/components/record-card/record-card.model';
+import { RecordCardData, activeStatus } from '../../../shared/components/record-card/record-card.model';
+import { Avatar } from '../../../shared/components/avatar/avatar';
 import { injectIsHandset } from '../../../core/utils/handset';
 import { apiResource } from '../../../core/api/api-resource';
 
@@ -30,6 +31,7 @@ const PAGE_SIZE = 20;
 @Component({
   selector: 'app-doctor-list',
   imports: [
+    Avatar,
     NgTemplateOutlet,
     RecordCard,
     EmptyState,
@@ -55,10 +57,10 @@ export class DoctorList {
     return {
       title: name,
       subtitle: doctor.specialty,
-      initials: initialsOf(name),
+      photo: { src: doctor.user.photo, kind: 'doctor' },
       status: activeStatus(doctor.is_active),
       muted: !doctor.is_active,
-      fields: [{ label: translate('doctors.professionalNumber'), value: doctor.professional_number }],
+      fields: [],
     };
   }
 
@@ -71,7 +73,7 @@ export class DoctorList {
   readonly page = input(1, { transform: (value: unknown) => numberAttribute(value, 1) });
 
   protected readonly pageSize = PAGE_SIZE;
-  protected readonly displayedColumns = ['name', 'specialty', 'professional_number', 'status', 'actions'];
+  protected readonly displayedColumns = ['photo', 'name', 'specialty', 'status', 'actions'];
   protected readonly canManage = computed(() => this.auth.hasRole('clinic_admin'));
 
   protected readonly doctorsResource = apiResource<Paginated<Doctor>>(

@@ -54,6 +54,13 @@
   } @else {
     <div class="table-scroll">
     <table mat-table [dataSource]="dataSource" class="doctors-table">
+      <ng-container matColumnDef="photo">
+        <th mat-header-cell *matHeaderCellDef class="photo-cell">{{ 'common.columns.photo' | transloco }}</th>
+        <td mat-cell *matCellDef="let doctor" class="photo-cell">
+          <app-avatar [src]="doctor.user.photo" kind="doctor" [name]="doctor.user.first_name + ' ' + doctor.user.last_name" />
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>{{ 'common.columns.name' | transloco }}</th>
         <td mat-cell *matCellDef="let doctor">{{ doctor.user.first_name }} {{ doctor.user.last_name }}</td>
@@ -62,11 +69,6 @@
       <ng-container matColumnDef="specialty">
         <th mat-header-cell *matHeaderCellDef>{{ 'doctors.specialty' | transloco }}</th>
         <td mat-cell *matCellDef="let doctor">{{ doctor.specialty }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="professional_number">
-        <th mat-header-cell *matHeaderCellDef>{{ 'doctors.professionalNumber' | transloco }}</th>
-        <td mat-cell *matCellDef="let doctor">{{ doctor.professional_number }}</td>
       </ng-container>
 
       <ng-container matColumnDef="status">

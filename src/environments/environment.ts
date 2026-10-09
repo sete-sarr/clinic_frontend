@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  // Remplacer par la véritable URL du backend Render avant le déploiement (exemple_prod.md §3), par ex.
-  // 'https://clinic-backend.onrender.com/api/v1'. Un chemin relatif ne fonctionne que si le frontend et
-  // le backend partagent une même origine, ce qui n'est pas le cas avec Vercel + Render en domaines séparés.
+  // Adresse Render du backend (exemple_prod.md § « Adresse de l'API »). Un chemin relatif ne fonctionnerait
+  // que si le frontend et le backend partageaient une même origine — ici app.procli.org et l'API Render
+  // sont deux domaines séparés.
   apiBaseUrl: 'https://clinic-backend-p0km.onrender.com/api/v1',
 };

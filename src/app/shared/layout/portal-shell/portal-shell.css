@@ -44,3 +44,21 @@
 .shell-workspace.with-bottom-nav {
   padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--space-6));
 }
+
+/* Application mobile en bord à bord (docs/mobile.md) : en-tête et menu commencent sous la barre
+   d'état du téléphone. Sans effet dans un navigateur ordinaire (inset nul). */
+.shell-header {
+  padding-top: env(safe-area-inset-top);
+  height: calc(64px + env(safe-area-inset-top));
+}
+
+@media (max-width: 599px) {
+  /* Hauteur mobile de mat-toolbar (56 px) + barre d'état. */
+  .shell-header {
+    height: calc(56px + env(safe-area-inset-top));
+  }
+}
+
+.shell-sidenav {
+  padding-top: env(safe-area-inset-top);
+}

@@ -9,6 +9,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { languageInterceptor } from './core/i18n/language.interceptor';
 import { provideI18n } from './core/i18n/provide-i18n';
+import { provideNativeApp } from './core/mobile/native-app';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,5 +22,7 @@ export const appConfig: ApplicationConfig = {
     // Langue de l'interface (FR/EN) : Transloco, LOCALE_ID des pipes date/number et locale du
     // sélecteur de date — voir core/i18n/provide-i18n.ts et docs/i18n.md.
     ...provideI18n(),
+    // Application mobile : barre d'état, bouton retour Android (sans effet sur le web et le bureau).
+    provideNativeApp(),
   ],
 };

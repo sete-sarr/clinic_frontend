@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { isTauri } from '@tauri-apps/api/core';
 
 // Les exports CSV portent un nom de fichier Content-Disposition: attachment — une simple URL blob
@@ -6,9 +7,15 @@ import { isTauri } from '@tauri-apps/api/core';
 //
 // Dans l'application de bureau (Tauri), la webview n'honore ni <a download> ni window.open() sur une
 // URL blob : on passe alors par les plugins natifs (boîte « Enregistrer sous », écriture disque,
-// ouverture dans l'application par défaut). Les plugins sont chargés en import() dynamique pour ne
-// rien ajouter au bundle initial de la version web.
+// ouverture dans l'application par défaut). Dans l'application mobile (Capacitor), le fichier est écrit
+// sur le téléphone puis proposé dans le menu de partage Android/iOS (ouvrir avec le lecteur PDF,
+// enregistrer, envoyer). Les plugins sont chargés en import() dynamique pour ne rien ajouter au bundle
+// initial de la version web.
 export function triggerBlobDownload(blob: Blob, filename: string): void {
+  if (Capacitor.isNativePlatform()) {
+    void shareBlobOnMobile(blob, filename).catch((error) => console.error(error));
+    return;
+  }
   if (isTauri()) {
     void saveBlobNatively(blob, filename).catch((error) => console.error(error));
     return;
@@ -22,6 +29,10 @@ export function triggerBlobDownload(blob: Blob, filename: string): void {
 }
 
 export function openBlobInNewTab(blob: Blob, filename = 'document.pdf'): void {
+  if (Capacitor.isNativePlatform()) {
+    void shareBlobOnMobile(blob, filename).catch((error) => console.error(error));
+    return;
+  }
   if (isTauri()) {
     void openBlobNatively(blob, filename).catch((error) => console.error(error));
     return;
@@ -57,4 +68,28 @@ async function openBlobNatively(blob: Blob, filename: string): Promise<void> {
     baseDir: BaseDirectory.AppCache,
   });
   await openPath(await join(await appCacheDir(), 'documents', uniqueName));
+}
+
+async function shareBlobOnMobile(blob: Blob, filename: string): Promise<void> {
+  const [{ Filesystem, Directory }, { Share }] = await Promise.all([
+    import('@capacitor/filesystem'),
+    import('@capacitor/share'),
+  ]);
+  // Cache de l'application : nom unique pour ne pas écraser un document encore ouvert.
+  const { uri } = await Filesystem.writeFile({
+    path: `documents/${Date.now()}-${filename}`,
+    data: await blobToBase64(blob),
+    directory: Directory.Cache,
+    recursive: true,
+  });
+  await Share.share({ title: filename, files: [uri] });
+}
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1] ?? '');
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
 }

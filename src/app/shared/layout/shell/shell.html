@@ -95,8 +95,12 @@
       }
     </mat-toolbar>
 
-    <main class="shell-workspace">
+    <main class="shell-workspace" [class.with-bottom-nav]="isHandset()">
       <router-outlet />
     </main>
+
+    @if (isHandset()) {
+      <app-bottom-nav [tabs]="bottomTabs()" (more)="drawer.open()" />
+    }
   </mat-sidenav-content>
 </mat-sidenav-container>

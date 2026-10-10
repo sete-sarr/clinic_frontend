@@ -48,6 +48,20 @@
     "downloadGuide": "Télécharger le guide d'utilisation",
     "logout": "Déconnexion"
   },
+  "bottomNav": {
+    "label": "Navigation principale",
+    "more": "Plus",
+    "unread": "{{count}} non lue(s)",
+    "short": {
+      "dashboard": "Accueil",
+      "appointments": "Agenda",
+      "invoices": "Factures",
+      "stays": "Séjours",
+      "prescriptions": "Ordonnance",
+      "results": "Résultats",
+      "consultations": "Consult."
+    }
+  },
   "photo": {
     "add": "Ajouter une photo",
     "change": "Changer la photo",

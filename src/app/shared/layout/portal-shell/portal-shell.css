@@ -39,3 +39,8 @@
   background-color: var(--color-background);
   min-height: calc(100vh - 64px);
 }
+
+/* Téléphone : la barre du bas (app-bottom-nav) est fixée sur le contenu — réserver sa hauteur. */
+.shell-workspace.with-bottom-nav {
+  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--space-6));
+}

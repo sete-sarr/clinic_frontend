@@ -55,6 +55,10 @@
   --color-text-secondary: var(--color-neutral-600);
   --color-text-disabled: var(--color-neutral-400);
 
+  // Barre de navigation du bas sur téléphone (shared/layout/bottom-nav, docs/mobile.md) : la zone de
+  // travail des coquilles réserve cette hauteur (+ zone de gestes) pour ne rien masquer.
+  --bottom-nav-height: 64px;
+
   // Sidebar accent theme (Settings → "Couleur d'accent") — dedicated dark palette, applied to the
   // sidebar and, for a consistent branded look, to table headers/modal headers/top menu as well
   // (see .shell-sidenav, .shell-header, .app-dialog-header, .mat-mdc-header-row below). Values are

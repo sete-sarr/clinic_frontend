@@ -48,6 +48,20 @@
     "downloadGuide": "Download the user guide",
     "logout": "Log out"
   },
+  "bottomNav": {
+    "label": "Main navigation",
+    "more": "More",
+    "unread": "{{count}} unread",
+    "short": {
+      "dashboard": "Home",
+      "appointments": "Agenda",
+      "invoices": "Invoices",
+      "stays": "Stays",
+      "prescriptions": "Rx",
+      "results": "Results",
+      "consultations": "Consults"
+    }
+  },
   "photo": {
     "add": "Add a photo",
     "change": "Change photo",

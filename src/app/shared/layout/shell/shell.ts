@@ -16,9 +16,11 @@ import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Clinic } from '../../../core/models/clinic.model';
 import { Role } from '../../../core/models/user.model';
+import { NotificationService } from '../../../core/notifications/notification.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { UserGuideService } from '../../../core/services/user-guide.service';
 import { Avatar } from '../../components/avatar/avatar';
+import { BottomNav, BottomNavTab } from '../bottom-nav/bottom-nav';
 import { GlobalSearch } from '../../components/global-search/global-search';
 import { LanguageSwitcher } from '../../components/language-switcher/language-switcher';
 import { MyPhotoDialog } from '../../components/my-photo-dialog/my-photo-dialog';
@@ -222,6 +224,27 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+// Centre de notifications (en-tête : cloche) — onglet de la barre du bas des rôles sans tableau de bord.
+const NOTIFICATIONS_ITEM: NavItem = {
+  labelKey: 'notifications.title',
+  icon: 'notifications',
+  route: '/notifications',
+  roles: ['doctor', 'secretary', 'accountant', 'clinic_admin', 'pharmacist', 'lab_technician', 'nurse'],
+};
+
+// Barre du bas sur téléphone (docs/mobile.md § Étape 1) : 4 routes au plus par rôle prioritaire
+// (ROLE_PRIORITY), reprises de NAV_ITEMS — mêmes libellés, icônes et droits que le menu latéral ;
+// « Plus » ouvre ce menu pour tout le reste.
+const BOTTOM_TABS: Partial<Record<Role, string[]>> = {
+  clinic_admin: ['/dashboard', '/appointments', '/patients', '/billing'],
+  doctor: ['/dashboard', '/appointments', '/patients', '/consultations'],
+  secretary: ['/dashboard', '/appointments', '/patients', '/visitors'],
+  accountant: ['/dashboard', '/billing', '/payments', '/hospitalization/stays'],
+  nurse: ['/hospitalization', '/notifications'],
+  lab_technician: ['/laboratory', '/notifications'],
+  pharmacist: ['/pharmacy', '/notifications'],
+};
+
 @Component({
   selector: 'app-shell',
   imports: [
@@ -229,6 +252,7 @@ const NAV_ITEMS: NavItem[] = [
     RouterLinkActive,
     RouterOutlet,
     Avatar,
+    BottomNav,
     GlobalSearch,
     LanguageSwitcher,
     NotificationBell,
@@ -251,6 +275,7 @@ export class Shell {
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly themeService = inject(ThemeService);
   private readonly dialog = inject(MatDialog);
+  private readonly notifications = inject(NotificationService);
 
   protected readonly isHandset = toSignal(
     this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
@@ -301,10 +326,29 @@ export class Shell {
 
   // Clé de traduction du rôle principal (i18n/*.json → roles.*, mêmes valeurs que
   // backend/accounts/migrations/0002_seed_roles.py).
-  protected readonly primaryRoleKey = computed(() => {
+  private readonly primaryRole = computed(() => {
     const roles = this.auth.roles();
-    const primary = ROLE_PRIORITY.find((role) => roles.includes(role));
+    return ROLE_PRIORITY.find((role) => roles.includes(role));
+  });
+
+  protected readonly primaryRoleKey = computed(() => {
+    const primary = this.primaryRole();
     return primary ? `roles.${primary}` : '';
+  });
+
+  protected readonly bottomTabs = computed<BottomNavTab[]>(() => {
+    const role = this.primaryRole();
+    const routes = (role && BOTTOM_TABS[role]) || [];
+    const unread = this.notifications.unreadCount();
+    return routes
+      .map((route) => [...NAV_ITEMS, NOTIFICATIONS_ITEM].find((item) => item.route === route))
+      .filter((item): item is NavItem => !!item && this.auth.hasRole(...item.roles))
+      .map((item) => ({
+        labelKey: item.labelKey,
+        icon: item.icon,
+        route: item.route,
+        badge: item.route === NOTIFICATIONS_ITEM.route ? unread : undefined,
+      }));
   });
 
   protected readonly userInitials = computed(() => {

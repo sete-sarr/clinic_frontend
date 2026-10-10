@@ -13,6 +13,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageSwitcher } from '../../components/language-switcher/language-switcher';
+import { BottomNav, BottomNavTab } from '../bottom-nav/bottom-nav';
 
 interface NavItem {
   labelKey: string; // i18n/*.json → portal.nav.*
@@ -33,6 +34,7 @@ const NAV_ITEMS: NavItem[] = [
 @Component({
   selector: 'app-portal-shell',
   imports: [
+    BottomNav,
     LanguageSwitcher,
     RouterLink,
     RouterLinkActive,
@@ -60,6 +62,8 @@ export class PortalShell {
 
   protected readonly user = this.auth.user;
   protected readonly navItems = NAV_ITEMS;
+  // Barre du bas sur téléphone (docs/mobile.md) : les 4 premières entrées du menu, « Plus » pour le reste.
+  protected readonly bottomTabs: BottomNavTab[] = NAV_ITEMS.slice(0, 4);
 
   protected logout(): void {
     this.auth.logout();

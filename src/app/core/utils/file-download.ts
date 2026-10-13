@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { isTauri } from '@tauri-apps/api/core';
+import { Observable } from 'rxjs';
 
 // Les exports CSV portent un nom de fichier Content-Disposition: attachment — une simple URL blob
 // via window.open() l'ignore, donc le fichier a besoin d'un <a download> synthétique pour être
@@ -40,6 +41,28 @@ export function openBlobInNewTab(blob: Blob, filename = 'document.pdf'): void {
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank');
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+/**
+ * Ouvre un document (PDF…) obtenu de façon asynchrone. Navigateur : l'onglet est ouvert pendant le
+ * clic puis rempli à l'arrivée du fichier — un onglet ouvert après l'attente serait bloqué comme
+ * fenêtre surgissante, notamment par Chrome sur téléphone. Application mobile ou de bureau : même
+ * traitement que openBlobInNewTab. À utiliser directement dans le gestionnaire de clic.
+ */
+export function openDocument(source: Observable<Blob>, filename = 'document.pdf'): void {
+  const tab = Capacitor.isNativePlatform() || isTauri() ? null : window.open('', '_blank');
+  source.subscribe({
+    next: (blob) => {
+      if (tab && !tab.closed) {
+        const url = URL.createObjectURL(blob);
+        tab.location.href = url;
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      } else {
+        openBlobInNewTab(blob, filename);
+      }
+    },
+    error: () => tab?.close(),
+  });
 }
 
 async function saveBlobNatively(blob: Blob, filename: string): Promise<void> {

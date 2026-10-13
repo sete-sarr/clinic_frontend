@@ -46,7 +46,7 @@ interface NavItem {
 // Un groupe sans entrée visible pour le rôle connecté est masqué avec son séparateur.
 const NAV_GROUPS: string[][] = [
   ['/dashboard'],
-  ['/appointments', '/patients', '/visitors'], // accueil
+  ['/patients', '/appointments', '/visitors'], // accueil : le patient d'abord, puis son rendez-vous
   ['/hospitalization', '/consultations', '/medical-records', '/prescriptions', '/laboratory', '/pharmacy'], // soins
   ['/billing', '/payments', '/hospitalization/stays'], // finances
   ['/reports', '/audit-log'], // pilotage

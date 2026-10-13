@@ -14,6 +14,10 @@
   gap: var(--space-2);
 }
 
+.period-toggle {
+  margin-bottom: var(--space-4);
+}
+
 .filters {
   display: flex;
   align-items: center;

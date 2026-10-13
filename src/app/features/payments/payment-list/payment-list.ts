@@ -16,7 +16,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-download';
+import { openDocument, triggerBlobDownload } from '../../../core/utils/file-download';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import {
   PAYMENT_METHOD_LABELS,
@@ -160,7 +160,7 @@ export class PaymentList {
   }
 
   protected downloadReceipt(payment: Payment): void {
-    this.paymentService.downloadReceiptPdf(payment.id).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.paymentService.downloadReceiptPdf(payment.id));
   }
 
   protected exportCsv(): void {

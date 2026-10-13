@@ -41,6 +41,7 @@ import { DEFAULT_CURRENCY, MoneyPipe, currencySymbol } from '../../../core/utils
 import { apiResource } from '../../../core/api/api-resource';
 import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
 import { MedicationScanner } from '../../pharmacy/medication-scanner';
+import { openDocument } from '../../../core/utils/file-download';
 
 export interface InvoiceFormDialogData {
   id?: string;
@@ -475,11 +476,7 @@ export class InvoiceForm {
     if (!id) {
       return;
     }
-    this.invoiceService.downloadPdf(Number(id)).subscribe((blob) => {
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    });
+    openDocument(this.invoiceService.downloadPdf(Number(id)));
   }
 
   protected async addPayment(): Promise<void> {

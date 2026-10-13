@@ -10,9 +10,9 @@ export const ROLE_PRIORITY: Role[] = [
 // du menu latéral (NAV_ITEMS de shared/layout/shell/shell.ts). La première est aussi la page d'arrivée
 // du rôle après la connexion (homeRouteFor).
 export const BOTTOM_TABS: Partial<Record<Role, string[]>> = {
-  clinic_admin: ['/dashboard', '/appointments', '/patients', '/billing'],
-  doctor: ['/dashboard', '/appointments', '/patients', '/consultations'],
-  secretary: ['/dashboard', '/appointments', '/patients', '/visitors'],
+  clinic_admin: ['/dashboard', '/patients', '/appointments', '/billing'],
+  doctor: ['/dashboard', '/patients', '/appointments', '/consultations'],
+  secretary: ['/dashboard', '/patients', '/appointments', '/visitors'],
   accountant: ['/dashboard', '/billing', '/payments', '/hospitalization/stays'],
   nurse: ['/hospitalization', '/notifications'],
   lab_technician: ['/laboratory', '/notifications'],

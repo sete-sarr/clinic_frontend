@@ -14,7 +14,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
-import { openBlobInNewTab } from '../../../core/utils/file-download';
+import { openDocument } from '../../../core/utils/file-download';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { LabResultCorrection } from '../lab-result-correction/lab-result-correction';
 import {
@@ -129,11 +129,11 @@ export class LabOrderDetail {
   }
 
   protected openAttachment(item: LabOrderItem): void {
-    this.laboratoryService.downloadAttachment(this.id(), item.id).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.laboratoryService.downloadAttachment(this.id(), item.id));
   }
 
   protected downloadPdf(): void {
-    this.laboratoryService.downloadPdf(this.id()).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.laboratoryService.downloadPdf(this.id()));
   }
 
   protected correct(item: LabOrderItem): void {

@@ -18,7 +18,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-download';
+import { openDocument, triggerBlobDownload } from '../../../core/utils/file-download';
 import { INVOICE_STATUS_LABELS, Invoice, InvoiceStatus } from '../invoice.model';
 import { InvoiceForm } from '../invoice-form/invoice-form';
 import { InvoiceService } from '../invoice.service';
@@ -163,7 +163,7 @@ export class InvoiceList {
   }
 
   protected downloadPdf(invoice: Invoice): void {
-    this.invoiceService.downloadPdf(invoice.id).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.invoiceService.downloadPdf(invoice.id), `${invoice.number}.pdf`);
   }
 
   protected exportCsv(): void {

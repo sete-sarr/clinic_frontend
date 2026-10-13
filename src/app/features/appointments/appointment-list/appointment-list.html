@@ -14,6 +14,16 @@
   </div>
 </div>
 
+<mat-button-toggle-group
+  class="period-toggle"
+  [value]="period()"
+  (change)="onPeriodChange($event.value)"
+  [attr.aria-label]="'appointments.period.label' | transloco"
+>
+  <mat-button-toggle value="upcoming">{{ 'appointments.period.upcoming' | transloco }}</mat-button-toggle>
+  <mat-button-toggle value="past">{{ 'appointments.period.past' | transloco }}</mat-button-toggle>
+</mat-button-toggle-group>
+
 <div class="filters">
   <mat-form-field appearance="outline" class="patient-number-filter">
     <mat-label>{{ 'appointments.patientNumber' | transloco }}</mat-label>

@@ -16,6 +16,7 @@ import { INVOICE_STATUS_LABELS, Invoice } from '../../billing/invoice.model';
 import { InvoiceService } from '../../billing/invoice.service';
 import { MoneyPipe } from '../../../core/utils/money';
 import { apiResource } from '../../../core/api/api-resource';
+import { openDocument } from '../../../core/utils/file-download';
 
 const PAGE_SIZE = 20;
 
@@ -63,10 +64,6 @@ export class PortalInvoices {
   }
 
   protected downloadPdf(invoice: Invoice): void {
-    this.invoiceService.downloadPdf(invoice.id).subscribe((blob) => {
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    });
+    openDocument(this.invoiceService.downloadPdf(invoice.id));
   }
 }

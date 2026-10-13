@@ -18,7 +18,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-download';
+import { openDocument, triggerBlobDownload } from '../../../core/utils/file-download';
 import { GENDER_LABELS, Gender, Patient } from '../patient.model';
 import { EmergencyAccessDialog } from '../emergency-access-dialog/emergency-access-dialog';
 import { PatientForm } from '../patient-form/patient-form';
@@ -200,7 +200,7 @@ export class PatientList {
   }
 
   protected downloadStatement(patient: Patient): void {
-    this.patientService.downloadStatementPdf(patient.id).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.patientService.downloadStatementPdf(patient.id));
   }
 
   protected exportCsv(): void {

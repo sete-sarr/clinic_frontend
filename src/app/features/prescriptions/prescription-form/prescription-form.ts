@@ -41,6 +41,7 @@ import {
 import { PrescriptionService } from '../prescription.service';
 import { apiResource } from '../../../core/api/api-resource';
 import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
+import { openDocument } from '../../../core/utils/file-download';
 
 export interface PrescriptionFormDialogData {
   id?: string;
@@ -312,10 +313,6 @@ export class PrescriptionForm {
     if (!id) {
       return;
     }
-    this.prescriptionService.downloadPdf(Number(id)).subscribe((blob) => {
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    });
+    openDocument(this.prescriptionService.downloadPdf(Number(id)));
   }
 }

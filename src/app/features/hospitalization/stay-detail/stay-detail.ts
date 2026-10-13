@@ -12,7 +12,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { parseApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
-import { openBlobInNewTab } from '../../../core/utils/file-download';
+import { openDocument } from '../../../core/utils/file-download';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import {
   ADMISSION_STATUS_LABELS,
@@ -155,7 +155,7 @@ export class StayDetail {
   }
 
   protected downloadPdf(): void {
-    this.hospitalizationService.downloadPdf(this.id()).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.hospitalizationService.downloadPdf(this.id()));
   }
 
   private applied(stay: Admission | undefined, successKey: string): void {

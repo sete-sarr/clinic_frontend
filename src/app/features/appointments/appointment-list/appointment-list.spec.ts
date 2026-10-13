@@ -60,7 +60,7 @@ describe('AppointmentList — filtres de l’URL', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/appointments', AppointmentList);
     TestBed.tick();
-    http.expectOne(`${environment.apiBaseUrl}/appointments/?page=1`).flush({ count: 0, next: null, previous: null, results: [] });
+    http.expectOne((r) => r.url === `${environment.apiBaseUrl}/appointments/` && r.params.get('period') === 'upcoming').flush({ count: 0, next: null, previous: null, results: [] });
     await settle();
 
     const checkbox = harness.routeNativeElement!.querySelector<HTMLInputElement>('mat-checkbox input')!;

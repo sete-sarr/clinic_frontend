@@ -558,7 +558,12 @@
     "assignConfirm": "Attribuer",
     "returnToDepartment": "Remettre au département ({{department}})",
     "assigned": "Rendez-vous attribué.",
-    "assignError": "Impossible d'attribuer le rendez-vous."
+    "assignError": "Impossible d'attribuer le rendez-vous.",
+    "period": {
+      "label": "Période",
+      "upcoming": "À venir",
+      "past": "Passés"
+    }
   },
   "consultations": {
     "title": "Consultations",

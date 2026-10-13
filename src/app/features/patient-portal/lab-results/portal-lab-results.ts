@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { openBlobInNewTab } from '../../../core/utils/file-download';
+import { openDocument } from '../../../core/utils/file-download';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { LabOrder, LabOrderItem, referenceRange } from '../../laboratory/laboratory.model';
 import { LaboratoryService } from '../../laboratory/laboratory.service';
@@ -54,10 +54,10 @@ export class PortalLabResults {
   }
 
   protected downloadPdf(order: LabOrder): void {
-    this.laboratoryService.downloadPdf(order.id).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.laboratoryService.downloadPdf(order.id));
   }
 
   protected openAttachment(order: LabOrder, item: LabOrderItem): void {
-    this.laboratoryService.downloadAttachment(order.id, item.id).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.laboratoryService.downloadAttachment(order.id, item.id));
   }
 }

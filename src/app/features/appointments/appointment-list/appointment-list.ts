@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,7 +24,7 @@ import { parseApiError } from '../../../core/api/api-error';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-download';
+import { openDocument, triggerBlobDownload } from '../../../core/utils/file-download';
 import { toIsoDate } from '../../../core/utils/date';
 import {
   APPOINTMENT_STATUS_LABELS,
@@ -40,6 +41,8 @@ import { injectIsHandset } from '../../../core/utils/handset';
 import { apiResource } from '../../../core/api/api-resource';
 
 const PAGE_SIZE = 20;
+
+type AppointmentPeriod = 'upcoming' | 'past';
 const SEARCH_DEBOUNCE_MS = 300;
 
 @Component({
@@ -49,6 +52,7 @@ const SEARCH_DEBOUNCE_MS = 300;
     RecordCard,
     EmptyState,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCheckboxModule,
     MatChipsModule,
     MatFormFieldModule,
@@ -104,6 +108,11 @@ export class AppointmentList {
   });
   // Rendez-vous de département encore sans médecin (« À attribuer ») — paramètre API assigned=false.
   readonly unassigned = input(false, { transform: booleanAttribute });
+  // « À venir » (par défaut : aujourd'hui et après, le plus proche en premier) ou « Passés » (le plus
+  // récent en premier) — paramètre API period.
+  readonly period = input<AppointmentPeriod, unknown>('upcoming', {
+    transform: (value: unknown) => (value === 'past' ? 'past' : 'upcoming'),
+  });
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly today = toIsoDate(new Date());
@@ -121,6 +130,7 @@ export class AppointmentList {
       url: `${environment.apiBaseUrl}/appointments/`,
       params: {
         page: this.page(),
+        period: this.period(),
         ...(this.status() ? { status: this.status()! } : {}),
         ...(this.patientNumber() ? { patient_number: this.patientNumber()! } : {}),
         ...(this.checkedIn() !== undefined ? { checked_in: this.checkedIn()! } : {}),
@@ -185,6 +195,13 @@ export class AppointmentList {
         queryParamsHandling: 'merge',
       });
     }, SEARCH_DEBOUNCE_MS);
+  }
+
+  protected onPeriodChange(period: AppointmentPeriod): void {
+    this.router.navigate([], {
+      queryParams: { period: period === 'past' ? 'past' : null, page: null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected onUnassignedFilterChange(checked: boolean): void {
@@ -272,7 +289,7 @@ export class AppointmentList {
   }
 
   protected downloadTicket(appointment: Appointment): void {
-    this.appointmentService.downloadTicketPdf(appointment.id).subscribe((blob) => openBlobInNewTab(blob));
+    openDocument(this.appointmentService.downloadTicketPdf(appointment.id), `ticket-${appointment.ticket_number}.pdf`);
   }
 
   protected confirm(appointment: Appointment): void {

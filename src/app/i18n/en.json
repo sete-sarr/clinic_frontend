@@ -558,7 +558,12 @@
     "assignConfirm": "Assign",
     "returnToDepartment": "Return to the department ({{department}})",
     "assigned": "Appointment assigned.",
-    "assignError": "Could not assign the appointment."
+    "assignError": "Could not assign the appointment.",
+    "period": {
+      "label": "Period",
+      "upcoming": "Upcoming",
+      "past": "Past"
+    }
   },
   "consultations": {
     "title": "Consultations",

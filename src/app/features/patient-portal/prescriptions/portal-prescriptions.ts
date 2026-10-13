@@ -15,6 +15,7 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { PRESCRIPTION_STATUS_LABELS, Prescription } from '../../prescriptions/prescription.model';
 import { PrescriptionService } from '../../prescriptions/prescription.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { openDocument } from '../../../core/utils/file-download';
 
 const PAGE_SIZE = 20;
 
@@ -61,10 +62,6 @@ export class PortalPrescriptions {
   }
 
   protected downloadPdf(prescription: Prescription): void {
-    this.prescriptionService.downloadPdf(prescription.id).subscribe((blob) => {
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    });
+    openDocument(this.prescriptionService.downloadPdf(prescription.id));
   }
 }

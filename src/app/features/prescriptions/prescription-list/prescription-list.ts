@@ -25,6 +25,7 @@ import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, statusTone } from '../../../shared/components/record-card/record-card.model';
 import { injectIsHandset } from '../../../core/utils/handset';
 import { apiResource } from '../../../core/api/api-resource';
+import { openDocument } from '../../../core/utils/file-download';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -133,11 +134,7 @@ export class PrescriptionList {
   }
 
   protected downloadPdf(prescription: Prescription): void {
-    this.prescriptionService.downloadPdf(prescription.id).subscribe((blob) => {
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    });
+    openDocument(this.prescriptionService.downloadPdf(prescription.id));
   }
 
   protected openCreate(): void {

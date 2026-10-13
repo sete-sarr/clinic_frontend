@@ -11,10 +11,12 @@ export type AuditAction =
   | 'export'
   | 'login'
   | 'logout'
-  | 'permission_change';
+  | 'permission_change'
+  | 'emergency_access';
 
 export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = translatedLabels<AuditAction>('labels.auditAction', [
   'create', 'update', 'cancel', 'archive', 'view', 'print', 'export', 'login', 'logout', 'permission_change',
+  'emergency_access',
 ]);
 
 // Types d'objets journalisés : nom de classe du modèle backend (common.audit.record_audit, AuditLog.model_name).

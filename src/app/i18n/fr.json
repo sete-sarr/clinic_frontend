@@ -287,7 +287,8 @@
       "export": "Export",
       "login": "Connexion",
       "logout": "Déconnexion",
-      "permission_change": "Changement de permission"
+      "permission_change": "Changement de permission",
+      "emergency_access": "Accès d'urgence"
     },
     "invoiceStatus": {
       "draft": "Brouillon",
@@ -496,7 +497,20 @@
     "genderRequired": "Genre requis",
     "saved": "Patient enregistré avec succès.",
     "saveError": "Impossible d'enregistrer le patient.",
-    "confirmDeactivate": "Désactiver {{name}} ({{number}}) ?"
+    "confirmDeactivate": "Désactiver {{name}} ({{number}}) ?",
+    "emergency": {
+      "action": "Accès d'urgence",
+      "title": "Accès d'urgence à un dossier",
+      "intro": "Pour un patient qui n'est pas le vôtre et que vous devez prendre en charge en urgence. Son dossier vous sera ouvert pendant 24 heures.",
+      "numberHint": "Numéro exact, par exemple PAT-2026-00012",
+      "numberRequired": "Indiquez le numéro du patient",
+      "reason": "Motif de l'accès d'urgence",
+      "reasonRequired": "Indiquez le motif ({{count}} caractères au moins)",
+      "warning": "Cet accès est enregistré dans le journal d'audit avec votre motif, et l'administrateur de la clinique en est averti.",
+      "confirm": "Ouvrir l'accès",
+      "granted": "Accès d'urgence ouvert pour 24 h au patient {{number}}.",
+      "error": "Impossible d'ouvrir l'accès d'urgence."
+    }
   },
   "doctors": {
     "title": "Médecins",

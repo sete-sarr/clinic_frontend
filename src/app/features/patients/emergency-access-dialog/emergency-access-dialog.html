@@ -1,0 +1,49 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'patients.emergency.title' | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <p class="emergency-intro">{{ 'patients.emergency.intro' | transloco }}</p>
+
+  <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'patients.patientNumber' | transloco }}</mat-label>
+      <input matInput [formField]="accessForm.patient_number" autocomplete="off" />
+      <mat-hint>{{ 'patients.emergency.numberHint' | transloco }}</mat-hint>
+      @if (accessForm.patient_number().touched() && accessForm.patient_number().invalid()) {
+        <mat-error>{{ accessForm.patient_number().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'patients.emergency.reason' | transloco }}</mat-label>
+      <textarea matInput rows="3" [formField]="accessForm.reason"></textarea>
+      @if (accessForm.reason().touched() && accessForm.reason().invalid()) {
+        <mat-error>{{ accessForm.reason().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+      }
+    </mat-form-field>
+
+    <p class="emergency-warning" role="note">
+      <mat-icon aria-hidden="true">policy</mat-icon>
+      <span>{{ 'patients.emergency.warning' | transloco }}</span>
+    </p>
+
+    @if (accessForm().errors().length > 0) {
+      <p class="server-error" role="alert">{{ accessForm().errors()[0].message }}</p>
+    }
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+      <button mat-flat-button color="warn" type="submit" [disabled]="accessForm().submitting()">
+        @if (accessForm().submitting()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ 'patients.emergency.confirm' | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

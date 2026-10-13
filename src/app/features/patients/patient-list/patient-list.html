@@ -5,6 +5,12 @@
       <mat-icon>download</mat-icon>
       {{ 'common.actions.exportCsv' | transloco }}
     </button>
+    @if (canRequestEmergencyAccess()) {
+      <button mat-stroked-button color="warn" (click)="openEmergencyAccess()">
+        <mat-icon>emergency</mat-icon>
+        {{ 'patients.emergency.action' | transloco }}
+      </button>
+    }
     @if (canManage()) {
       <button mat-flat-button color="primary" (click)="openCreate()">
         <mat-icon>person_add</mat-icon>

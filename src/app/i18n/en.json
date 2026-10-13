@@ -287,7 +287,8 @@
       "export": "Export",
       "login": "Login",
       "logout": "Logout",
-      "permission_change": "Permission change"
+      "permission_change": "Permission change",
+      "emergency_access": "Emergency access"
     },
     "invoiceStatus": {
       "draft": "Draft",
@@ -496,7 +497,20 @@
     "genderRequired": "Gender is required",
     "saved": "Patient saved.",
     "saveError": "Unable to save the patient.",
-    "confirmDeactivate": "Deactivate {{name}} ({{number}})?"
+    "confirmDeactivate": "Deactivate {{name}} ({{number}})?",
+    "emergency": {
+      "action": "Emergency access",
+      "title": "Emergency access to a record",
+      "intro": "For a patient who is not yours and whom you must treat urgently. Their record will be open to you for 24 hours.",
+      "numberHint": "Exact number, e.g. PAT-2026-00012",
+      "numberRequired": "Enter the patient number",
+      "reason": "Reason for emergency access",
+      "reasonRequired": "Enter the reason (at least {{count}} characters)",
+      "warning": "This access is recorded in the audit log with your reason, and the clinic administrator is notified.",
+      "confirm": "Open access",
+      "granted": "Emergency access opened for 24 h to patient {{number}}.",
+      "error": "Could not open emergency access."
+    }
   },
   "doctors": {
     "title": "Doctors",

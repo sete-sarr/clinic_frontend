@@ -1,0 +1,35 @@
+.full-width {
+  width: 100%;
+}
+
+.emergency-intro {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Rappel de la traçabilité : icône + texte, jamais la couleur seule. */
+.emergency-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: 8px;
+  background-color: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+}
+
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}

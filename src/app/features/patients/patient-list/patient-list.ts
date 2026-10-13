@@ -20,7 +20,9 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-download';
 import { GENDER_LABELS, Gender, Patient } from '../patient.model';
+import { EmergencyAccessDialog } from '../emergency-access-dialog/emergency-access-dialog';
 import { PatientForm } from '../patient-form/patient-form';
+import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { PatientService } from '../patient.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
 import { RecordCardData, activeStatus } from '../../../shared/components/record-card/record-card.model';
@@ -75,6 +77,7 @@ export class PatientList {
   private readonly dialog = inject(MatDialog);
   private readonly patientService = inject(PatientService);
   protected readonly auth = inject(AuthService);
+  private readonly successNotifier = inject(SuccessNotifier);
 
   readonly search = input<string | undefined>();
   readonly gender = input<Gender | undefined>();
@@ -104,6 +107,11 @@ export class PatientList {
 
   protected readonly canManage = computed(() => this.auth.hasRole('secretary', 'clinic_admin'));
   protected readonly canDeactivate = computed(() => this.auth.hasRole('clinic_admin'));
+  // Médecin sans rôle de gestion : il ne voit que ses patients (backend patients/access.py) ; l'accès
+  // d'urgence lui ouvre le dossier d'un autre patient pour 24 h, motivé et journalisé.
+  protected readonly canRequestEmergencyAccess = computed(
+    () => this.auth.hasRole('doctor') && !this.auth.hasRole('clinic_admin', 'secretary', 'accountant'),
+  );
   // business/reporting-export-policy.md : le relevé patient est un rapport financier — accountant/secretary/
   // clinic_admin peuvent le consulter, le médecin non.
   protected readonly canViewStatement = computed(() => this.auth.hasRole('secretary', 'accountant', 'clinic_admin'));
@@ -148,6 +156,16 @@ export class PatientList {
     ref.afterClosed().subscribe((result) => {
       if (result) {
         this.patientsResource.reload();
+      }
+    });
+  }
+
+  protected openEmergencyAccess(): void {
+    const ref = this.dialog.open(EmergencyAccessDialog, { width: '560px', maxWidth: '95vw' });
+    ref.afterClosed().subscribe((patient) => {
+      if (patient) {
+        this.successNotifier.show(translate('patients.emergency.granted', { number: patient.patient_number }));
+        this.onSearchInput(patient.patient_number);
       }
     });
   }

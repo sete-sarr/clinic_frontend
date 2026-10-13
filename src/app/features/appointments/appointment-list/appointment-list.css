@@ -50,6 +50,32 @@
   font-weight: var(--font-weight-medium);
 }
 
+.server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
+}
+
+/* Rendez-vous de département encore sans médecin : icône + libellé, jamais la couleur seule. */
+.unassigned {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.unassigned mat-icon {
+  color: var(--color-warning);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.take-button {
+  white-space: nowrap;
+}
+
 .checked-in-icon {
   color: var(--color-success);
   font-size: 18px;

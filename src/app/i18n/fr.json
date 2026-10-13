@@ -544,7 +544,21 @@
     "saved": "Rendez-vous enregistré avec succès.",
     "saveError": "Impossible d'enregistrer le rendez-vous.",
     "edit": "Modifier le rendez-vous",
-    "checkedInLabel": "Ticket d'arrivée"
+    "checkedInLabel": "Ticket d'arrivée",
+    "department": "Département",
+    "departmentHint": "Sans médecin choisi, un médecin du département prendra en charge le rendez-vous.",
+    "anyDoctor": "Premier médecin disponible du département",
+    "doctorOrDepartmentRequired": "Choisissez un médecin ou un département",
+    "unassignedOnly": "À attribuer uniquement",
+    "take": "Prendre en charge",
+    "taken": "Rendez-vous pris en charge.",
+    "takeError": "Impossible de prendre en charge ce rendez-vous.",
+    "assign": "Attribuer à un médecin",
+    "assignTitle": "Attribuer le rendez-vous",
+    "assignConfirm": "Attribuer",
+    "returnToDepartment": "Remettre au département ({{department}})",
+    "assigned": "Rendez-vous attribué.",
+    "assignError": "Impossible d'attribuer le rendez-vous."
   },
   "consultations": {
     "title": "Consultations",

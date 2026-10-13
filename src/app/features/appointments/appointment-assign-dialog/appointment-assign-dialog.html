@@ -1,0 +1,45 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'appointments.assignTitle' | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <p class="summary">{{ appointment.patient_display }} · {{ appointment.date }} · {{ appointment.time }}</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'common.fields.doctor' | transloco }}</mat-label>
+    <mat-select [value]="doctor()" (selectionChange)="doctor.set($event.value)">
+      @if (appointment.department) {
+        <mat-option [value]="null">
+          {{ 'appointments.returnToDepartment' | transloco: { department: appointment.department_display } }}
+        </mat-option>
+      }
+      @for (option of doctorsResource.value().results; track option.id) {
+        <mat-option [value]="option.id">{{ formatDoctor(option) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (error()) {
+    <p class="server-error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="form-actions">
+    <button mat-button type="button" (click)="dialogRef.close()">{{ 'common.actions.cancel' | transloco }}</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="saving() || doctor() === appointment.doctor"
+      (click)="onSubmit()"
+    >
+      @if (saving()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        {{ 'appointments.assignConfirm' | transloco }}
+      }
+    </button>
+  </div>
+</mat-dialog-content>

@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, booleanAttribute, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
@@ -18,6 +19,8 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
+import { parseApiError } from '../../../core/api/api-error';
+import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
 import { openBlobInNewTab, triggerBlobDownload } from '../../../core/utils/file-download';
@@ -28,6 +31,7 @@ import {
   AppointmentStatus,
   TERMINAL_APPOINTMENT_STATUSES,
 } from '../appointment.model';
+import { AppointmentAssignDialog } from '../appointment-assign-dialog/appointment-assign-dialog';
 import { AppointmentForm } from '../appointment-form/appointment-form';
 import { AppointmentService } from '../appointment.service';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
@@ -71,6 +75,9 @@ export class AppointmentList {
       status: { label: this.statusLabel(appointment), tone: statusTone(appointment.status) },
       fields: [
         { label: translate('appointments.dateTime'), value: `${appointment.date} · ${appointment.time}` },
+        ...(appointment.department_display
+          ? [{ label: translate('appointments.department'), value: appointment.department_display }]
+          : []),
         ...(this.isCheckedIn(appointment)
           ? [{ label: translate('appointments.checkedInLabel'), value: appointment.ticket_number }]
           : []),
@@ -81,6 +88,7 @@ export class AppointmentList {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly appointmentService = inject(AppointmentService);
+  private readonly successNotifier = inject(SuccessNotifier);
   protected readonly auth = inject(AuthService);
 
   // Entrées liées au routeur (withComponentInputBinding) : chaque query param alimente l'entrée de
@@ -94,6 +102,8 @@ export class AppointmentList {
   readonly checkedIn = input<boolean | undefined, unknown>(undefined, {
     transform: (value: unknown) => (value === undefined || value === null || value === '' ? undefined : booleanAttribute(value)),
   });
+  // Rendez-vous de département encore sans médecin (« À attribuer ») — paramètre API assigned=false.
+  readonly unassigned = input(false, { transform: booleanAttribute });
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly today = toIsoDate(new Date());
@@ -114,6 +124,7 @@ export class AppointmentList {
         ...(this.status() ? { status: this.status()! } : {}),
         ...(this.patientNumber() ? { patient_number: this.patientNumber()! } : {}),
         ...(this.checkedIn() !== undefined ? { checked_in: this.checkedIn()! } : {}),
+        ...(this.unassigned() ? { assigned: false } : {}),
       },
     }),
     { defaultValue: emptyPage<Appointment>() },
@@ -123,6 +134,9 @@ export class AppointmentList {
   protected readonly totalCount = computed(() => this.appointmentsResource.value().count);
 
   protected readonly canManage = computed(() => this.auth.hasRole('doctor', 'secretary', 'clinic_admin'));
+  // Accueil et administrateur : gèrent aussi les rendez-vous encore sans médecin et les attribuent.
+  protected readonly isFrontDesk = computed(() => this.auth.hasRole('secretary', 'clinic_admin'));
+  protected readonly actionError = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -135,6 +149,23 @@ export class AppointmentList {
 
   protected isTerminal(appointment: Appointment): boolean {
     return TERMINAL_APPOINTMENT_STATUSES.has(appointment.status);
+  }
+
+  protected isUnassigned(appointment: Appointment): boolean {
+    return appointment.doctor === null;
+  }
+
+  /** Un médecin ne modifie un rendez-vous de département qu'après l'avoir pris en charge (backend). */
+  protected canEdit(appointment: Appointment): boolean {
+    return this.canManage() && !this.isTerminal(appointment) && (this.isFrontDesk() || !this.isUnassigned(appointment));
+  }
+
+  protected canTake(appointment: Appointment): boolean {
+    return this.auth.hasRole('doctor') && !this.isFrontDesk() && this.isUnassigned(appointment) && !this.isTerminal(appointment);
+  }
+
+  protected canAssign(appointment: Appointment): boolean {
+    return this.isFrontDesk() && !this.isTerminal(appointment);
   }
 
   protected statusLabel(appointment: Appointment): string {
@@ -154,6 +185,13 @@ export class AppointmentList {
         queryParamsHandling: 'merge',
       });
     }, SEARCH_DEBOUNCE_MS);
+  }
+
+  protected onUnassignedFilterChange(checked: boolean): void {
+    this.router.navigate([], {
+      queryParams: { unassigned: checked ? 'true' : null, page: null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected onCheckedInFilterChange(checked: boolean): void {
@@ -205,6 +243,28 @@ export class AppointmentList {
       !this.isTerminal(appointment) &&
       appointment.date === this.today
     );
+  }
+
+  protected async take(appointment: Appointment): Promise<void> {
+    this.actionError.set(null);
+    try {
+      await firstValueFrom(this.appointmentService.take(appointment.id));
+      this.successNotifier.show(translate('appointments.taken'));
+    } catch (error) {
+      // Ex. un confrère vient de le prendre : la liste rechargée ne le montre plus.
+      this.actionError.set(parseApiError(error, translate('appointments.takeError')).message);
+    }
+    this.appointmentsResource.reload();
+  }
+
+  protected openAssign(appointment: Appointment): void {
+    const ref = this.dialog.open(AppointmentAssignDialog, { width: '480px', maxWidth: '95vw', data: appointment });
+    ref.afterClosed().subscribe((updated) => {
+      if (updated) {
+        this.successNotifier.show(translate('appointments.assigned'));
+        this.appointmentsResource.reload();
+      }
+    });
   }
 
   protected checkIn(appointment: Appointment): void {

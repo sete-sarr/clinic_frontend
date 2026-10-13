@@ -1,5 +1,5 @@
 import { Component, ElementRef, computed, effect, inject, signal } from '@angular/core';
-import { FieldTree, FormField, form, maxLength, required, submit } from '@angular/forms/signals';
+import { FieldTree, FormField, form, maxLength, required, submit, validate } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -14,6 +14,7 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
+import { DepartmentSummary } from '../../../core/models/department.model';
 import { DoctorSummary } from '../../../core/models/doctor.model';
 import { PatientSummary } from '../../../core/models/patient.model';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
@@ -30,6 +31,7 @@ export interface AppointmentFormDialogData {
 
 interface AppointmentFormModel {
   patient: number | null;
+  department: number | null;
   doctor: number | null;
   date: Date | null;
   time: string;
@@ -83,6 +85,7 @@ export class AppointmentForm {
 
   protected readonly model = signal<AppointmentFormModel>({
     patient: null,
+    department: null,
     doctor: null,
     date: null,
     time: '',
@@ -100,8 +103,21 @@ export class AppointmentForm {
     { defaultValue: emptyPage<PatientSummary>() },
   );
 
+  // Départements ouverts aux rendez-vous ; la liste des médecins se restreint au département choisi.
+  protected readonly departmentsResource = apiResource<Paginated<DepartmentSummary>>(
+    () => ({ url: `${environment.apiBaseUrl}/departments/`, params: { status: 'active', page_size: 100 } }),
+    { defaultValue: emptyPage<DepartmentSummary>() },
+  );
+
   protected readonly doctorsResource = apiResource<Paginated<DoctorSummary>>(
-    () => ({ url: `${environment.apiBaseUrl}/doctors/`, params: { page_size: 100 } }),
+    () => ({
+      url: `${environment.apiBaseUrl}/doctors/`,
+      params: {
+        page_size: 100,
+        is_active: true,
+        ...(this.model().department ? { department: this.model().department! } : {}),
+      },
+    }),
     { defaultValue: emptyPage<DoctorSummary>() },
   );
 
@@ -109,7 +125,12 @@ export class AppointmentForm {
 
   protected readonly appointmentForm = form(this.model, (path) => {
     required(path.patient, { message: translate('common.validation.patientRequired') });
-    required(path.doctor, { message: translate('common.validation.doctorRequired') });
+    // Médecin facultatif quand un département est choisi : un médecin du département le prendra en charge.
+    validate(path.doctor, ({ value, valueOf }) =>
+      value() || valueOf(path.department)
+        ? undefined
+        : { kind: 'required', message: translate('appointments.doctorOrDepartmentRequired') },
+    );
     required(path.date, { message: translate('common.validation.dateRequired') });
     required(path.time, { message: translate('common.validation.timeRequired') });
     maxLength(path.reason, 255, { message: translate('common.validation.max255') });
@@ -121,6 +142,7 @@ export class AppointmentForm {
       if (appointment) {
         this.model.set({
           patient: appointment.patient,
+          department: appointment.department,
           doctor: appointment.doctor,
           date: parseIsoDate(appointment.date),
           time: appointment.time.slice(0, 5),
@@ -142,6 +164,11 @@ export class AppointmentForm {
     this.patientLabel.set(formatPatient(patient));
   }
 
+  protected onDepartmentChange(): void {
+    // Le médecin choisi peut ne pas appartenir au nouveau département.
+    this.appointmentForm.doctor().value.set(null);
+  }
+
   protected formatPatientOption(patient: PatientSummary): string {
     return formatPatient(patient);
   }
@@ -152,7 +179,8 @@ export class AppointmentForm {
       const value = this.model();
       const payload: AppointmentPayload = {
         patient: value.patient!,
-        doctor: value.doctor!,
+        doctor: value.doctor,
+        department: value.department,
         date: toIsoDate(value.date!),
         time: value.time,
         reason: value.reason,
@@ -172,6 +200,7 @@ export class AppointmentForm {
         const apiError = parseApiError(error, translate('appointments.saveError'));
         const fieldsByName = {
           patient: this.appointmentForm.patient,
+          department: this.appointmentForm.department,
           doctor: this.appointmentForm.doctor,
           date: this.appointmentForm.date,
           time: this.appointmentForm.time,

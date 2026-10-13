@@ -23,8 +23,12 @@ export interface Appointment {
   clinic: number;
   patient: number;
   patient_display: string;
-  doctor: number;
+  // Rendez-vous de département (rotation) : `doctor` reste null tant qu'aucun médecin du
+  // département ne l'a pris en charge ; doctor_display vaut alors « À attribuer — <département> ».
+  doctor: number | null;
   doctor_display: string;
+  department: number | null;
+  department_display: string | null;
   date: string;
   time: string;
   status: AppointmentStatus;
@@ -38,7 +42,9 @@ export interface Appointment {
 
 export interface AppointmentPayload {
   patient: number;
-  doctor: number;
+  // Au moins l'un des deux (appointments/services.py::_resolve_assignment).
+  doctor: number | null;
+  department: number | null;
   date: string;
   time: string;
   reason: string;

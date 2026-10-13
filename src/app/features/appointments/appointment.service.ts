@@ -22,6 +22,16 @@ export class AppointmentService {
     return this.http.patch<Appointment>(`${this.baseUrl}${id}/`, { status });
   }
 
+  /** Un médecin du département prend en charge un rendez-vous encore à attribuer. */
+  take(id: number): Observable<Appointment> {
+    return this.http.post<Appointment>(`${this.baseUrl}${id}/take/`, {});
+  }
+
+  /** Accueil : attribue ou réattribue le rendez-vous ; `null` le remet au département. */
+  assign(id: number, doctor: number | null): Observable<Appointment> {
+    return this.http.post<Appointment>(`${this.baseUrl}${id}/assign/`, { doctor });
+  }
+
   checkIn(id: number): Observable<Appointment> {
     return this.http.post<Appointment>(`${this.baseUrl}${id}/check-in/`, {});
   }

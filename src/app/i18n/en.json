@@ -544,7 +544,21 @@
     "saved": "Appointment saved.",
     "saveError": "Unable to save the appointment.",
     "edit": "Edit appointment",
-    "checkedInLabel": "Check-in ticket"
+    "checkedInLabel": "Check-in ticket",
+    "department": "Department",
+    "departmentHint": "With no doctor selected, a doctor from the department will take the appointment.",
+    "anyDoctor": "First available doctor in the department",
+    "doctorOrDepartmentRequired": "Choose a doctor or a department",
+    "unassignedOnly": "Awaiting a doctor only",
+    "take": "Take appointment",
+    "taken": "Appointment taken.",
+    "takeError": "Could not take this appointment.",
+    "assign": "Assign to a doctor",
+    "assignTitle": "Assign the appointment",
+    "assignConfirm": "Assign",
+    "returnToDepartment": "Return to the department ({{department}})",
+    "assigned": "Appointment assigned.",
+    "assignError": "Could not assign the appointment."
   },
   "consultations": {
     "title": "Consultations",

@@ -36,8 +36,24 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'appointments.department' | transloco }}</mat-label>
+          <mat-select [formField]="appointmentForm.department" (selectionChange)="onDepartmentChange()">
+            <mat-option [value]="null">—</mat-option>
+            @for (department of departmentsResource.value().results; track department.id) {
+              <mat-option [value]="department.id">{{ department.name }}</mat-option>
+            }
+          </mat-select>
+          @if (model().department && !model().doctor) {
+            <mat-hint>{{ 'appointments.departmentHint' | transloco }}</mat-hint>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'common.fields.doctor' | transloco }}</mat-label>
           <mat-select [formField]="appointmentForm.doctor">
+            @if (model().department) {
+              <mat-option [value]="null">{{ 'appointments.anyDoctor' | transloco }}</mat-option>
+            }
             @for (doctor of doctorsResource.value().results; track doctor.id) {
               <mat-option [value]="doctor.id">{{ formatDoctor(doctor) }}</mat-option>
             }

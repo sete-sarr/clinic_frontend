@@ -203,7 +203,7 @@
     },
     "register": {
       "title": "Create your clinic",
-      "subtitle": "Start your free month.",
+      "subtitle": "Start your 14-day free trial.",
       "clinicSection": "Clinic",
       "clinicName": "Clinic name",
       "clinicNameRequired": "Clinic name is required",
@@ -863,19 +863,18 @@
     "noPlanTrial": "None (free trial)",
     "trialEnd": "Trial ends",
     "nextRenewal": "Next renewal",
-    "trialInfo": "You are on your free trial month. Choose a plan now: you will not be charged before the trial ends.",
+    "trialInfo": "You are on your free trial. You can pay now: your paid period will start when the trial ends.",
     "pastDue": "Your last payment failed. Please update your payment method to avoid your account being suspended.",
     "suspended": "Your subscription is suspended. Creating new records is blocked; your existing data remains accessible. Choose a plan below to reactivate your account.",
     "manage": "Manage subscription",
     "billingCycle": "Billing cycle",
     "monthly": "Monthly",
     "annual": "Annual",
-    "twoMonthsFree": "2 months free",
     "perYear": "year",
     "perMonth": "month",
     "switchToPlan": "Switch to this plan",
     "choosePlan": "Choose this plan",
-    "disclaimer": "Prices in CFA francs (XOF). The first month ({{days}} days) is free; payment is handled securely by Stripe.",
+    "disclaimer": "Prices in CFA francs (XOF), payment by Wave, Orange Money or card. The first {{days}} days are free. Without payment, the clinic becomes read-only: your data remains available.",
     "checkoutSuccess": "Payment confirmed — your subscription is being updated.",
     "checkoutCancelled": "Payment was cancelled. No changes were made.",
     "checkoutError": "Unable to start the payment right now.",
@@ -894,7 +893,39 @@
       "upTo5000Patients": "Up to 5,000 patients",
       "advancedReports": "Advanced reports and exports",
       "smsNotifications": "Appointment text messages to patients",
-      "dayBeforeReminder": "Automatic reminder the day before the appointment"
+      "dayBeforeReminder": "Automatic reminder the day before the appointment",
+      "consultationsAndPrescriptions": "Consultations, medical records and prescriptions",
+      "everythingInStarter": "Everything in Starter, plus:",
+      "hospitalization": "Inpatient care: rooms, beds, stays and nursing",
+      "laboratory": "Laboratory: test orders and results",
+      "pharmacy": "Pharmacy: stock, batches and barcodes"
+    },
+    "annualOffer": "3 months free",
+    "pay": "Pay (Wave, Orange Money, card)",
+    "extend": "Extend",
+    "periodEnd": "End of paid period",
+    "feesNote": "Payment fees extra, shown on the payment page.",
+    "pastDuePrepaid": "Your paid period has ended. Extend your subscription within {{days}} days of the due date to avoid read-only mode.",
+    "confirmPrepaidChange": "Switch to the {{plan}} plan? A new period starts on the payment date; the remaining days of your current plan are not refunded.",
+    "payment": {
+      "checking": "Checking your payment…",
+      "paid": "Payment received: your subscription is active. A confirmation email has been sent to you.",
+      "failed": "The payment did not go through. Nothing was activated; you can try again.",
+      "stillPending": "The operator's confirmation is taking longer than expected. Your subscription will be activated automatically as soon as it arrives; you can close this page."
+    },
+    "history": {
+      "title": "Payment history",
+      "date": "Date",
+      "plan": "Plan",
+      "period": "Period",
+      "amount": "Amount paid",
+      "status": "Status"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "expired": "Abandoned"
     }
   },
   "laboratory": {

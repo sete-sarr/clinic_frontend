@@ -189,3 +189,48 @@ mat-card-actions {
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
 }
+
+.notice-failed {
+  border-color: var(--color-error);
+  background-color: color-mix(in srgb, var(--color-error) 10%, transparent);
+}
+
+.fees-note {
+  margin: var(--space-1) 0 var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.history-title {
+  margin: var(--space-8) 0 var(--space-3);
+  font-size: 1.125rem;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+  font-size: 0.875rem;
+}
+
+.history-table th,
+.history-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Statut toujours écrit en toutes lettres : la couleur n'est qu'un complément. */
+.payment-status {
+  font-weight: var(--font-weight-medium);
+}
+
+.payment-paid {
+  color: var(--color-success);
+}
+
+.payment-failed,
+.payment-expired {
+  color: var(--color-error);
+}

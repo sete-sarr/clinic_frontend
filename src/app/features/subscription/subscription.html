@@ -3,8 +3,18 @@
 </div>
 
 @if (checkoutNotice(); as notice) {
-  <div class="checkout-notice" [class.notice-success]="notice.kind === 'success'" [class.notice-cancelled]="notice.kind === 'cancelled'" role="status">
-    <mat-icon>{{ notice.kind === 'success' ? 'check_circle' : 'info' }}</mat-icon>
+  <div
+    class="checkout-notice"
+    [class.notice-success]="notice.kind === 'success'"
+    [class.notice-cancelled]="notice.kind === 'cancelled' || notice.kind === 'checking'"
+    [class.notice-failed]="notice.kind === 'failed'"
+    role="status"
+  >
+    @if (notice.kind === 'checking') {
+      <mat-spinner diameter="20" />
+    } @else {
+      <mat-icon>{{ notice.kind === 'success' ? 'check_circle' : notice.kind === 'failed' ? 'error' : 'info' }}</mat-icon>
+    }
     <span>{{ notice.message | transloco }}</span>
     <button mat-icon-button (click)="dismissNotice()" [attr.aria-label]="'common.actions.close' | transloco">
       <mat-icon>close</mat-icon>
@@ -41,7 +51,7 @@
           }
           @if (clinic.current_period_end) {
             <div class="status-item">
-              <span class="status-label">{{ 'subscription.nextRenewal' | transloco }}</span>
+              <span class="status-label">{{ (isPrepaid() ? 'subscription.periodEnd' : 'subscription.nextRenewal') | transloco }}</span>
               <span class="status-value">{{ clinic.current_period_end | date: 'mediumDate' }}</span>
             </div>
           }
@@ -56,7 +66,7 @@
         @if (clinic.subscription_status === 'past_due') {
           <p class="warning-text">
             <mat-icon>warning</mat-icon>
-            {{ 'subscription.pastDue' | transloco }}
+            {{ (isPrepaid() ? 'subscription.pastDuePrepaid' : 'subscription.pastDue') | transloco: { days: graceDays() } }}
           </p>
         }
         @if (clinic.subscription_status === 'suspended') {
@@ -66,7 +76,7 @@
           </p>
         }
 
-        @if (clinic.subscription_status !== 'trial') {
+        @if (!isPrepaid() && clinic.subscription_status !== 'trial') {
           <div class="manage-action">
             <button mat-stroked-button (click)="manageBilling()" [disabled]="working() !== null">
               @if (working() === 'portal') {
@@ -85,7 +95,7 @@
   <div class="cycle-toggle">
     <mat-button-toggle-group [value]="billingCycle()" (change)="billingCycle.set($event.value)" [attr.aria-label]="'subscription.billingCycle' | transloco">
       <mat-button-toggle value="monthly">{{ 'subscription.monthly' | transloco }}</mat-button-toggle>
-      <mat-button-toggle value="annual">{{ 'subscription.annual' | transloco }} <span class="save-badge">{{ 'subscription.twoMonthsFree' | transloco }}</span></mat-button-toggle>
+      <mat-button-toggle value="annual">{{ 'subscription.annual' | transloco }} <span class="save-badge">{{ 'subscription.annualOffer' | transloco }}</span></mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 
@@ -100,6 +110,9 @@
             <span class="price-amount">{{ priceForCycle(plan, billingCycle()) | number: '1.0-0' }} {{ currencyLabel }}</span>
             <span class="price-period">/ {{ (billingCycle() === 'annual' ? 'subscription.perYear' : 'subscription.perMonth') | transloco }}</span>
           </div>
+          @if (isPrepaid()) {
+            <p class="fees-note">{{ 'subscription.feesNote' | transloco }}</p>
+          }
           <ul class="plan-highlights">
             @for (highlight of plan.highlights; track highlight) {
               <li>
@@ -110,14 +123,14 @@
           </ul>
         </mat-card-content>
         <mat-card-actions>
-          @if (isCurrentPlan(plan.tier)) {
+          @if (isCurrentPlan(plan.tier) && !isPrepaid()) {
             <button mat-flat-button disabled>{{ 'subscription.currentPlan' | transloco }}</button>
           } @else {
             <button mat-flat-button color="primary" (click)="selectPlan(plan.tier)" [disabled]="working() !== null">
               @if (working() === plan.tier) {
                 <mat-spinner diameter="18" />
               } @else {
-                {{ (hasSubscription() ? 'subscription.switchToPlan' : 'subscription.choosePlan') | transloco }}
+                {{ planButtonLabel(plan.tier) | transloco }}
               }
             </button>
           }
@@ -133,4 +146,45 @@
   <p class="pricing-disclaimer">
     {{ 'subscription.disclaimer' | transloco: { days: trialDays } }}
   </p>
+
+  @if (payments().length > 0) {
+    <h2 class="history-title">{{ 'subscription.history.title' | transloco }}</h2>
+    <div class="table-scroll">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>{{ 'subscription.history.date' | transloco }}</th>
+            <th>{{ 'subscription.history.plan' | transloco }}</th>
+            <th>{{ 'subscription.history.period' | transloco }}</th>
+            <th>{{ 'subscription.history.amount' | transloco }}</th>
+            <th>{{ 'subscription.history.status' | transloco }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (payment of payments(); track payment.id) {
+            <tr>
+              <td>{{ (payment.paid_at ?? payment.created_at) | date: 'mediumDate' }}</td>
+              <td>
+                {{ planLabel(payment.plan_tier) }} ·
+                {{ (payment.billing_cycle === 'annual' ? 'subscription.annual' : 'subscription.monthly') | transloco }}
+              </td>
+              <td>
+                @if (payment.period_start && payment.period_end) {
+                  {{ payment.period_start | date: 'mediumDate' }} → {{ payment.period_end | date: 'mediumDate' }}
+                } @else {
+                  —
+                }
+              </td>
+              <td>{{ (payment.charged_amount ?? payment.amount) | number: '1.0-0' }} {{ currencyLabel }}</td>
+              <td>
+                <span [class]="'payment-status payment-' + payment.status">
+                  {{ 'subscription.paymentStatus.' + payment.status | transloco }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 }

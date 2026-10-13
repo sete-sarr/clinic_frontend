@@ -15,7 +15,7 @@ import { map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Clinic } from '../../../core/models/clinic.model';
-import { Role } from '../../../core/models/user.model';
+import { PlanModule, Role } from '../../../core/models/user.model';
 import { BOTTOM_TABS, DASHBOARD_ROLES, primaryRole } from '../../../core/navigation/role-navigation';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -35,6 +35,8 @@ interface NavItem {
   icon: string;
   route: string;
   roles: Role[];
+  // Module réservé à la formule Professional (et à l'essai) : masqué pour une clinique Starter.
+  module?: PlanModule;
 }
 
 
@@ -167,6 +169,7 @@ const NAV_ITEMS: NavItem[] = [
     // route réservée à ces deux rôles (app.routes.ts canAccessPharmacy), même schéma que
     // Départements (écran de gestion, pas un simple sélecteur en lecture).
     roles: ['pharmacist', 'clinic_admin'],
+    module: 'pharmacy',
   },
   {
     labelKey: 'nav.visitors',
@@ -182,6 +185,7 @@ const NAV_ITEMS: NavItem[] = [
     // CanManageWardStructure (backend/hospitalization/permissions.py) : tableau d'occupation pour le
     // médecin, l'infirmier, la réception (emplacement uniquement) et l'administrateur.
     roles: ['doctor', 'nurse', 'secretary', 'clinic_admin'],
+    module: 'hospitalization',
   },
   {
     // La comptabilité n'a pas accès au tableau d'occupation, seulement aux séjours (dates, nuitées).
@@ -189,6 +193,7 @@ const NAV_ITEMS: NavItem[] = [
     icon: 'list_alt',
     route: '/hospitalization/stays',
     roles: ['accountant'],
+    module: 'hospitalization',
   },
   {
     labelKey: 'nav.wards',
@@ -196,6 +201,7 @@ const NAV_ITEMS: NavItem[] = [
     route: '/wards',
     // CanManageWardStructure : paramétrage des chambres et lits réservé à l'administrateur.
     roles: ['clinic_admin'],
+    module: 'hospitalization',
   },
   {
     labelKey: 'nav.laboratory',
@@ -204,6 +210,7 @@ const NAV_ITEMS: NavItem[] = [
     // CanAccessLabOrders (backend/laboratory/permissions.py) : médecin (ses demandes), technicien de
     // laboratoire et administrateur — jamais la réception ni la comptabilité (access-policy.md).
     roles: ['doctor', 'lab_technician', 'clinic_admin'],
+    module: 'laboratory',
   },
   {
     labelKey: 'nav.labCatalog',
@@ -212,6 +219,7 @@ const NAV_ITEMS: NavItem[] = [
     route: '/lab-tests',
     // CanManageLabTests (backend/laboratory/permissions.py) : écriture réservée à l'administrateur.
     roles: ['clinic_admin'],
+    module: 'laboratory',
   },
   {
     labelKey: 'nav.subscription',
@@ -276,11 +284,18 @@ export class Shell {
     this.auth.refreshUser();
   }
 
+  /** Entrée visible : rôle autorisé et, pour un module Professional, compris dans la formule. */
+  private canSee(item: NavItem | undefined): item is NavItem {
+    if (!item || !this.auth.hasRole(...item.roles)) {
+      return false;
+    }
+    const modules = this.user()?.clinic_modules;
+    return !item.module || !modules || modules.includes(item.module);
+  }
+
   protected readonly navGroups = computed(() =>
     NAV_GROUPS.map((routes) =>
-      routes
-        .map((route) => NAV_ITEMS.find((item) => item.route === route))
-        .filter((item): item is NavItem => !!item && this.auth.hasRole(...item.roles)),
+      routes.map((route) => NAV_ITEMS.find((item) => item.route === route)).filter((item) => this.canSee(item)),
     ).filter((group) => group.length > 0),
   );
 
@@ -326,7 +341,7 @@ export class Shell {
     const unread = this.notifications.unreadCount();
     return routes
       .map((route) => [...NAV_ITEMS, NOTIFICATIONS_ITEM].find((item) => item.route === route))
-      .filter((item): item is NavItem => !!item && this.auth.hasRole(...item.roles))
+      .filter((item) => this.canSee(item))
       .map((item) => ({
         labelKey: item.labelKey,
         icon: item.icon,

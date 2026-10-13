@@ -22,7 +22,12 @@ export interface User {
   clinic_currency?: string | null;
   // URL signée et temporaire de la photo de profil (null : image par défaut).
   photo?: string | null;
+  // Modules réservés à la formule Professional affichés dans le menu (backend
+  // subscriptions/catalog.py::visible_modules) ; absent des sessions antérieures = tous.
+  clinic_modules?: PlanModule[];
 }
+
+export type PlanModule = 'hospitalization' | 'laboratory' | 'pharmacy';
 
 export interface AuthTokens {
   access: string;

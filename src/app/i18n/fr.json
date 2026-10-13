@@ -203,7 +203,7 @@
     },
     "register": {
       "title": "Créer votre clinique",
-      "subtitle": "Démarrez votre mois d'essai gratuit.",
+      "subtitle": "Démarrez votre essai gratuit de 14 jours.",
       "clinicSection": "Clinique",
       "clinicName": "Nom de la clinique",
       "clinicNameRequired": "Nom de la clinique requis",
@@ -863,19 +863,18 @@
     "noPlanTrial": "Aucune (essai gratuit)",
     "trialEnd": "Fin de l'essai",
     "nextRenewal": "Prochain renouvellement",
-    "trialInfo": "Vous profitez de votre mois d'essai gratuit. Choisissez une formule dès maintenant : aucun prélèvement n'aura lieu avant la fin de l'essai.",
+    "trialInfo": "Vous profitez de votre essai gratuit. Vous pouvez payer dès maintenant : votre période payée commencera à la fin de l'essai.",
     "pastDue": "Votre dernier paiement a échoué. Merci de mettre à jour votre moyen de paiement pour éviter la suspension du compte.",
     "suspended": "Votre abonnement est suspendu. La création de nouveaux enregistrements est bloquée ; vos données existantes restent accessibles. Choisissez une formule ci-dessous pour réactiver votre compte.",
     "manage": "Gérer l'abonnement",
     "billingCycle": "Cycle de facturation",
     "monthly": "Mensuel",
     "annual": "Annuel",
-    "twoMonthsFree": "2 mois offerts",
     "perYear": "an",
     "perMonth": "mois",
     "switchToPlan": "Passer à cette formule",
     "choosePlan": "Choisir cette formule",
-    "disclaimer": "Tarifs en francs CFA (XOF). Le premier mois ({{days}} jours) est gratuit ; le paiement est géré de façon sécurisée par Stripe.",
+    "disclaimer": "Tarifs en francs CFA (XOF), paiement par Wave, Orange Money ou carte. Les {{days}} premiers jours sont gratuits. Sans paiement, la clinique passe en lecture seule : vos données restent consultables.",
     "checkoutSuccess": "Paiement confirmé — votre abonnement est en cours de mise à jour.",
     "checkoutCancelled": "Le paiement a été annulé. Aucun changement n’a été effectué.",
     "checkoutError": "Impossible de démarrer le paiement pour l'instant.",
@@ -894,7 +893,39 @@
       "upTo5000Patients": "Jusqu’à 5000 patients",
       "advancedReports": "Rapports et exports avancés",
       "smsNotifications": "SMS de rendez-vous aux patients",
-      "dayBeforeReminder": "Rappel automatique la veille du rendez-vous"
+      "dayBeforeReminder": "Rappel automatique la veille du rendez-vous",
+      "consultationsAndPrescriptions": "Consultations, dossiers médicaux et ordonnances",
+      "everythingInStarter": "Tout Starter, plus :",
+      "hospitalization": "Hospitalisation : chambres, lits, séjours et soins",
+      "laboratory": "Laboratoire : demandes et résultats d'analyses",
+      "pharmacy": "Pharmacie : stock, lots et codes-barres"
+    },
+    "annualOffer": "3 mois offerts",
+    "pay": "Payer (Wave, Orange Money, carte)",
+    "extend": "Prolonger",
+    "periodEnd": "Fin de la période payée",
+    "feesNote": "Frais de paiement en sus, affichés sur la page de paiement.",
+    "pastDuePrepaid": "Votre période payée est terminée. Prolongez votre abonnement dans les {{days}} jours suivant l'échéance pour éviter le passage en lecture seule.",
+    "confirmPrepaidChange": "Passer à la formule {{plan}} ? Une nouvelle période commence le jour du paiement ; les jours restants de votre formule actuelle ne sont pas remboursés.",
+    "payment": {
+      "checking": "Vérification de votre paiement…",
+      "paid": "Paiement reçu : votre abonnement est actif. Un e-mail de confirmation vous a été envoyé.",
+      "failed": "Le paiement n'a pas abouti. Aucun montant n'a été activé ; vous pouvez réessayer.",
+      "stillPending": "La confirmation de l'opérateur prend plus de temps que prévu. Votre abonnement sera activé automatiquement dès réception ; vous pouvez fermer cette page."
+    },
+    "history": {
+      "title": "Historique des paiements",
+      "date": "Date",
+      "plan": "Formule",
+      "period": "Période",
+      "amount": "Montant payé",
+      "status": "Statut"
+    },
+    "paymentStatus": {
+      "pending": "En attente",
+      "paid": "Payé",
+      "failed": "Échoué",
+      "expired": "Abandonné"
     }
   },
   "laboratory": {

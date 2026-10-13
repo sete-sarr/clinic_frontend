@@ -159,10 +159,19 @@
         }
 
         @if (formEditable()) {
-          <button mat-stroked-button type="button" (click)="addLine()" class="add-line-button">
-            <mat-icon>add</mat-icon>
-            {{ 'billing.addLine' | transloco }}
-          </button>
+          <div class="line-buttons">
+            <button mat-stroked-button type="button" (click)="addLine()" class="add-line-button">
+              <mat-icon>add</mat-icon>
+              {{ 'billing.addLine' | transloco }}
+            </button>
+            <button mat-stroked-button type="button" (click)="scanMedication()" class="add-line-button">
+              <mat-icon>qr_code_scanner</mat-icon>
+              {{ 'pharmacy.scan.invoiceButton' | transloco }}
+            </button>
+          </div>
+          @if (scanError()) {
+            <p class="scan-error" role="alert">{{ scanError() }}</p>
+          }
         }
 
         <div class="totals">

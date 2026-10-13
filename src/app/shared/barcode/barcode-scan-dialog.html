@@ -1,0 +1,50 @@
+<div class="app-dialog-header">
+  <h2 mat-dialog-title>{{ 'barcode.title' | transloco }}</h2>
+  <button mat-icon-button type="button" (click)="dialogRef.close()" [attr.aria-label]="'common.actions.close' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <div class="camera" [class.hidden]="cameraState() === 'unavailable' || cameraState() === 'denied'">
+    <video #video class="video" muted playsinline></video>
+    <div class="viewfinder" aria-hidden="true"></div>
+  </div>
+
+  <p class="status" role="status">
+    @switch (cameraState()) {
+      @case ('starting') {
+        {{ 'barcode.starting' | transloco }}
+      }
+      @case ('scanning') {
+        {{ 'barcode.hint' | transloco }}
+      }
+      @case ('denied') {
+        <mat-icon aria-hidden="true">no_photography</mat-icon>
+        {{ 'barcode.denied' | transloco }}
+      }
+      @case ('unavailable') {
+        <mat-icon aria-hidden="true">no_photography</mat-icon>
+        {{ 'barcode.noCamera' | transloco }}
+      }
+    }
+  </p>
+
+  <form class="manual" novalidate (submit)="$event.preventDefault(); submitManual()">
+    <mat-form-field appearance="outline" class="manual-field">
+      <mat-label>{{ 'barcode.manualLabel' | transloco }}</mat-label>
+      <input
+        #manualInput
+        matInput
+        autocomplete="off"
+        inputmode="numeric"
+        [value]="manualCode()"
+        (input)="manualCode.set($any($event.target).value)"
+      />
+      <mat-hint>{{ 'barcode.manualHint' | transloco }}</mat-hint>
+    </mat-form-field>
+    <button mat-flat-button color="primary" type="submit" [disabled]="!manualCode().trim()">
+      {{ 'barcode.validate' | transloco }}
+    </button>
+  </form>
+</mat-dialog-content>

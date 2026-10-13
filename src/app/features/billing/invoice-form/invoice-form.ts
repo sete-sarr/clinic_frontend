@@ -40,6 +40,7 @@ import { PaymentService } from '../../payments/payment.service';
 import { DEFAULT_CURRENCY, MoneyPipe, currencySymbol } from '../../../core/utils/money';
 import { apiResource } from '../../../core/api/api-resource';
 import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
+import { MedicationScanner } from '../../pharmacy/medication-scanner';
 
 export interface InvoiceFormDialogData {
   id?: string;
@@ -188,8 +189,19 @@ export class InvoiceForm {
     { defaultValue: emptyPage<Medication>() },
   );
 
+  // Médicaments scannés absents de la première page du catalogue (au-delà de 200).
+  private readonly scannedMedications = signal<Medication[]>([]);
+  private readonly medicationScanner = inject(MedicationScanner);
+  protected readonly scanError = signal<string | null>(null);
+
   private readonly medicationsById = computed(
-    () => new Map(this.medicationsResource.value().results.map((medication) => [medication.id, medication])),
+    () =>
+      new Map(
+        [...this.medicationsResource.value().results, ...this.scannedMedications()].map((medication) => [
+          medication.id,
+          medication,
+        ]),
+      ),
   );
 
   protected medicationFor(id: number | null | undefined): Medication | undefined {
@@ -324,6 +336,49 @@ export class InvoiceForm {
           count: medication.units_per_pack,
         })})`
       : `${medication.name} (${medication.unit})`;
+  }
+
+  /**
+   * Scan d'une boîte : une boîte de plus si le médicament est déjà sur la facture (vendu à la boîte),
+   * sinon une nouvelle ligne (ou la ligne vide en cours) vendue à la boîte.
+   */
+  protected async scanMedication(): Promise<void> {
+    this.scanError.set(null);
+    const outcome = await this.medicationScanner.scan();
+    if (!outcome) {
+      return;
+    }
+    if ('error' in outcome) {
+      this.scanError.set(outcome.error);
+      return;
+    }
+    const medication = outcome.scan.medication;
+    if (!medication) {
+      this.medicationScanner.reportUnknown(outcome.scan, () => this.medicationsResource.reload());
+      return;
+    }
+    if (!medication.is_active) {
+      this.scanError.set(translate('pharmacy.scan.archived', { name: medication.name }));
+      return;
+    }
+    if (!this.medicationsById().has(medication.id)) {
+      this.scannedMedications.update((list) => [...list, medication]);
+    }
+    const saleUnit: SaleUnit = isPackaged(medication) ? 'pack' : 'unit';
+    const lines = this.model().lines;
+    const existing = lines.findIndex((line) => line.medication === medication.id && line.sale_unit === saleUnit);
+    if (existing >= 0) {
+      this.updateLine(existing, { quantity: Number(lines[existing].quantity) + 1 });
+      return;
+    }
+    const blank = lines.findIndex((line) => !line.medication && !line.description.trim());
+    let index = blank;
+    if (blank < 0) {
+      this.addLine();
+      index = lines.length;
+    }
+    this.updateLine(index, { medication: medication.id, quantity: 1 });
+    this.applySaleUnit(index, medication, saleUnit);
   }
 
   protected addLine(): void {

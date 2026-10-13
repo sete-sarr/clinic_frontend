@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import {
   Medication,
   MedicationCreatePayload,
+  MedicationScan,
   MedicationUpdatePayload,
   SplitPacksPayload,
   StockBatch,
@@ -38,6 +39,11 @@ export class MedicationService {
 
   splitPacks(id: number, payload: SplitPacksPayload): Observable<Medication> {
     return this.http.post<Medication>(`${this.medicationsUrl}${id}/split-packs/`, payload);
+  }
+
+  /** Texte lu par le scanner (caméra ou douchette) -> GTIN, lot, péremption et médicament. */
+  scan(code: string): Observable<MedicationScan> {
+    return this.http.get<MedicationScan>(`${this.medicationsUrl}scan/`, { params: { code } });
   }
 
   receiveBatch(payload: StockBatchCreatePayload): Observable<StockBatch> {

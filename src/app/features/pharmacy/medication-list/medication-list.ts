@@ -15,11 +15,12 @@ import { TranslocoPipe, translate } from '@jsverse/transloco';
 import { environment } from '../../../../environments/environment';
 import { parseApiError } from '../../../core/api/api-error';
 import { Paginated, emptyPage } from '../../../core/models/pagination.model';
-import { Medication, formatStock, isPackaged } from '../../../core/models/pharmacy.model';
+import { Medication, MedicationScan, formatStock, isPackaged } from '../../../core/models/pharmacy.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { SuccessNotifier } from '../../../shared/notifications/success-notifier';
 import { MedicationForm } from '../medication-form/medication-form';
 import { MedicationService } from '../medication.service';
+import { MedicationScanner } from '../medication-scanner';
 import { SplitPacksDialog } from '../split-packs-dialog/split-packs-dialog';
 import { StockBatchForm } from '../stock-batch-form/stock-batch-form';
 import { RecordCard } from '../../../shared/components/record-card/record-card';
@@ -69,6 +70,7 @@ export class MedicationList {
 
   private readonly dialog = inject(MatDialog);
   private readonly medicationService = inject(MedicationService);
+  private readonly medicationScanner = inject(MedicationScanner);
   private readonly successNotifier = inject(SuccessNotifier);
 
   readonly page = signal(1);
@@ -153,11 +155,38 @@ export class MedicationList {
     });
   }
 
-  protected openReceiveBatch(medication: Medication): void {
+  /**
+   * Scan d'une boîte : `receive` ouvre la réception de stock (lot et péremption préremplis depuis un
+   * DataMatrix), sinon la fiche du médicament. Code inconnu : proposition de le créer.
+   */
+  protected async scanMedication(receive: boolean): Promise<void> {
+    this.actionError.set(null);
+    const outcome = await this.medicationScanner.scan();
+    if (!outcome) {
+      return;
+    }
+    if ('error' in outcome) {
+      this.actionError.set(outcome.error);
+      return;
+    }
+    const { scan } = outcome;
+    const medication = scan.medication;
+    if (!medication) {
+      this.medicationScanner.reportUnknown(scan, () => this.medicationsResource.reload());
+      return;
+    }
+    if (receive && medication.is_active) {
+      this.openReceiveBatch(medication, scan);
+    } else {
+      this.openEdit(medication);
+    }
+  }
+
+  protected openReceiveBatch(medication: Medication, scan?: MedicationScan): void {
     const ref = this.dialog.open(StockBatchForm, {
       width: '640px',
       maxWidth: '95vw',
-      data: { medication },
+      data: { medication, scan },
     });
     ref.afterClosed().subscribe((result) => {
       if (result) {

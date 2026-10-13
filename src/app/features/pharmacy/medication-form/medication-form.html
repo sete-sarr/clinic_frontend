@@ -27,6 +27,25 @@
       </div>
 
       <div class="field-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'pharmacy.scan.barcodeField' | transloco }}</mat-label>
+          <input matInput inputmode="numeric" autocomplete="off" [formField]="medicationForm.barcode" />
+          <button
+            mat-icon-button
+            matIconSuffix
+            type="button"
+            (click)="scanBarcode()"
+            [attr.aria-label]="'pharmacy.scan.scanTooltip' | transloco"
+          >
+            <mat-icon>qr_code_scanner</mat-icon>
+          </button>
+          @if (medicationForm.barcode().touched() && medicationForm.barcode().invalid()) {
+            <mat-error>{{ medicationForm.barcode().errors()[0]?.message ?? ('common.invalidField' | transloco) }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
         <mat-form-field appearance="outline" class="half-width">
           <mat-label>{{ 'pharmacy.packaging.baseUnit' | transloco }}</mat-label>
           <input matInput [placeholder]="'pharmacy.unitPlaceholder' | transloco" [formField]="medicationForm.unit" />

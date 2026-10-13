@@ -12,14 +12,17 @@ import { firstValueFrom } from 'rxjs';
 import { TranslocoPipe, translate } from '@jsverse/transloco';
 
 import { parseApiError } from '../../../core/api/api-error';
-import { Medication, SaleUnit, isPackaged, unitsFor } from '../../../core/models/pharmacy.model';
-import { toIsoDate } from '../../../core/utils/date';
+import { Medication, MedicationScan, SaleUnit, isPackaged, unitsFor } from '../../../core/models/pharmacy.model';
+import { parseIsoDate, toIsoDate } from '../../../core/utils/date';
+import { MedicationScanner } from '../medication-scanner';
 import { MedicationService } from '../medication.service';
 import { DEFAULT_CURRENCY, currencySymbol } from '../../../core/utils/money';
 import { AuthService } from '../../../core/auth/auth.service';
 
 export interface StockBatchFormDialogData {
   medication: Medication;
+  // Réception par scan d'un DataMatrix : lot et péremption lus sur la boîte.
+  scan?: MedicationScan;
 }
 
 interface StockBatchFormModel {
@@ -53,15 +56,19 @@ export class StockBatchForm {
   // Prix saisis dans la devise actuelle de la clinique (docs/i18n.md §8).
   protected readonly currencySymbol = currencySymbol(inject(AuthService).user()?.clinic_currency ?? DEFAULT_CURRENCY);
   private readonly medicationService = inject(MedicationService);
+  private readonly medicationScanner = inject(MedicationScanner);
   protected readonly dialogRef = inject(MatDialogRef<StockBatchForm>);
   protected readonly data = inject<StockBatchFormDialogData>(MAT_DIALOG_DATA);
 
   protected readonly medication = this.data.medication;
   protected readonly isPackaged = isPackaged(this.medication);
 
+  protected readonly scanMessage = signal<string | null>(this.data.scan ? this.scanSummary(this.data.scan) : null);
+  protected readonly scanError = signal<string | null>(null);
+
   protected readonly model = signal<StockBatchFormModel>({
-    batch_number: '',
-    expiry_date: null,
+    batch_number: this.data.scan?.batch_number ?? '',
+    expiry_date: this.data.scan?.expiry_date ? parseIsoDate(this.data.scan.expiry_date) : null,
     received_date: new Date(),
     quantity: 1,
     // Produit conditionné : réception en boîtes par défaut (cas courant), en unités possible.
@@ -78,6 +85,38 @@ export class StockBatchForm {
     min(path.quantity, 1, { message: translate('pharmacy.batch.quantityMin') });
     min(path.unit_cost, 0, { message: translate('pharmacy.batch.costNotNegative') });
   });
+
+  /** Lit lot et péremption sur la boîte (DataMatrix), après avoir vérifié qu'il s'agit bien de ce médicament. */
+  protected async scanBox(): Promise<void> {
+    this.scanError.set(null);
+    const outcome = await this.medicationScanner.scan();
+    if (!outcome) {
+      return;
+    }
+    if ('error' in outcome) {
+      this.scanError.set(outcome.error);
+      return;
+    }
+    const { scan } = outcome;
+    if (scan.medication && scan.medication.id !== this.medication.id) {
+      this.scanError.set(translate('pharmacy.scan.otherMedication', { name: scan.medication.name }));
+      return;
+    }
+    if (!scan.batch_number && !scan.expiry_date) {
+      this.scanError.set(translate('pharmacy.scan.noBatchData'));
+      return;
+    }
+    this.model.update((current) => ({
+      ...current,
+      batch_number: scan.batch_number || current.batch_number,
+      expiry_date: scan.expiry_date ? parseIsoDate(scan.expiry_date) : current.expiry_date,
+    }));
+    this.scanMessage.set(this.scanSummary(scan));
+  }
+
+  private scanSummary(scan: MedicationScan): string | null {
+    return scan.batch_number || scan.expiry_date ? translate('pharmacy.scan.batchFilled') : null;
+  }
 
   // Quantité convertie en unités de base, affichée sous la saisie.
   protected readonly unitsPreview = computed(() =>

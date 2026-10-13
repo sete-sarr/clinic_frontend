@@ -109,8 +109,20 @@
   flex: 0 1 200px;
 }
 
+.line-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 .add-line-button {
   margin-bottom: var(--space-4);
+}
+
+.scan-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-4);
 }
 
 .totals {

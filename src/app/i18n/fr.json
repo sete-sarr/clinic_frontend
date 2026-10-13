@@ -768,6 +768,22 @@
       "confirm": "Convertir le stock",
       "done": "Stock converti en unités.",
       "error": "Impossible de convertir le stock."
+    },
+    "scan": {
+      "barcodeField": "Code-barres de la boîte (facultatif)",
+      "scanTooltip": "Scanner le code-barres",
+      "invalidBarcode": "Code-barres invalide : 8 à 14 chiffres",
+      "search": "Rechercher par scan",
+      "receive": "Réceptionner par scan",
+      "readBox": "Lire le lot sur la boîte",
+      "batchFilled": "Lot et date de péremption lus sur la boîte.",
+      "noBatchData": "Ce code ne contient ni lot ni date de péremption : saisissez-les.",
+      "otherMedication": "Ce code correspond à un autre médicament : {{name}}.",
+      "unknown": "Aucun médicament avec le code {{code}}.",
+      "create": "Créer",
+      "archived": "« {{name}} » est archivé et ne peut pas être vendu.",
+      "invoiceButton": "Scanner un médicament",
+      "error": "Lecture du code impossible."
     }
   },
   "staff": {
@@ -1220,5 +1236,15 @@
     "checkedInAt": "Entrée",
     "checkedOutAt": "Sortie",
     "exportFilename": "registre-visiteurs.csv"
+  },
+  "barcode": {
+    "title": "Scanner un code-barres",
+    "starting": "Ouverture de la caméra…",
+    "hint": "Placez le code-barres ou le carré DataMatrix de la boîte dans le cadre.",
+    "denied": "Accès à la caméra refusé : autorisez-le dans les réglages, ou saisissez le code.",
+    "noCamera": "Aucune caméra disponible : saisissez le code ou utilisez une douchette.",
+    "manualLabel": "Code-barres",
+    "manualHint": "Saisissez le code ou scannez-le avec une douchette.",
+    "validate": "Valider"
   }
 }

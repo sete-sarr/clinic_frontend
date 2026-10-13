@@ -9,6 +9,8 @@ export interface Medication {
   id: number;
   clinic: number;
   name: string;
+  // Code-barres de la boîte (GTIN canonique) ; '' = pas de code.
+  barcode: string;
   unit: string;
   unit_price: number;
   pack_unit: string;
@@ -27,6 +29,7 @@ export interface Medication {
 
 export interface MedicationCreatePayload {
   name: string;
+  barcode: string;
   unit: string;
   unit_price: number;
   pack_unit: string;
@@ -35,6 +38,16 @@ export interface MedicationCreatePayload {
   allow_unit_sale: boolean;
   min_threshold: number;
   max_threshold: number | null;
+}
+
+// Résultat de GET /pharmacy/medications/scan/ (backend pharmacy/barcodes.py) : GTIN canonique, lot et
+// péremption lus dans un DataMatrix (vides pour un code linéaire), médicament de la clinique qui
+// porte ce code (null s'il n'est pas au catalogue, archivé compris sinon).
+export interface MedicationScan {
+  gtin: string;
+  batch_number: string;
+  expiry_date: string | null;
+  medication: Medication | null;
 }
 
 // « Détailler le stock » (backend split_medication_packs) : le médicament, jusqu'ici compté par

@@ -7,6 +7,18 @@
 
 <mat-dialog-content>
   <form novalidate (submit)="$event.preventDefault(); onSubmit()">
+    <div class="scan-row">
+      <button mat-stroked-button type="button" (click)="scanBox()">
+        <mat-icon>qr_code_scanner</mat-icon>
+        {{ 'pharmacy.scan.readBox' | transloco }}
+      </button>
+      @if (scanError()) {
+        <p class="scan-error" role="alert">{{ scanError() }}</p>
+      } @else if (scanMessage()) {
+        <p class="scan-info" role="status"><mat-icon aria-hidden="true">check_circle</mat-icon>{{ scanMessage() }}</p>
+      }
+    </div>
+
     <div class="field-row">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{ 'pharmacy.batch.number' | transloco }}</mat-label>

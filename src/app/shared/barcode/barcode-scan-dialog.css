@@ -1,0 +1,52 @@
+.camera {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: var(--color-neutral-500);
+  aspect-ratio: 4 / 3;
+}
+
+.camera.hidden {
+  display: none;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Cadre de visée : la zone où placer le code. */
+.viewfinder {
+  position: absolute;
+  inset: 20% 12%;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px color-mix(in srgb, var(--color-neutral-500) 45%, transparent);
+  pointer-events: none;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.manual {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.manual-field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.manual button {
+  margin-top: var(--space-2);
+}

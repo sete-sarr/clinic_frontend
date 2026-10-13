@@ -768,6 +768,22 @@
       "confirm": "Convert the stock",
       "done": "Stock converted into units.",
       "error": "Could not convert the stock."
+    },
+    "scan": {
+      "barcodeField": "Box barcode (optional)",
+      "scanTooltip": "Scan the barcode",
+      "invalidBarcode": "Invalid barcode: 8 to 14 digits",
+      "search": "Find by scan",
+      "receive": "Receive by scan",
+      "readBox": "Read the batch from the box",
+      "batchFilled": "Batch number and expiry date read from the box.",
+      "noBatchData": "This code holds no batch number or expiry date: enter them.",
+      "otherMedication": "This code belongs to another medication: {{name}}.",
+      "unknown": "No medication with code {{code}}.",
+      "create": "Create",
+      "archived": "“{{name}}” is archived and cannot be sold.",
+      "invoiceButton": "Scan a medication",
+      "error": "Could not read the code."
     }
   },
   "staff": {
@@ -1220,5 +1236,15 @@
     "checkedInAt": "Check-in",
     "checkedOutAt": "Check-out",
     "exportFilename": "visitor-log.csv"
+  },
+  "barcode": {
+    "title": "Scan a barcode",
+    "starting": "Opening the camera…",
+    "hint": "Place the box's barcode or DataMatrix square inside the frame.",
+    "denied": "Camera access denied: allow it in the settings, or enter the code.",
+    "noCamera": "No camera available: enter the code or use a barcode scanner.",
+    "manualLabel": "Barcode",
+    "manualHint": "Type the code or scan it with a barcode scanner.",
+    "validate": "Confirm"
   }
 }

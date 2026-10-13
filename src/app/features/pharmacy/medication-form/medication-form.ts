@@ -18,13 +18,17 @@ import { MedicationService } from '../medication.service';
 import { DEFAULT_CURRENCY, currencySymbol } from '../../../core/utils/money';
 import { AuthService } from '../../../core/auth/auth.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { BarcodeScanner } from '../../../shared/barcode/barcode-scanner';
 
 export interface MedicationFormDialogData {
   id?: string;
+  // Création depuis un code scanné inconnu (MedicationScanner.openCreate).
+  barcode?: string;
 }
 
 interface MedicationFormModel {
   name: string;
+  barcode: string;
   unit: string;
   unit_price: number;
   pack_unit: string;
@@ -55,6 +59,7 @@ export class MedicationForm {
   // Prix saisis dans la devise actuelle de la clinique (docs/i18n.md §8).
   protected readonly currencySymbol = currencySymbol(inject(AuthService).user()?.clinic_currency ?? DEFAULT_CURRENCY);
   private readonly medicationService = inject(MedicationService);
+  private readonly barcodeScanner = inject(BarcodeScanner);
   private readonly successNotifier = inject(SuccessNotifier);
   protected readonly dialogRef = inject(MatDialogRef<MedicationForm>);
   private readonly data = inject<MedicationFormDialogData>(MAT_DIALOG_DATA, { optional: true });
@@ -71,6 +76,7 @@ export class MedicationForm {
 
   protected readonly model = signal<MedicationFormModel>({
     name: '',
+    barcode: this.data?.barcode ?? '',
     unit: '',
     unit_price: 0,
     pack_unit: '',
@@ -93,6 +99,12 @@ export class MedicationForm {
   protected readonly medicationForm = form(this.model, (path) => {
     required(path.name, { message: translate('pharmacy.nameRequired') });
     maxLength(path.name, 200, { message: translate('pharmacy.nameTooLong') });
+    // Format seulement (8 à 14 chiffres) : clé de contrôle et unicité sont vérifiées par le serveur.
+    validate(path.barcode, ({ value }) =>
+      !value().trim() || /^\d{8,14}$/.test(value().replace(/\s/g, ''))
+        ? undefined
+        : { kind: 'barcode', message: translate('pharmacy.scan.invalidBarcode') },
+    );
     required(path.unit, { message: translate('pharmacy.unitRequired') });
     maxLength(path.unit, 50, { message: translate('pharmacy.unitTooLong') });
     min(path.unit_price, 0, { message: translate('pharmacy.priceNotNegative') });
@@ -128,6 +140,7 @@ export class MedicationForm {
       if (medication) {
         this.model.set({
           name: medication.name,
+          barcode: medication.barcode,
           unit: medication.unit,
           unit_price: medication.unit_price,
           pack_unit: medication.pack_unit,
@@ -139,6 +152,21 @@ export class MedicationForm {
         });
       }
     });
+  }
+
+  /** Remplit le champ avec le GTIN lu (un DataMatrix est réduit à son GTIN par le serveur). */
+  protected async scanBarcode(): Promise<void> {
+    const code = await this.barcodeScanner.scan();
+    if (!code) {
+      return;
+    }
+    try {
+      const scan = await firstValueFrom(this.medicationService.scan(code));
+      this.medicationForm.barcode().value.set(scan.gtin);
+    } catch (error) {
+      this.medicationForm.barcode().value.set(code);
+    }
+    this.medicationForm.barcode().markAsTouched();
   }
 
   protected async onSubmit(): Promise<void> {
@@ -158,6 +186,7 @@ export class MedicationForm {
         const apiError = parseApiError(error, translate('pharmacy.saveError'));
         const fieldsByName = {
           name: this.medicationForm.name,
+          barcode: this.medicationForm.barcode,
           unit: this.medicationForm.unit,
           unit_price: this.medicationForm.unit_price,
           pack_unit: this.medicationForm.pack_unit,

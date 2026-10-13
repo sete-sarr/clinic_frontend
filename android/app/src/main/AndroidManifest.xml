@@ -32,4 +32,8 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Scan des codes-barres des médicaments (caméra, shared/barcode) : demandée à la première
+         utilisation ; l'application reste installable sur un appareil sans caméra. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 </manifest>

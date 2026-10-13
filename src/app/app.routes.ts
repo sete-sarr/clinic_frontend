@@ -1,7 +1,10 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 
 import { authGuard, guestGuard } from './core/auth/auth.guard';
 import { roleGuard, staffAreaGuard } from './core/auth/role.guard';
+import { AuthService } from './core/auth/auth.service';
+import { DASHBOARD_ROLES, homeRouteFor } from './core/navigation/role-navigation';
 
 // CanManageConsultations (backend/consultations/permissions.py) : doctor/clinic_admin uniquement, en
 // lecture ET en écriture — secretary/accountant ne doivent jamais accéder aux données cliniques
@@ -129,9 +132,12 @@ export const routes: Routes = [
     loadComponent: () => import('./shared/layout/shell/shell').then((m) => m.Shell),
     canActivate: [authGuard, staffAreaGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      // Page d'arrivée selon le rôle (core/navigation/role-navigation.ts) : tableau de bord, sinon le
+      // module de travail du rôle (hospitalisation, laboratoire, pharmacie) au lieu d'une page vide.
+      { path: '', pathMatch: 'full', redirectTo: () => homeRouteFor(inject(AuthService).roles()) },
       {
         path: 'dashboard',
+        canActivate: [roleGuard(...DASHBOARD_ROLES)],
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {

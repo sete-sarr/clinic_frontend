@@ -1,6 +1,9 @@
 :host {
   display: block;
   min-width: 0;
+  /* La disposition suit la largeur de la carte, pas celle de l'écran (deux cartes côte à côte sur
+     téléphone dans l'occupation des lits, une seule par ligne au tableau de bord). */
+  container-type: inline-size;
 }
 
 .kpi-card {
@@ -63,4 +66,40 @@
 .kpi-label {
   font-size: 0.9375rem;
   color: var(--color-text-secondary);
+}
+
+.kpi-label {
+  overflow-wrap: anywhere;
+}
+
+/* Carte étroite (≈ 2 colonnes sur téléphone) : icône au-dessus du chiffre, tailles réduites, pour que
+   les libellés longs (« En nettoyage », « Hors service ») restent dans la carte. */
+@container (max-width: 220px) {
+  .kpi-card {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: var(--space-3);
+    min-height: 0;
+    padding: var(--space-4);
+  }
+
+  .kpi-icon-badge {
+    width: 44px;
+    height: 44px;
+  }
+
+  .kpi-icon-badge mat-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+  }
+
+  .kpi-value {
+    font-size: 1.75rem;
+  }
+
+  .kpi-label {
+    font-size: 0.875rem;
+  }
 }

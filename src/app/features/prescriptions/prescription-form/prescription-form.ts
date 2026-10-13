@@ -1,4 +1,4 @@
-import { Component, LOCALE_ID, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, LOCALE_ID, computed, effect, inject, signal } from '@angular/core';
 import {
   FieldTree,
   FormField,
@@ -40,6 +40,7 @@ import {
 } from '../prescription.model';
 import { PrescriptionService } from '../prescription.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
 
 export interface PrescriptionFormDialogData {
   id?: string;
@@ -78,6 +79,7 @@ const itemSchema = schema<PrescriptionItem>((item) => {
 @Component({
   selector: 'app-prescription-form',
   imports: [
+    FieldErrorState,
     FormField,
     MatAutocompleteModule,
     MatButtonModule,
@@ -168,6 +170,8 @@ export class PrescriptionForm {
     { defaultValue: emptyPage<Consultation>() },
   );
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+
   protected readonly prescriptionForm = form(this.model, (path) => {
     disabled(path, () => this.isLocked());
     // Le lien vers la consultation est en relation un-à-un et défini uniquement à la création (prescriptions/services.py
@@ -236,6 +240,7 @@ export class PrescriptionForm {
   }
 
   protected async onSubmit(): Promise<void> {
+    revealFirstError(this.host, this.prescriptionForm.patient());
     await submit(this.prescriptionForm, async () => {
       const value = this.model();
       const payload: PrescriptionPayload = {

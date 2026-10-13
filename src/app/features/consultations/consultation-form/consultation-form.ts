@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, disabled, form, required, submit } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +29,7 @@ import {
 } from '../consultation.model';
 import { ConsultationService } from '../consultation.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
 
 export interface ConsultationFormDialogData {
   id?: string;
@@ -69,6 +70,7 @@ function formatDoctor(doctor: DoctorSummary): string {
 @Component({
   selector: 'app-consultation-form',
   imports: [
+    FieldErrorState,
     FormField,
     MatAutocompleteModule,
     MatButtonModule,
@@ -156,6 +158,8 @@ export class ConsultationForm {
     { defaultValue: emptyPage<DoctorSummary>() },
   );
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+
   protected readonly consultationForm = form(this.model, (path) => {
     // Le disabled() propre à Signal Forms se propage à chaque champ descendant — y compris l'input
     // `disabled` propre aux composants Material via [formField] — donc une consultation validée
@@ -208,6 +212,7 @@ export class ConsultationForm {
   }
 
   protected async onSubmit(): Promise<void> {
+    revealFirstError(this.host, this.consultationForm.patient());
     await submit(this.consultationForm, async () => {
       const value = this.model();
       const payload: ConsultationPayload = {

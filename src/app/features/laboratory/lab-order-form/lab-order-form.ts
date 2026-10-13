@@ -1,4 +1,4 @@
-import { Component, LOCALE_ID, inject, signal } from '@angular/core';
+import { Component, ElementRef, LOCALE_ID, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, submit, validate } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +20,7 @@ import { Consultation } from '../../consultations/consultation.model';
 import { LabOrderPayload, LabTest } from '../laboratory.model';
 import { LaboratoryService } from '../laboratory.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
 
 function formatPatient(patient: PatientSummary): string {
   return `${patient.first_name} ${patient.last_name} (${patient.patient_number})`;
@@ -30,6 +31,7 @@ function formatPatient(patient: PatientSummary): string {
 @Component({
   selector: 'app-lab-order-form',
   imports: [
+    FieldErrorState,
     FormField,
     MatAutocompleteModule,
     MatButtonModule,
@@ -73,6 +75,8 @@ export class LabOrderForm {
     { defaultValue: emptyPage<LabTest>() },
   );
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+
   protected readonly orderForm = form(this.model, (path) => {
     validate(path.patient, ({ value }) =>
       value() ? undefined : { kind: 'required', message: translate('common.validation.patientRequired') },
@@ -103,6 +107,7 @@ export class LabOrderForm {
   }
 
   protected async onSubmit(): Promise<void> {
+    revealFirstError(this.host, this.orderForm.patient());
     await submit(this.orderForm, async () => {
       try {
         const created = await firstValueFrom(this.laboratoryService.createOrder(this.model()));

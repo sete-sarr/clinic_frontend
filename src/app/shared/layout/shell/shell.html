@@ -65,7 +65,12 @@
       <app-language-switcher class="header-language" />
 
       @if (user(); as currentUser) {
-        <button mat-button class="user-chip" [matMenuTriggerFor]="userMenu">
+        <button
+          mat-button
+          class="user-chip"
+          [matMenuTriggerFor]="userMenu"
+          [attr.aria-label]="(currentUser.first_name || currentUser.username) + (primaryRoleKey() ? ' — ' + (primaryRoleKey() | transloco) : '')"
+        >
           @if (currentUser.photo) {
             <app-avatar class="user-avatar" [src]="currentUser.photo" kind="staff" [size]="36" />
           } @else {
@@ -77,6 +82,14 @@
           </span>
         </button>
         <mat-menu #userMenu="matMenu">
+          @if (isHandset()) {
+            <!-- Sur téléphone, le nom et le rôle sont masqués dans l'en-tête : rappelés ici. -->
+            <div class="menu-identity">
+              <span class="menu-identity-name">{{ currentUser.first_name }} {{ currentUser.last_name }}</span>
+              <span class="menu-identity-role">{{ primaryRoleKey() ? (primaryRoleKey() | transloco) : '' }}</span>
+            </div>
+            <mat-divider />
+          }
           <button mat-menu-item (click)="openMyPhoto()">
             <mat-icon>account_circle</mat-icon>
             <span>{{ 'userMenu.myPhoto' | transloco }}</span>

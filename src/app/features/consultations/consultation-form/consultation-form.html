@@ -35,6 +35,7 @@
               [disabled]="isLocked()"
               (input)="onPatientQueryInput($any($event.target).value)"
               [matAutocomplete]="patientAuto"
+            [appFieldErrorState]="consultationForm.patient()"
               autocomplete="off"
               [placeholder]="'common.patientSearch' | transloco"
             />

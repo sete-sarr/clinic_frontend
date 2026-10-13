@@ -16,6 +16,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Clinic } from '../../../core/models/clinic.model';
 import { Role } from '../../../core/models/user.model';
+import { BOTTOM_TABS, DASHBOARD_ROLES, primaryRole } from '../../../core/navigation/role-navigation';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { UserGuideService } from '../../../core/services/user-guide.service';
@@ -36,8 +37,6 @@ interface NavItem {
   roles: Role[];
 }
 
-// Du plus privilégié au moins privilégié — un utilisateur avec plusieurs rôles n'affiche qu'un seul libellé dans la puce de l'en-tête.
-const ROLE_PRIORITY: Role[] = ['clinic_admin', 'doctor', 'accountant', 'pharmacist', 'lab_technician', 'nurse', 'secretary', 'patient'];
 
 // Ne liste que les routes qui existent réellement. Ajouter une entrée ici (avec les rôles autorisés à la voir,
 // selon business/access-policy.md) à chaque nouveau module de fonctionnalité livré.
@@ -58,7 +57,7 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.dashboard',
     icon: 'dashboard',
     route: '/dashboard',
-    roles: ['doctor', 'secretary', 'accountant', 'clinic_admin'],
+    roles: DASHBOARD_ROLES,
   },
   {
     labelKey: 'nav.appointments',
@@ -232,18 +231,6 @@ const NOTIFICATIONS_ITEM: NavItem = {
   roles: ['doctor', 'secretary', 'accountant', 'clinic_admin', 'pharmacist', 'lab_technician', 'nurse'],
 };
 
-// Barre du bas sur téléphone (docs/mobile.md § Étape 1) : 4 routes au plus par rôle prioritaire
-// (ROLE_PRIORITY), reprises de NAV_ITEMS — mêmes libellés, icônes et droits que le menu latéral ;
-// « Plus » ouvre ce menu pour tout le reste.
-const BOTTOM_TABS: Partial<Record<Role, string[]>> = {
-  clinic_admin: ['/dashboard', '/appointments', '/patients', '/billing'],
-  doctor: ['/dashboard', '/appointments', '/patients', '/consultations'],
-  secretary: ['/dashboard', '/appointments', '/patients', '/visitors'],
-  accountant: ['/dashboard', '/billing', '/payments', '/hospitalization/stays'],
-  nurse: ['/hospitalization', '/notifications'],
-  lab_technician: ['/laboratory', '/notifications'],
-  pharmacist: ['/pharmacy', '/notifications'],
-};
 
 @Component({
   selector: 'app-shell',
@@ -326,10 +313,7 @@ export class Shell {
 
   // Clé de traduction du rôle principal (i18n/*.json → roles.*, mêmes valeurs que
   // backend/accounts/migrations/0002_seed_roles.py).
-  private readonly primaryRole = computed(() => {
-    const roles = this.auth.roles();
-    return ROLE_PRIORITY.find((role) => roles.includes(role));
-  });
+  private readonly primaryRole = computed(() => primaryRole(this.auth.roles()));
 
   protected readonly primaryRoleKey = computed(() => {
     const primary = this.primaryRole();

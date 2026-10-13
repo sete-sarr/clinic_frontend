@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, applyEach, disabled, form, min, required, schema, submit } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -39,6 +39,7 @@ import { PAYMENT_METHOD_LABELS, PAYMENT_STATUS_LABELS, Payment, PaymentMethod } 
 import { PaymentService } from '../../payments/payment.service';
 import { DEFAULT_CURRENCY, MoneyPipe, currencySymbol } from '../../../core/utils/money';
 import { apiResource } from '../../../core/api/api-resource';
+import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
 
 export interface InvoiceFormDialogData {
   id?: string;
@@ -86,6 +87,7 @@ const lineSchema = schema<InvoiceLine>((line) => {
 @Component({
   selector: 'app-invoice-form',
   imports: [
+    FieldErrorState,
     MoneyPipe,
     DatePipe,
     EmptyState,
@@ -196,6 +198,8 @@ export class InvoiceForm {
 
   // Erreur des actions Émettre/Annuler (ex. stock insuffisant à l'émission), hors du formulaire.
   protected readonly actionError = signal<string | null>(null);
+
+  private readonly host = inject(ElementRef<HTMLElement>);
 
   protected readonly invoiceForm = form(this.model, (path) => {
     disabled(path, () => !this.formEditable());
@@ -334,6 +338,7 @@ export class InvoiceForm {
   }
 
   protected async onSubmit(): Promise<void> {
+    revealFirstError(this.host, this.invoiceForm.patient());
     await submit(this.invoiceForm, async () => {
       try {
         const value = this.model();

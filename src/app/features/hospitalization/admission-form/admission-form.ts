@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, required, submit, validate } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +21,7 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { AdmissionPayload, Bed, bedLocation } from '../hospitalization.model';
 import { HospitalizationService } from '../hospitalization.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
 
 function formatPatient(patient: PatientSummary): string {
   return `${patient.first_name} ${patient.last_name} (${patient.patient_number})`;
@@ -31,6 +32,7 @@ function formatPatient(patient: PatientSummary): string {
 @Component({
   selector: 'app-admission-form',
   imports: [
+    FieldErrorState,
     FormField,
     MatAutocompleteModule,
     MatButtonModule,
@@ -70,6 +72,8 @@ export class AdmissionForm {
     this.bedsResource.value().filter((bed) => bed.status === 'free' && bed.department === this.model().department),
   );
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+
   protected readonly admissionForm = form(this.model, (path) => {
     validate(path.patient, ({ value }) =>
       value() ? undefined : { kind: 'required', message: translate('common.validation.patientRequired') },
@@ -103,6 +107,7 @@ export class AdmissionForm {
   }
 
   protected async onSubmit(): Promise<void> {
+    revealFirstError(this.host, this.admissionForm.patient());
     await submit(this.admissionForm, async () => {
       const value = this.model();
       const payload: AdmissionPayload = this.admitNow()

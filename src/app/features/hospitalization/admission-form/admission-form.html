@@ -14,6 +14,7 @@
         [value]="patientLabel()"
         (input)="onPatientQueryInput($any($event.target).value)"
         [matAutocomplete]="patientAuto"
+            [appFieldErrorState]="admissionForm.patient()"
         autocomplete="off"
         [placeholder]="'common.patientSearch' | transloco"
       />

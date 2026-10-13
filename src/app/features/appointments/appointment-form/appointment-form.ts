@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, signal } from '@angular/core';
 import { FieldTree, FormField, form, maxLength, required, submit } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +22,7 @@ import { SuccessNotifier } from '../../../shared/notifications/success-notifier'
 import { Appointment, AppointmentPayload } from '../appointment.model';
 import { AppointmentService } from '../appointment.service';
 import { apiResource } from '../../../core/api/api-resource';
+import { FieldErrorState, revealFirstError } from '../../../shared/forms/form-errors';
 
 export interface AppointmentFormDialogData {
   id?: string;
@@ -47,6 +48,7 @@ function formatDoctor(doctor: DoctorSummary): string {
 @Component({
   selector: 'app-appointment-form',
   imports: [
+    FieldErrorState,
     FormField,
     MatAutocompleteModule,
     MatButtonModule,
@@ -103,6 +105,8 @@ export class AppointmentForm {
     { defaultValue: emptyPage<DoctorSummary>() },
   );
 
+  private readonly host = inject(ElementRef<HTMLElement>);
+
   protected readonly appointmentForm = form(this.model, (path) => {
     required(path.patient, { message: translate('common.validation.patientRequired') });
     required(path.doctor, { message: translate('common.validation.doctorRequired') });
@@ -143,6 +147,7 @@ export class AppointmentForm {
   }
 
   protected async onSubmit(): Promise<void> {
+    revealFirstError(this.host, this.appointmentForm.patient());
     await submit(this.appointmentForm, async () => {
       const value = this.model();
       const payload: AppointmentPayload = {

@@ -247,3 +247,33 @@
 .shell-sidenav {
   padding-top: env(safe-area-inset-top);
 }
+
+/* Téléphone : la puce utilisateur ne garde que la photo ou les initiales — le nom et le rôle
+   (« Technicien de laboratoire ») débordaient de l'en-tête. Ils restent dans le menu utilisateur. */
+@media (max-width: 599px) {
+  .user-text {
+    display: none;
+  }
+
+  .user-chip {
+    min-width: 0;
+    padding: 0 var(--space-1);
+  }
+}
+
+.menu-identity {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-3) var(--space-4);
+  line-height: 1.4;
+}
+
+.menu-identity-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.menu-identity-role {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}

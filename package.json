@@ -16,7 +16,7 @@
     "mobile:sync": "npm run build:mobile && cap sync android",
     "mobile:android": "cap open android",
     "mobile:assets": "capacitor-assets generate --android --assetPath resources --iconBackgroundColor #0f3d5e --iconBackgroundColorDark #0f3d5e --splashBackgroundColor #0f3d5e --splashBackgroundColorDark #0f3d5e",
-    "mobile:apk": "npm run mobile:sync && cd android && gradlew.bat assembleRelease"
+    "mobile:apk": "npm run mobile:sync && cd android && .\\gradlew.bat assembleRelease"
   },
   "private": true,
   "packageManager": "npm@11.6.2",

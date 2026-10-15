@@ -916,7 +916,9 @@
       "checking": "Vérification de votre paiement…",
       "paid": "Paiement reçu : votre abonnement est actif. Un e-mail de confirmation vous a été envoyé.",
       "failed": "Le paiement n'a pas abouti. Aucun montant n'a été activé ; vous pouvez réessayer.",
-      "stillPending": "La confirmation de l'opérateur prend plus de temps que prévu. Votre abonnement sera activé automatiquement dès réception ; vous pouvez fermer cette page."
+      "stillPending": "La confirmation de l'opérateur prend plus de temps que prévu. Votre abonnement sera activé automatiquement dès réception ; vous pouvez fermer cette page.",
+      "opened": "La page de paiement s'est ouverte à côté de proCli. Payez, puis revenez ici : cet écran se met à jour automatiquement dès que le paiement est confirmé.",
+      "failedRetry": "Le paiement n'a pas abouti. Vous pouvez réessayer sur la page de paiement : cet écran se mettra à jour dès qu'il sera confirmé."
     },
     "history": {
       "title": "Historique des paiements",

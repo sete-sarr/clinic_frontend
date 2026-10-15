@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
 import { apiResource } from '../../core/api/api-resource';
 import { parseApiError } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
+import { reserveExternalPage } from '../../core/utils/external-page';
 import { BillingCycle, Clinic, PlanTier, SUBSCRIPTION_STATUS_LABELS } from '../../core/models/clinic.model';
 import { SuccessNotifier } from '../../shared/notifications/success-notifier';
 import { CURRENCY_LABEL, PLAN_CATALOG, TRIAL_DAYS, priceForCycle } from './plan-catalog';
@@ -21,10 +22,12 @@ import { SubscriptionOverview, SubscriptionPayment, SubscriptionService } from '
 
 type CheckoutNotice = { kind: 'success' | 'cancelled' | 'checking' | 'failed'; message: string };
 
-// Vérification du paiement au retour de la page SasPay : toutes les 3 s pendant 1 min au plus ; le
-// webhook ou la tâche quotidienne prennent le relais si la confirmation de l'opérateur tarde.
-const PAYMENT_POLL_MS = 3000;
-const PAYMENT_POLL_ATTEMPTS = 20;
+// Suivi du paiement pendant que la page SasPay est ouverte dans un autre onglet (le prestataire Wave,
+// PayDunya, ne renvoie pas vers proCli après paiement) : toutes les 4 s pendant 10 min au plus, et
+// aussitôt quand l'utilisateur revient sur proCli. Au-delà, le webhook ou la tâche quotidienne
+// prennent le relais.
+const PAYMENT_POLL_MS = 4000;
+const PAYMENT_POLL_ATTEMPTS = 150;
 
 @Component({
   selector: 'app-subscription',
@@ -82,13 +85,32 @@ export class Subscription {
 
   protected readonly checkoutNotice = signal<CheckoutNotice | null>(this.initialNotice());
   private pollHandle?: ReturnType<typeof setTimeout>;
+  // Paiement en cours de suivi et nombre de vérifications déjà faites.
+  private pendingPayment: { id: number; attempt: number } | null = null;
 
   constructor() {
     const paymentId = Number(this.route.snapshot.queryParamMap.get('payment'));
     if (paymentId) {
-      this.pollPayment(paymentId, 1);
+      this.trackPayment(paymentId);
     }
-    inject(DestroyRef).onDestroy(() => clearTimeout(this.pollHandle));
+    // Retour sur proCli (onglet ou application) après avoir payé : vérification immédiate.
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && this.pendingPayment) {
+        clearTimeout(this.pollHandle);
+        void this.pollPayment();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    inject(DestroyRef).onDestroy(() => {
+      clearTimeout(this.pollHandle);
+      document.removeEventListener('visibilitychange', onVisible);
+    });
+  }
+
+  private trackPayment(paymentId: number): void {
+    clearTimeout(this.pollHandle);
+    this.pendingPayment = { id: paymentId, attempt: 0 };
+    void this.pollPayment();
   }
 
   private initialNotice(): CheckoutNotice | null {
@@ -106,28 +128,43 @@ export class Subscription {
     return null;
   }
 
-  private async pollPayment(paymentId: number, attempt: number): Promise<void> {
+  private async pollPayment(): Promise<void> {
+    const pending = this.pendingPayment;
+    if (!pending) {
+      return;
+    }
+    pending.attempt += 1;
     try {
-      const payment = await firstValueFrom(this.subscriptionService.refreshPayment(paymentId));
+      const payment = await firstValueFrom(this.subscriptionService.refreshPayment(pending.id));
+      if (this.pendingPayment !== pending) {
+        return; // un autre paiement a été lancé entre-temps
+      }
       if (payment.status === 'paid') {
+        this.pendingPayment = null;
         this.checkoutNotice.set({ kind: 'success', message: 'subscription.payment.paid' });
         this.clinicResource.reload();
         this.overviewResource.reload();
         this.auth.refreshUser(); // modules de la formule dans le menu
         return;
       }
-      if (payment.status === 'failed' || payment.status === 'expired') {
+      if (payment.status === 'expired') {
+        this.pendingPayment = null;
         this.checkoutNotice.set({ kind: 'failed', message: 'subscription.payment.failed' });
         return;
+      }
+      // « Échoué » n'arrête pas le suivi : la page de paiement propose « Réessayer » sur la même session.
+      if (payment.status === 'failed') {
+        this.checkoutNotice.set({ kind: 'failed', message: 'subscription.payment.failedRetry' });
       }
     } catch {
       // erreur réseau passagère : nouvelle tentative ci-dessous
     }
-    if (attempt >= PAYMENT_POLL_ATTEMPTS) {
+    if (pending.attempt >= PAYMENT_POLL_ATTEMPTS) {
+      this.pendingPayment = null;
       this.checkoutNotice.set({ kind: 'checking', message: 'subscription.payment.stillPending' });
       return;
     }
-    this.pollHandle = setTimeout(() => this.pollPayment(paymentId, attempt + 1), PAYMENT_POLL_MS);
+    this.pollHandle = setTimeout(() => void this.pollPayment(), PAYMENT_POLL_MS);
   }
 
   // Abonnement en cours (actif ou en délai de grâce).
@@ -162,11 +199,23 @@ export class Subscription {
         return;
       }
     }
+    // Paiement prépayé : page de paiement à côté de proCli (réservée pendant le clic), cet écran suit
+    // le paiement et se met à jour seul. Stripe : redirection classique, avec retour vers proCli.
+    const page = this.isPrepaid() ? reserveExternalPage() : null;
     this.working.set(tier);
     try {
       const result = await firstValueFrom(this.subscriptionService.startCheckout(tier, this.billingCycle()));
-      window.location.href = result.checkout_url;
+      if (!page || !result.payment_id) {
+        window.location.href = result.checkout_url;
+        return;
+      }
+      page.open(result.checkout_url);
+      this.working.set(null);
+      this.checkoutNotice.set({ kind: 'checking', message: 'subscription.payment.opened' });
+      this.router.navigate([], { relativeTo: this.route, queryParams: { payment: result.payment_id } });
+      this.trackPayment(result.payment_id);
     } catch (error) {
+      page?.cancel();
       this.errorMessage.set(parseApiError(error, translate('subscription.checkoutError')).message);
       this.working.set(null);
     }
@@ -208,6 +257,7 @@ export class Subscription {
 
   protected dismissNotice(): void {
     clearTimeout(this.pollHandle);
+    this.pendingPayment = null;
     this.checkoutNotice.set(null);
     this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }

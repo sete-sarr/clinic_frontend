@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Droits de la fenêtre principale : enregistrement et ouverture des documents téléchargés.",
+  "description": "Droits de la fenêtre principale : enregistrement et ouverture des documents téléchargés, ouverture de la page de paiement SasPay dans le navigateur.",
   "windows": ["main"],
   "permissions": [
     "core:default",
@@ -18,6 +18,10 @@
     {
       "identifier": "opener:allow-open-path",
       "allow": [{ "path": "$APPCACHE/**" }]
+    },
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [{ "url": "https://checkout.saspay.me/*" }]
     }
   ]
 }

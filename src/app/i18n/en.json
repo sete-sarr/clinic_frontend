@@ -916,7 +916,9 @@
       "checking": "Checking your payment…",
       "paid": "Payment received: your subscription is active. A confirmation email has been sent to you.",
       "failed": "The payment did not go through. Nothing was activated; you can try again.",
-      "stillPending": "The operator's confirmation is taking longer than expected. Your subscription will be activated automatically as soon as it arrives; you can close this page."
+      "stillPending": "The operator's confirmation is taking longer than expected. Your subscription will be activated automatically as soon as it arrives; you can close this page.",
+      "opened": "The payment page has opened next to proCli. Pay, then come back here: this screen updates automatically as soon as the payment is confirmed.",
+      "failedRetry": "The payment did not go through. You can try again on the payment page: this screen will update as soon as it is confirmed."
     },
     "history": {
       "title": "Payment history",
